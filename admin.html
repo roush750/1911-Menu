@@ -1,33 +1,27 @@
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>1911 Coffee Shop Admin</title>
-  <meta name="theme-color" content="#120c08" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>1911 Admin Panel</title>
+  <meta name="theme-color" content="#120c08">
   <style>
 :root{
-  --bg:#120c08;
-  --bg2:#1a120b;
-  --panel:rgba(21,16,12,.86);
-  --panel2:rgba(12,10,8,.94);
+  --bg:#110b08;
+  --bg2:#1a120c;
+  --panel:rgba(22,16,12,.88);
+  --panel2:rgba(11,9,8,.96);
   --text:#f8eee0;
   --muted:rgba(248,238,224,.72);
   --gold:#d5ab53;
   --gold2:#f1d58d;
   --line:rgba(213,171,83,.18);
   --shadow:0 18px 54px rgba(0,0,0,.38);
-  --radius:28px;
-  --max:1200px;
+  --radius:26px;
+  --max:1240px;
 }
 *{box-sizing:border-box}
-html{
-  scroll-behavior:smooth;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(213,171,83,.18), transparent 28%),
-    radial-gradient(circle at 10% 18%, rgba(255,255,255,.06), transparent 16%),
-    linear-gradient(180deg, #090705 0%, #120c08 42%, #0b0a09 100%);
-}
+html{scroll-behavior:smooth;background:linear-gradient(180deg,#090705 0%,#120c08 42%,#0b0a09 100%)}
 body{
   margin:0;
   min-height:100vh;
@@ -64,16 +58,14 @@ body::after{
   opacity:.14;
   mix-blend-mode:screen;
 }
-@keyframes drift{
-  from{transform:translate3d(-8px,-12px,0) scale(1)}
-  to{transform:translate3d(8px,10px,0) scale(1.02)}
-}
+@keyframes drift{from{transform:translate3d(-8px,-12px,0) scale(1)}to{transform:translate3d(8px,10px,0) scale(1.02)}}
+a{color:inherit;text-decoration:none}
 .shell{
   position:relative;
   z-index:1;
   width:min(var(--max), calc(100% - 16px));
   margin:0 auto;
-  padding:10px 0 24px;
+  padding:12px 0 110px;
 }
 .topbar{
   position:sticky;
@@ -87,2062 +79,1240 @@ body::after{
   border:1px solid rgba(213,171,83,.16);
   border-radius:999px;
   background:rgba(10,8,7,.76);
-  backdrop-filter: blur(16px);
+  backdrop-filter:blur(16px);
   box-shadow:var(--shadow);
   margin-bottom:14px;
 }
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-width:0;
-}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
 .brand-logo{
-  width:42px;height:42px;border-radius:50%;
-  object-fit:contain;
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,.18), transparent 28%),
-    linear-gradient(180deg, rgba(213,171,83,.18), rgba(0,0,0,.25));
+  width:44px;height:44px;border-radius:50%;
+  object-fit:contain;background:linear-gradient(180deg, rgba(213,171,83,.18), rgba(0,0,0,.25));
   box-shadow:0 0 0 1px rgba(213,171,83,.25), 0 0 0 4px rgba(213,171,83,.08);
-  flex:0 0 auto;
-  padding:2px;
+  flex:0 0 auto;padding:2px;
 }
 .brand-text{min-width:0}
 .brand-text strong{
-  display:block;
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:.98rem;
-  letter-spacing:.07em;
-  text-transform:uppercase;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  display:block;font-family:Georgia,"Times New Roman",serif;font-size:.98rem;
+  letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .brand-text span{
-  display:block;
-  font-size:.78rem;
-  color:var(--muted);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.lang-switch{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
+  display:block;font-size:.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .btn{
-  appearance:none;
-  border:1px solid rgba(213,171,83,.22);
+  appearance:none;border:1px solid rgba(213,171,83,.22);
   background:linear-gradient(180deg, rgba(34,26,19,.95), rgba(17,13,10,.95));
-  color:var(--text);
-  padding:10px 14px;
-  border-radius:999px;
-  font:inherit;
-  font-weight:700;
-  cursor:pointer;
-  transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  color:var(--text);padding:10px 14px;border-radius:999px;font:inherit;font-weight:700;
+  cursor:pointer;transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
   box-shadow:0 10px 26px rgba(0,0,0,.28);
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
 }
 .btn:hover{transform:translateY(-1px);border-color:rgba(213,171,83,.42)}
 .btn.active{
-  color:#170f08;
-  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(178,126,30,.98));
+  color:#170f08;background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(178,126,30,.98));
   border-color:rgba(255,240,193,.58);
 }
-
-.hero{
-  position:relative;
-  overflow:hidden;
-  border-radius:34px;
-  border:1px solid rgba(213,171,83,.16);
-  background:
-    radial-gradient(circle at top, rgba(213,171,83,.20), transparent 30%),
-    linear-gradient(180deg, rgba(29,20,12,.88), rgba(11,9,8,.96));
-  box-shadow:var(--shadow);
-  padding:26px 16px 20px;
-  text-align:center;
-  margin-bottom:14px;
+.section-hero{
+  position:relative;overflow:hidden;border-radius:34px;border:1px solid rgba(213,171,83,.16);
+  background:linear-gradient(180deg, rgba(29,20,12,.88), rgba(11,9,8,.96));
+  box-shadow:var(--shadow);padding:22px 16px 18px;text-align:center;margin-bottom:14px;
 }
-.hero::before,.hero::after{
-  content:"";
-  position:absolute;
-  pointer-events:none;
+.section-hero::before,.section-hero::after{content:"";position:absolute;pointer-events:none}
+.section-hero::before{
+  inset:auto -20% -44% -20%;height:220px;background:radial-gradient(circle, rgba(213,171,83,.14), transparent 60%);
+  filter:blur(10px);animation:steam 8s ease-in-out infinite alternate;
 }
-.hero::before{
-  inset:auto -20% -44% -20%;
-  height:220px;
-  background:radial-gradient(circle, rgba(213,171,83,.14), transparent 60%);
-  filter:blur(10px);
-  animation:steam 8s ease-in-out infinite alternate;
+.section-hero::after{
+  inset:-40% -30% auto auto;width:320px;height:320px;background:radial-gradient(circle, rgba(241,213,141,.08), transparent 64%);
 }
-.hero::after{
-  inset:-40% -30% auto auto;
-  width:320px;height:320px;
-  background:radial-gradient(circle, rgba(241,213,141,.08), transparent 64%);
-}
-@keyframes steam{
-  from{transform:translateY(0) scale(1);opacity:.72}
-  to{transform:translateY(-14px) scale(1.04);opacity:1}
-}
+@keyframes steam{from{transform:translateY(0) scale(1);opacity:.72}to{transform:translateY(-14px) scale(1.04);opacity:1}}
 .logo-wrap{
-  width:148px;height:148px;
-  margin:0 auto 12px;
-  border-radius:50%;
-  padding:10px;
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255,255,255,.18), transparent 26%),
-    linear-gradient(145deg, rgba(241,213,141,.36), rgba(213,171,83,.08) 42%, rgba(0,0,0,.6) 100%);
+  width:150px;height:150px;margin:0 auto 12px;border-radius:50%;padding:10px;
+  background:linear-gradient(145deg, rgba(241,213,141,.36), rgba(213,171,83,.08) 42%, rgba(0,0,0,.6) 100%);
   box-shadow:0 0 0 1px rgba(213,171,83,.28), 0 18px 45px rgba(0,0,0,.45);
   animation:floaty 6s ease-in-out infinite;
 }
-.logo-wrap img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:block;
-  border-radius:50%;
-  background:rgba(0,0,0,.22);
-}
-@keyframes floaty{
-  0%,100%{transform:translateY(0) rotate(0)}
-  50%{transform:translateY(-7px) rotate(.9deg)}
-}
+.logo-wrap img{width:100%;height:100%;object-fit:contain;display:block;border-radius:50%;background:rgba(0,0,0,.22)}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(.9deg)}}
 .title{
-  margin:0;
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:clamp(2rem, 5vw, 4.6rem);
-  letter-spacing:.09em;
-  text-transform:uppercase;
-  text-shadow:0 2px 0 rgba(0,0,0,.55);
+  margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem, 5vw, 4.6rem);
+  letter-spacing:.09em;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.55);
 }
-.sub{
-  margin-top:6px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--muted);
-  font-size:clamp(.92rem, 2vw, 1.05rem);
-}
-.tagline{
-  margin-top:8px;
-  color:var(--gold2);
-  font-style:italic;
-  font-size:1rem;
-  letter-spacing:.05em;
-}
-.divider{
-  width:min(250px, 82%);
-  height:1px;
-  margin:18px auto 0;
-  background:linear-gradient(90deg, transparent, rgba(213,171,83,.92), transparent);
-  position:relative;
-}
-.divider::before,.divider::after{
-  content:"✦";
-  position:absolute;
-  top:-11px;
-  color:rgba(241,213,141,.9);
-  font-size:.9rem;
-}
-.divider::before{left:0}
-.divider::after{right:0}
-
-.meta-row{
-  display:grid;
-  gap:12px;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  margin-bottom:14px;
-}
+.sub{margin-top:6px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-size:clamp(.92rem, 2vw, 1.05rem)}
+.tagline{margin-top:8px;color:var(--gold2);font-style:italic;font-size:1rem;letter-spacing:.05em}
+.divider{width:min(250px, 82%);height:1px;margin:18px auto 0;background:linear-gradient(90deg, transparent, rgba(213,171,83,.92), transparent);position:relative}
+.divider::before,.divider::after{content:"✦";position:absolute;top:-11px;color:rgba(241,213,141,.9);font-size:.9rem}
+.divider::before{left:0}.divider::after{right:0}
+.meta-row{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px}
 .meta{
   background:linear-gradient(180deg, rgba(25,20,16,.95), rgba(12,10,8,.94));
-  border:1px solid rgba(213,171,83,.15);
-  box-shadow:var(--shadow);
-  border-radius:18px;
-  padding:12px 14px;
-  min-height:70px;
+  border:1px solid rgba(213,171,83,.15);box-shadow:var(--shadow);border-radius:18px;padding:12px 14px;min-height:70px;
 }
-.meta span{
-  display:block;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  font-size:.78rem;
-}
-.meta strong{
-  display:block;
-  margin-top:5px;
-  font-size:1.03rem;
-}
-
-.toolbar{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  margin-bottom:12px;
-}
+.meta span{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:.78rem}
+.meta strong{display:block;margin-top:5px;font-size:1.03rem}
+.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
 .search{
-  flex:1 1 280px;
-  border-radius:999px;
-  border:1px solid rgba(213,171,83,.16);
-  background:rgba(0,0,0,.22);
-  color:var(--text);
-  padding:12px 16px;
-  font:inherit;
-  outline:none;
-  min-height:46px;
+  flex:1 1 280px;border-radius:999px;border:1px solid rgba(213,171,83,.16);background:rgba(0,0,0,.22);
+  color:var(--text);padding:12px 16px;font:inherit;outline:none;min-height:46px;
 }
 .search::placeholder{color:rgba(248,238,224,.48)}
-
-.landing{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-  margin-bottom:14px;
-}
-.section-card{
-  border-radius:24px;
-  padding:18px;
-  border:1px solid rgba(213,171,83,.16);
-  background:
-    radial-gradient(circle at top, rgba(213,171,83,.12), transparent 35%),
-    linear-gradient(180deg, rgba(24,18,13,.95), rgba(10,8,7,.97));
-  color:var(--text);
-  box-shadow:var(--shadow);
-  text-align:left;
-  cursor:pointer;
-  transition:transform .16s ease, border-color .16s ease, background .16s ease;
-  position:relative;
-  overflow:hidden;
-}
-.section-card:hover{transform:translateY(-2px);border-color:rgba(213,171,83,.38)}
-.section-card.active{
-  border-color:rgba(241,213,141,.62);
-  background:
-    radial-gradient(circle at top, rgba(213,171,83,.20), transparent 35%),
-    linear-gradient(180deg, rgba(47,34,17,.98), rgba(15,12,10,.97));
-}
-.section-card .small{
-  display:block;
-  color:var(--gold2);
-  text-transform:uppercase;
-  letter-spacing:.16em;
-  font-size:.78rem;
-}
-.section-card h2{
-  margin:6px 0 4px;
-  font-family:Georgia, serif;
-  font-size:clamp(1.15rem, 2.7vw, 1.8rem);
-  line-height:1.05;
-}
-.section-card p{
-  margin:0;
-  color:var(--muted);
-  font-size:.94rem;
-  max-width:40ch;
-}
-.section-card::after{
-  content:"";
-  position:absolute;
-  inset:auto -14% -46% auto;
-  width:180px;height:180px;
-  background:radial-gradient(circle, rgba(213,171,83,.16), transparent 65%);
-  border-radius:50%;
-  filter:blur(4px);
-}
-.section-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-
-.panel{
-  position:relative;
-  overflow:hidden;
-  border-radius:34px;
-  padding:18px;
-  border:1px solid rgba(213,171,83,.14);
-  background:
-    radial-gradient(circle at top, rgba(213,171,83,.08), transparent 30%),
-    linear-gradient(180deg, rgba(17,13,11,.96), rgba(9,8,7,.98));
-  box-shadow:var(--shadow);
-}
-.panel-head{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:16px;
-  position:relative;
-  z-index:1;
-}
-.panel-head h3{
-  margin:0;
-  font-family:Georgia, serif;
-  font-size:clamp(1.45rem, 3.8vw, 2.2rem);
-  letter-spacing:.04em;
-}
-.panel-head p{
-  margin:0;
-  color:var(--muted);
-  line-height:1.6;
-  max-width:56ch;
-  font-size:.96rem;
-}
-.hint{
-  color:var(--muted);
-  font-size:.88rem;
-  line-height:1.45;
-  margin-top:2px;
-}
-
 .category-bar{
-  display:flex;
-  gap:8px;
-  overflow-x:auto;
-  padding:4px 2px 12px;
-  margin-bottom:8px;
-  scrollbar-width:none;
+  display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:8px;scrollbar-width:none;
 }
 .category-bar::-webkit-scrollbar{display:none}
 .category-chip{
-  flex:0 0 auto;
-  border-radius:999px;
-  padding:11px 15px;
-  border:1px solid rgba(213,171,83,.16);
-  background:linear-gradient(180deg, rgba(24,18,13,.96), rgba(10,8,7,.98));
-  color:var(--text);
-  font-weight:700;
-  cursor:pointer;
-  min-width:fit-content;
-  box-shadow:0 10px 26px rgba(0,0,0,.24);
+  flex:0 0 auto;border-radius:999px;padding:11px 15px;border:1px solid rgba(213,171,83,.16);
+  background:linear-gradient(180deg, rgba(24,18,13,.96), rgba(10,8,7,.98));color:var(--text);font-weight:700;
+  cursor:pointer;min-width:fit-content;box-shadow:0 10px 26px rgba(0,0,0,.24);
   transition:transform .14s ease, border-color .14s ease, background .14s ease, color .14s ease;
 }
 .category-chip:hover{transform:translateY(-1px)}
-.category-chip.active{
-  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
-  color:#170f08;
+.category-chip.active{background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));color:#170f08}
+.panel{
+  position:relative;overflow:hidden;border-radius:34px;padding:18px;border:1px solid rgba(213,171,83,.14);
+  background:linear-gradient(180deg, rgba(17,13,11,.96), rgba(9,8,7,.98));box-shadow:var(--shadow);
 }
-
+.panel-head{
+  display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;position:relative;z-index:1;
+}
+.panel-head h3{margin:0;font-family:Georgia, serif;font-size:clamp(1.45rem, 3.8vw, 2.2rem);letter-spacing:.04em}
+.panel-head p{margin:0;color:var(--muted);line-height:1.6;max-width:56ch;font-size:.96rem}
+.hint{color:var(--muted);font-size:.88rem;line-height:1.45;margin-top:2px}
 .items{
-  position:relative;
-  z-index:1;
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:12px;
+  position:relative;z-index:1;display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:12px;
 }
 .card{
-  width:100%;
-  text-align:left;
-  color:inherit;
-  cursor:pointer;
-  border:1px solid rgba(213,171,83,.14);
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,.05), transparent 40%),
-    linear-gradient(180deg, rgba(28,22,18,.96), rgba(11,10,9,.98));
-  border-radius:22px;
-  box-shadow:0 12px 34px rgba(0,0,0,.28);
-  padding:10px;
-  display:flex;
-  gap:10px;
-  align-items:stretch;
-  transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
-  position:relative;
-  overflow:hidden;
-  appearance:none;
-  outline:none;
+  width:100%;text-align:left;color:inherit;cursor:pointer;border:1px solid rgba(213,171,83,.14);
+  background:linear-gradient(180deg, rgba(28,22,18,.96), rgba(11,10,9,.98));border-radius:22px;
+  box-shadow:0 12px 34px rgba(0,0,0,.28);padding:10px;display:flex;gap:10px;align-items:stretch;
+  transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;position:relative;overflow:hidden;appearance:none;outline:none;
 }
-.card:hover,.card:focus-visible{
-  transform:translateY(-2px);
-  border-color:rgba(241,213,141,.5);
-  box-shadow:0 18px 44px rgba(0,0,0,.36);
-}
+.card:hover,.card:focus-visible{transform:translateY(-2px);border-color:rgba(241,213,141,.5);box-shadow:0 18px 44px rgba(0,0,0,.36)}
 .thumb{
-  width:118px;
-  min-width:118px;
-  height:118px;
-  border-radius:18px;
-  overflow:hidden;
-  position:relative;
-  border:1px solid rgba(213,171,83,.24);
-  background:linear-gradient(180deg, rgba(213,171,83,.16), rgba(0,0,0,.28));
-  flex:0 0 auto;
+  width:118px;min-width:118px;height:118px;border-radius:18px;overflow:hidden;position:relative;
+  border:1px solid rgba(213,171,83,.24);background:linear-gradient(180deg, rgba(213,171,83,.16), rgba(0,0,0,.28));flex:0 0 auto;
 }
-.thumb img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  transform:scale(1);
-  transition:transform .18s ease;
-}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1);transition:transform .18s ease}
 .card:hover .thumb img{transform:scale(1.03)}
-.thumb::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg, rgba(255,255,255,.08), transparent 45%);
-  pointer-events:none;
-}
-.body{
-  flex:1;
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-  justify-content:space-between;
-}
-.name{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  align-items:baseline;
-  line-height:1.12;
-}
-.name .main{
-  font-size:1.04rem;
-  font-weight:800;
-  letter-spacing:.01em;
-}
+.thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(255,255,255,.08), transparent 45%);pointer-events:none}
+.body{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;justify-content:space-between}
+.name{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;line-height:1.12}
+.name .main{font-size:1.04rem;font-weight:800;letter-spacing:.01em}
+.name .small{font-size:.9rem;color:var(--muted)}
 .desc{
-  color:var(--muted);
-  font-size:.84rem;
-  line-height:1.36;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-  min-height:2.6em;
+  color:var(--muted);font-size:.84rem;line-height:1.36;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;min-height:2.6em;
 }
-.prices{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  align-items:center;
-  direction:ltr;
-}
+.prices{display:flex;gap:8px;flex-wrap:wrap;align-items:center;direction:ltr}
 .price{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:34px;
-  min-width:76px;
-  padding:0 12px;
-  border-radius:999px;
-  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
-  color:#170f08;
-  font-weight:900;
-  box-shadow:0 10px 22px rgba(213,171,83,.18);
-  border:1px solid rgba(255,255,255,.12);
+  display:inline-flex;align-items:center;justify-content:center;min-height:34px;min-width:76px;padding:0 12px;border-radius:999px;
+  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));color:#170f08;font-weight:900;
+  box-shadow:0 10px 22px rgba(213,171,83,.18);border:1px solid rgba(255,255,255,.12);
 }
 .price.secondary{
-  background:linear-gradient(180deg, rgba(38,35,32,.96), rgba(20,18,16,.96));
-  color:var(--text);
-  border-color:rgba(213,171,83,.14);
-  box-shadow:none;
+  background:linear-gradient(180deg, rgba(38,35,32,.96), rgba(20,18,16,.96));color:var(--text);border-color:rgba(213,171,83,.14);box-shadow:none;
 }
 .price.single{min-width:94px}
-
 .empty{
-  padding:24px;
-  border-radius:22px;
-  border:1px dashed rgba(213,171,83,.22);
-  color:var(--muted);
-  background:rgba(255,255,255,.02);
-  grid-column:1/-1;
+  padding:24px;border-radius:22px;border:1px dashed rgba(213,171,83,.22);color:var(--muted);background:rgba(255,255,255,.02);grid-column:1/-1;
 }
-
 .footer{
-  margin-top:14px;
-  padding:16px 18px;
-  border-radius:24px;
-  border:1px solid rgba(213,171,83,.14);
-  background:linear-gradient(180deg, rgba(18,14,12,.94), rgba(9,8,7,.96));
-  color:var(--muted);
-  box-shadow:var(--shadow);
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px 18px;
-  justify-content:space-between;
-  align-items:center;
-  font-size:.95rem;
-  position:relative;
-  z-index:1;
+  margin-top:14px;padding:16px 18px;border-radius:24px;border:1px solid rgba(213,171,83,.14);
+  background:linear-gradient(180deg, rgba(18,14,12,.94), rgba(9,8,7,.96));color:var(--muted);box-shadow:var(--shadow);
+  display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between;align-items:center;font-size:.95rem;position:relative;z-index:1;
 }
 .footer strong{color:var(--text)}
+.bottom-bar{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:70;
+  width:min(var(--max), calc(100% - 16px));
+  display:flex;gap:10px;justify-content:center;
+}
+.bottom-bar .btn{flex:1 1 0;max-width:280px}
 .hidden{display:none!important}
-
 .modal{
-  position:fixed;
-  inset:0;
-  z-index:100;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
+  position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:18px;
 }
 .modal.open{display:flex}
-.backdrop{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.68);
-  backdrop-filter:blur(10px);
-}
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(10px)}
 .dialog{
-  position:relative;
-  z-index:1;
-  width:min(980px,100%);
-  max-height:min(92vh,920px);
-  overflow:auto;
-  border-radius:30px;
-  border:1px solid rgba(241,213,141,.22);
-  background:linear-gradient(180deg, rgba(20,15,12,.98), rgba(9,8,7,.99));
-  box-shadow:0 30px 120px rgba(0,0,0,.62);
-  padding:16px;
-  animation:pop .16s ease-out;
+  position:relative;z-index:1;width:min(980px,100%);max-height:min(92vh,920px);overflow:auto;
+  border-radius:30px;border:1px solid rgba(241,213,141,.22);background:linear-gradient(180deg, rgba(20,15,12,.98), rgba(9,8,7,.99));
+  box-shadow:0 30px 120px rgba(0,0,0,.62);padding:16px;animation:pop .16s ease-out;
 }
-@keyframes pop{
-  from{transform:translateY(10px) scale(.98); opacity:.5}
-  to{transform:translateY(0) scale(1); opacity:1}
-}
-.dialog-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:12px;
-}
-.dialog-top strong{
-  font-family:Georgia, serif;
-  letter-spacing:.04em;
-  font-size:1.15rem;
-}
+@keyframes pop{from{transform:translateY(10px) scale(.98);opacity:.5}to{transform:translateY(0) scale(1);opacity:1}}
+.dialog-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.dialog-top strong{font-family:Georgia, serif;letter-spacing:.04em;font-size:1.15rem}
 .close{
-  appearance:none;
-  border:none;
-  background:rgba(255,255,255,.08);
-  color:var(--text);
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  font-size:1.5rem;
-  cursor:pointer;
+  appearance:none;border:none;background:rgba(255,255,255,.08);color:var(--text);width:44px;height:44px;border-radius:50%;
+  font-size:1.5rem;cursor:pointer;
 }
 .preview{
-  width:100%;
-  border-radius:24px;
-  overflow:hidden;
-  border:1px solid rgba(213,171,83,.16);
-  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08));
-  display:block;
+  width:100%;border-radius:24px;overflow:hidden;border:1px solid rgba(213,171,83,.16);
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08));display:block;
 }
-.preview img{
-  width:100%;
-  height:auto;
-  display:block;
-  background:#0c0907;
+.preview img{width:100%;height:auto;display:block;background:#0c0907}
+.dialog-copy{margin-top:12px;color:var(--muted);line-height:1.6;font-size:.96rem}
+.launcher-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.launcher-card{
+  appearance:none;border:none;width:100%;text-align:left;color:var(--text);border-radius:24px;padding:18px;
+  border:1px solid rgba(213,171,83,.18);background:linear-gradient(180deg, rgba(28,22,18,.96), rgba(11,10,9,.98));
+  box-shadow:0 14px 34px rgba(0,0,0,.28);cursor:pointer;transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
 }
-.dialog-copy{
-  margin-top:12px;
-  color:var(--muted);
-  line-height:1.6;
-  font-size:.96rem;
+.launcher-card:hover{transform:translateY(-2px);border-color:rgba(241,213,141,.48)}
+.launcher-card.active{
+  border-color:rgba(241,213,141,.72);background:linear-gradient(180deg, rgba(45,33,18,.98), rgba(12,10,8,.98));
 }
-
-.admin-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
+.launcher-card.soon{opacity:.88}
+.launcher-card-name{font-size:1.14rem;font-weight:800;letter-spacing:.02em;display:block}
+.launcher-card-desc{display:block;margin-top:5px;color:var(--muted);font-size:.9rem}
+.launcher-card.soon .launcher-card-desc{color:rgba(248,238,224,.56)}
+.launcher-foot{margin-top:16px;color:var(--gold2);text-align:center;font-size:.95rem;letter-spacing:.04em}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .admin-card{
-  border:1px solid rgba(213,171,83,.14);
-  border-radius:22px;
-  background:rgba(255,255,255,.03);
-  padding:14px;
+  border:1px solid rgba(213,171,83,.14);border-radius:22px;background:rgba(255,255,255,.03);padding:14px;
 }
-.admin-card h4{
-  margin:0 0 10px;
-  font-size:1rem;
-  font-family:Georgia, serif;
-  letter-spacing:.03em;
-}
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  margin-bottom:10px;
-}
-.field label{
-  font-size:.8rem;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:var(--muted);
-}
+.admin-card h4{margin:0 0 10px;font-size:1rem;font-family:Georgia, serif;letter-spacing:.03em}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.field label{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .field input,.field textarea,.field select{
-  width:100%;
-  border-radius:14px;
-  border:1px solid rgba(213,171,83,.18);
-  background:rgba(0,0,0,.28);
-  color:var(--text);
-  padding:11px 12px;
-  font:inherit;
-  outline:none;
+  width:100%;border-radius:14px;border:1px solid rgba(213,171,83,.18);background:rgba(0,0,0,.28);color:var(--text);
+  padding:11px 12px;font:inherit;outline:none;
 }
 .field textarea{min-height:84px;resize:vertical}
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
 .action{
-  border-radius:999px;
-  padding:10px 14px;
-  border:1px solid rgba(213,171,83,.18);
-  background:linear-gradient(180deg, rgba(34,26,19,.95), rgba(17,13,10,.95));
-  color:var(--text);
-  font-weight:700;
-  cursor:pointer;
-  text-decoration:none;
+  border-radius:999px;padding:10px 14px;border:1px solid rgba(213,171,83,.18);
+  background:linear-gradient(180deg, rgba(34,26,19,.95), rgba(17,13,10,.95));color:var(--text);font-weight:700;cursor:pointer;
 }
-.action.primary{
-  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
-  color:#170f08;
-}
-.admin-note{
-  color:var(--muted);
-  font-size:.86rem;
-  line-height:1.5;
-}
+.action.primary{background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));color:#170f08}
+.admin-note{color:var(--muted);font-size:.86rem;line-height:1.5}
 .preview-mini{
-  width:100%;
-  border-radius:18px;
-  overflow:hidden;
-  border:1px solid rgba(213,171,83,.14);
-  background:rgba(255,255,255,.03);
-  min-height:120px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:100%;border-radius:18px;overflow:hidden;border:1px solid rgba(213,171,83,.14);background:rgba(255,255,255,.03);min-height:120px;
+  display:flex;align-items:center;justify-content:center;
 }
-.preview-mini img{
-  width:100%;
-  display:block;
-  object-fit:cover;
-  background:#0c0907;
+.preview-mini img{width:100%;display:block;object-fit:cover;background:#0c0907}
+.confirm-row{
+  margin-top:10px;padding-top:10px;border-top:1px solid rgba(213,171,83,.12);
 }
-
-[data-lang="ar"], [data-lang="ku"]{direction:rtl}
-[data-lang="ar"] .topbar,
-[data-lang="ar"] .hero,
-[data-lang="ar"] .panel-head,
-[data-lang="ar"] .footer,
-[data-lang="ku"] .topbar,
-[data-lang="ku"] .hero,
-[data-lang="ku"] .panel-head,
-[data-lang="ku"] .footer{
-  direction:rtl;
+.confirm-msg{font-size:.88rem;color:var(--gold2);margin-bottom:8px;line-height:1.4}
+.status-pill{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(213,171,83,.18);
+  background:rgba(0,0,0,.22);color:var(--muted);font-size:.85rem
 }
-
-@media (max-width: 1060px){
-  .landing{grid-template-columns:1fr}
-  .admin-grid,.meta-row{grid-template-columns:1fr}
+.dots{display:inline-flex;gap:4px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+@media (max-width: 960px){
+  .meta-row,.admin-grid{grid-template-columns:1fr}
+  .items{grid-template-columns:1fr}
 }
-@media (max-width: 640px){
-  .shell{width:min(var(--max), calc(100% - 12px))}
-  .hero{padding:22px 12px 16px}
+@media (max-width: 560px){
+  .shell{width:min(var(--max), calc(100% - 12px));padding-bottom:120px}
+  .hero{padding:20px 12px 16px}
   .logo-wrap{width:126px;height:126px}
   .card{padding:9px}
   .thumb{width:100px;min-width:100px;height:100px}
   .brand-text span{display:none}
   .btn{flex:1 1 auto}
-  .lang-switch{flex:1}
-  .items{grid-template-columns:1fr}
 }
-</style>
+[data-lang="ar"], [data-lang="ku"]{direction:rtl}
+[data-lang="ar"] .topbar,[data-lang="ar"] .section-hero,[data-lang="ar"] .panel-head,[data-lang="ar"] .footer,
+[data-lang="ku"] .topbar,[data-lang="ku"] .section-hero,[data-lang="ku"] .panel-head,[data-lang="ku"] .footer{direction:rtl}
+  </style>
 </head>
-<body>
-  <div class="shell" id="app" data-lang="en">
-    <header class="topbar">
-      <div class="brand">
-        <img class="brand-logo" id="brandLogoAdmin" src="" alt="1911 logo" />
-        <div class="brand-text">
-          <strong id="adminBackTitle">1911 Coffee Shop</strong>
-          <span id="adminBackSub">Vintage • Modern • Premium</span>
-        </div>
+<body data-mode="admin">
+<div class="shell" id="adminRoot">
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand-logo" id="adminLogo" src="" alt="1911 logo">
+      <div class="brand-text">
+        <strong id="adminBrand">1911 Coffee Shop</strong>
+        <span id="adminStatus">Firebase</span>
       </div>
-      <div class="lang-switch">
-        <button class="btn active" id="langEN" type="button">English</button>
-        <button class="btn" id="langAR" type="button">العربية</button>
-        <button class="btn" id="langKU" type="button">کوردی</button>
-        <a class="btn" href="index.html" id="openMenuBtn">Open Menu</a>
-      </div>
-    </header>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+      <a class="btn" id="adminBackBtn" href="index.html">Back to menu</a>
+    </div>
+  </header>
 
-    <section class="hero">
-      <div class="logo-wrap"><img id="heroLogoAdmin" src="" alt="1911 logo" /></div>
-      <h1 class="title" id="adminHeroTitle">Admin Panel</h1>
-      <div class="sub" id="adminHeroSub">Vintage • Modern • Premium</div>
-      <div class="tagline" id="adminHeroTag">Since 2021</div>
-      <div class="divider"></div>
-    </section>
+  <section class="section-hero">
+    <div class="logo-wrap"><img id="heroLogo" src="" alt="1911 logo"></div>
+    <h1 class="title">Admin Panel</h1>
+    <div class="sub">Edit logo, categories, items, and top cards</div>
+    <div class="divider"></div>
+  </section>
 
-    <section class="meta-row" id="topCards" aria-label="highlights"></section>
-
-    <section class="meta-row" aria-label="summary">
-      <div class="meta"><span id="topCardTitle">Top info cards</span><strong id="adminStateSummary">0 categories • 0 items</strong></div>
-      <div class="meta"><span id="pill2Label">Service</span><strong id="pill2Value">English • العربية • کوردی</strong></div>
-      <div class="meta"><span id="pill3Label">Experience</span><strong id="pill3Value">Fast, clean, elegant</strong></div>
-    </section>
-
-    <main class="admin-grid" id="adminRoot">
-      <section class="admin-card">
-        <h4 id="topCardTitle">Top info cards</h4>
-        <div class="field">
-          <label>Select card</label>
-          <select id="topCardSelect">
-            <option value="0">Card 1</option>
-            <option value="1">Card 2</option>
-            <option value="2">Card 3</option>
-          </select>
-        </div>
-        <div class="field"><label>Label - English</label><input id="topCardLabelEn" type="text" /></div>
-        <div class="field"><label>Label - Arabic</label><input id="topCardLabelAr" type="text" /></div>
-        <div class="field"><label>Label - Kurdish</label><input id="topCardLabelKu" type="text" /></div>
-        <div class="field"><label>Value - English</label><input id="topCardValueEn" type="text" /></div>
-        <div class="field"><label>Value - Arabic</label><input id="topCardValueAr" type="text" /></div>
-        <div class="field"><label>Value - Kurdish</label><input id="topCardValueKu" type="text" /></div>
-        <div class="admin-note" id="adminNote">These cards update the public menu instantly after saving.</div>
-      </section>
-
-      <section class="admin-card">
-        <h4 id="logoCardTitle">Logo</h4>
-        <div class="field">
-          <label id="logoInputLabel">Upload logo</label>
-          <input id="logoInput" type="file" accept="image/*" />
-        </div>
-        <div class="actions">
-          <button class="action primary" id="saveLogoBtn" type="button">Save Logo</button>
-          <button class="action" id="resetLogoBtn" type="button">Reset Logo</button>
-        </div>
-        <div class="admin-note" id="logoNote">Change the top logo and the hero logo together.</div>
-        <div class="preview-mini" style="margin-top:12px;"><img id="logoPreview" alt="" /></div>
-      </section>
-
-      <section class="admin-card">
-        <h4 id="categoryCardTitle">Categories</h4>
-        <div class="field">
-          <label id="categorySelectLabel">Edit category</label>
-          <select id="categorySelect"></select>
-        </div>
-        <div class="field"><label>English</label><input id="categoryNameEn" type="text" /></div>
-        <div class="field"><label>Arabic</label><input id="categoryNameAr" type="text" /></div>
-        <div class="field"><label>Kurdish</label><input id="categoryNameKu" type="text" /></div>
-        <div class="field"><label id="categoryDescLabel">Description</label><textarea id="categoryDesc"></textarea></div>
-        <div class="actions">
-          <button class="action primary" id="saveCategoryBtn" type="button">Save Category</button>
-          <button class="action" id="newCategoryBtn" type="button">New Category</button>
-          <button class="action" id="deleteCategoryBtn" type="button">Delete Category</button>
-        </div>
-        <div class="admin-note" id="categoryNote">Category chips update instantly on save.</div>
-      </section>
-
-      <section class="admin-card">
-        <h4 id="itemCardTitle">Items</h4>
-        <div class="field">
-          <label id="itemCategoryLabel">Item category</label>
-          <select id="itemCategorySelect"></select>
-        </div>
-        <div class="field">
-          <label id="itemSelectLabel">Edit item</label>
-          <select id="itemSelect"></select>
-        </div>
-        <div class="field"><label>English</label><input id="itemNameEn" type="text" /></div>
-        <div class="field"><label>Arabic</label><input id="itemNameAr" type="text" /></div>
-        <div class="field"><label>Kurdish</label><input id="itemNameKu" type="text" /></div>
-        <div class="field"><label id="itemDescLabel">Description</label><textarea id="itemDesc"></textarea></div>
-        <div class="field">
-          <label id="priceLabel">Prices</label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input id="priceSmall" type="text" inputmode="numeric" placeholder="Small" style="flex:1;min-width:120px" />
-            <input id="priceLarge" type="text" inputmode="numeric" placeholder="Large" style="flex:1;min-width:120px" />
-          </div>
-        </div>
-        <div class="field">
-          <label id="itemImageLabel">Upload item picture</label>
-          <input id="itemImageInput" type="file" accept="image/*" />
-        </div>
-        <div class="actions">
-          <button class="action primary" id="saveItemBtn" type="button">Save Item</button>
-          <button class="action" id="newItemBtn" type="button">New Item</button>
-          <button class="action" id="deleteItemBtn" type="button">Delete Item</button>
-        </div>
-        <div class="admin-note" id="itemNote">You can add items to any category, including ones you create later.</div>
-        <div class="preview-mini" style="margin-top:12px;"><img id="itemPreview" alt="" /></div>
-      </section>
-
-      <section class="admin-card">
-        <h4 id="toolsCardTitle">Tools</h4>
-        <div class="actions">
-          <button class="action" id="exportBtn" type="button">Export JSON</button>
-          <button class="action" id="resetMenuBtn" type="button">Reset Demo Menu</button>
-        </div>
-        <div class="admin-note" id="toolsNote" style="margin-top:10px;">
-          Your edits are saved on the device automatically.
-        </div>
-        <textarea id="exportBox" readonly placeholder="Export appears here" style="margin-top:12px;min-height:220px;width:100%;border-radius:14px;border:1px solid rgba(213,171,83,.18);background:rgba(0,0,0,.28);color:var(--text);padding:12px;resize:vertical"></textarea>
-      </section>
-    </main>
+  <div class="toolbar">
+    <div class="status-pill"><span class="dots"><i></i><i></i><i></i></span><span id="syncStatus">Starting…</span></div>
+    <div class="status-pill">This page writes to Firebase and local cache</div>
   </div>
 
-  <script>
-const STORAGE_KEYS = [
-  "1911_menu_state_v7",
-  "1911_menu_fixed_clean_v4_translation_cards_fixed",
-  "1911_menu_menu_v1",
-  "1911_menu_state_v6"
-];
+  <div class="admin-grid">
+    <section class="admin-card">
+      <h4>Logo</h4>
+      <div class="field">
+        <label>Upload logo</label>
+        <input id="logoInput" type="file" accept="image/*">
+      </div>
+      <div class="actions">
+        <button class="action primary" id="saveLogoBtn" type="button">Save Logo</button>
+        <button class="action" id="resetLogoBtn" type="button">Reset Logo</button>
+      </div>
+      <div class="admin-note" style="margin-top:10px">The top logo and hero logo update together on all devices.</div>
+      <div class="preview-mini" style="margin-top:12px;"><img id="logoPreview" alt=""></div>
+    </section>
 
+    <section class="admin-card">
+      <h4>Top cards</h4>
+      <div class="field">
+        <label>Select card</label>
+        <select id="topCardSelect">
+          <option value="0">Card 1</option>
+          <option value="1">Card 2</option>
+          <option value="2">Card 3</option>
+        </select>
+      </div>
+      <div class="field"><label>Label (English)</label><input id="topCardLabelEn" type="text"></div>
+      <div class="field"><label>Label (Arabic)</label><input id="topCardLabelAr" type="text"></div>
+      <div class="field"><label>Label (Kurdish)</label><input id="topCardLabelKu" type="text"></div>
+      <div class="field"><label>Value (English)</label><input id="topCardValueEn" type="text"></div>
+      <div class="field"><label>Value (Arabic)</label><input id="topCardValueAr" type="text"></div>
+      <div class="field"><label>Value (Kurdish)</label><input id="topCardValueKu" type="text"></div>
+    </section>
+
+    <section class="admin-card">
+      <h4>Categories</h4>
+      <div class="field">
+        <label>Edit category</label>
+        <select id="categorySelect"></select>
+      </div>
+      <div class="field"><label>English</label><input id="categoryNameEn" type="text"></div>
+      <div class="field"><label>Arabic</label><input id="categoryNameAr" type="text"></div>
+      <div class="field"><label>Kurdish</label><input id="categoryNameKu" type="text"></div>
+      <div class="field"><label>Description (English)</label><textarea id="categoryDescEn"></textarea></div>
+      <div class="field"><label>Description (Arabic)</label><textarea id="categoryDescAr"></textarea></div>
+      <div class="field"><label>Description (Kurdish)</label><textarea id="categoryDescKu"></textarea></div>
+      <div class="actions">
+        <button class="action primary" id="saveCategoryBtn" type="button">Save Category</button>
+        <button class="action" id="newCategoryBtn" type="button">New Category</button>
+        <button class="action" id="deleteCategoryBtn" type="button">Delete Category</button>
+      </div>
+    </section>
+
+    <section class="admin-card">
+      <h4>Items</h4>
+      <div class="field">
+        <label>Item category</label>
+        <select id="itemCategorySelect"></select>
+      </div>
+      <div class="field">
+        <label>Edit item</label>
+        <select id="itemSelect"></select>
+      </div>
+      <div class="field"><label>English</label><input id="itemNameEn" type="text"></div>
+      <div class="field"><label>Arabic</label><input id="itemNameAr" type="text"></div>
+      <div class="field"><label>Kurdish</label><input id="itemNameKu" type="text"></div>
+      <div class="field"><label>Description (English)</label><textarea id="itemDescEn"></textarea></div>
+      <div class="field"><label>Description (Arabic)</label><textarea id="itemDescAr"></textarea></div>
+      <div class="field"><label>Description (Kurdish)</label><textarea id="itemDescKu"></textarea></div>
+      <div class="field">
+        <label>Prices</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input id="priceSmall" type="text" inputmode="numeric" placeholder="Small" style="flex:1;min-width:120px">
+          <input id="priceLarge" type="text" inputmode="numeric" placeholder="Large" style="flex:1;min-width:120px">
+        </div>
+      </div>
+      <div class="field">
+        <label>Upload item picture</label>
+        <input id="itemImageInput" type="file" accept="image/*">
+      </div>
+      <div class="actions">
+        <button class="action primary" id="saveItemBtn" type="button">Save Item</button>
+        <button class="action" id="newItemBtn" type="button">New Item</button>
+        <button class="action" id="deleteItemBtn" type="button">Delete Item</button>
+      </div>
+      <div class="preview-mini" style="margin-top:12px;"><img id="itemPreview" alt=""></div>
+    </section>
+
+    <section class="admin-card">
+      <h4>Tools</h4>
+      <div class="actions">
+        <button class="action" id="exportBtn" type="button">Export JSON</button>
+        <button class="action" id="resetMenuBtn" type="button">Reset Demo Menu</button>
+      </div>
+      <div class="admin-note" style="margin-top:10px">Your edits save locally first and then sync to Firebase when the connection is available.</div>
+      <textarea id="exportBox" readonly placeholder="Export appears here" style="margin-top:12px;min-height:240px;width:100%;border-radius:14px;border:1px solid rgba(213,171,83,.18);background:rgba(0,0,0,.28);color:var(--text);padding:12px;resize:vertical"></textarea>
+    </section>
+  </div>
+</div>
+  <script type="module">
+const firebaseConfig = {
+  apiKey: "AIzaSyB_m-lt22FJ7fShyRHDgPEbkYTSOzMpMYM",
+  authDomain: "menu-e4cef.firebaseapp.com",
+  projectId: "menu-e4cef",
+  storageBucket: "menu-e4cef.firebasestorage.app",
+  messagingSenderId: "686608343620",
+  appId: "1:686608343620:web:cbcf3c2c4e149caaee9211",
+  measurementId: "G-RDY676HQLB"
+};
+
+const PAGE_MODE = document.body.dataset.mode;
+const CACHE_KEY = "1911_menu_cache_v3";
+const UI_KEY = "1911_menu_ui_v3";
+const FIRESTORE_PATH = ["menuSites", "1911"];
 const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-    <defs>
-      <radialGradient id="g" cx="35%" cy="30%" r="80%">
-        <stop offset="0%" stop-color="#f7ebc5"/>
-        <stop offset="48%" stop-color="#d5ab53"/>
-        <stop offset="100%" stop-color="#7a4e16"/>
-      </radialGradient>
-    </defs>
-    <circle cx="120" cy="120" r="118" fill="#120c08"/>
-    <circle cx="120" cy="120" r="104" fill="url(#g)" opacity=".92"/>
-    <circle cx="120" cy="120" r="76" fill="#2a1a0f"/>
-    <text x="120" y="130" text-anchor="middle" font-size="62" font-weight="700" fill="#f8eee0" font-family="Georgia,serif">1911</text>
-  </svg>
-`);
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#f7ebc5"/>
+      <stop offset="48%" stop-color="#d5ab53"/>
+      <stop offset="100%" stop-color="#7a4e16"/>
+    </radialGradient>
+  </defs>
+  <circle cx="120" cy="120" r="118" fill="#120c08"/>
+  <circle cx="120" cy="120" r="104" fill="url(#g)" opacity=".92"/>
+  <circle cx="120" cy="120" r="76" fill="#2a1a0f"/>
+  <text x="120" y="130" text-anchor="middle" font-size="62" font-weight="700" fill="#f8eee0" font-family="Georgia,serif">1911</text>
+</svg>`);
+const DB_LABELS = { en:"Fresh Brew", ar:"مشروبات طازجة", ku:"خواردنەوەی تازە" };
 
-const UI = {
-  en: {
-    brand: "1911 Coffee Shop",
-    brandSmall: "Vintage • Modern • Premium",
-    tagline: "Take Rest and Be Happy",
-    since: "Since 2021",
-    design: "Story",
-    designValue: "Premium café menu",
-    languages: "Service",
-    languagesValue: "English • العربية • کوردی",
-    menuType: "Experience",
-    menuTypeValue: "Fast, clean, elegant",
-    sectionHint: "Tap any item to preview a bigger image.",
-    footerLeft: "1911 • Ready for Acode • Single-file HTML",
-    footerRight: "Use the language buttons and category chips above.",
-    previewCopy: "Use the language buttons above, and tap any item to see a bigger preview.",
-    noDesc: "No description added yet.",
-    searchPlaceholder: "Search items...",
-    admin: "Admin",
-    adminTitle: "Admin Panel",
-    openMenu: "Open Menu",
-    topCardTitle: "Top info cards",
-    logoCardTitle: "Logo",
-    logoInputLabel: "Upload logo",
-    logoNote: "Change the top logo and the hero logo together.",
-    categoryCardTitle: "Categories",
-    categorySelectLabel: "Edit category",
-    categoryDescLabel: "Description",
-    categoryNote: "Category chips update instantly on save.",
-    itemCardTitle: "Items",
-    itemCategoryLabel: "Item category",
-    itemSelectLabel: "Edit item",
-    itemDescLabel: "Description",
-    priceLabel: "Prices",
-    itemImageLabel: "Upload item picture",
-    itemNote: "You can add items to any category, including ones you create later.",
-    toolsCardTitle: "Tools",
-    toolsNote: "Your edits are saved on the device automatically.",
-    saveLogo: "Save Logo",
-    resetLogo: "Reset Logo",
-    saveCategory: "Save Category",
-    newCategory: "New Category",
-    deleteCategory: "Delete Category",
-    saveItem: "Save Item",
-    newItem: "New Item",
-    deleteItem: "Delete Item",
-    exportJson: "Export JSON",
-    resetMenu: "Reset Demo Menu",
-    itemPreviewFallback: "Item",
-    categoryEmpty: "No category available.",
-    itemEmpty: "No items in this category yet.",
-    backToMenu: "Back to menu"
-  },
-  ar: {
-    brand: "مقهى 1911",
-    brandSmall: "عتيق • عصري • فاخر",
-    tagline: "خذ راحة وكن سعيدًا",
-    since: "منذ 2021",
-    design: "القصة",
-    designValue: "قائمة مقهى فاخرة",
-    languages: "الخدمة",
-    languagesValue: "English • العربية • کوردی",
-    menuType: "التجربة",
-    menuTypeValue: "سريعة، نظيفة، أنيقة",
-    sectionHint: "اضغط على أي item لمشاهدة صورة أكبر.",
-    footerLeft: "1911 • جاهز لـ Acode • ملف HTML واحد",
-    footerRight: "استخدم أزرار اللغة وفئات القائمة بالأعلى.",
-    previewCopy: "استخدم أزرار اللغة بالأعلى، ثم اضغط على أي item لرؤية صورة أكبر.",
-    noDesc: "لا يوجد وصف حتى الآن.",
-    searchPlaceholder: "ابحث عن item...",
-    admin: "لوحة الإدارة",
-    adminTitle: "لوحة الإدارة",
-    openMenu: "فتح القائمة",
-    topCardTitle: "بطاقات المعلومات العلوية",
-    logoCardTitle: "الشعار",
-    logoInputLabel: "رفع الشعار",
-    logoNote: "غيّر الشعار العلوي وشعار الهيرو معًا.",
-    categoryCardTitle: "الفئات",
-    categorySelectLabel: "تعديل الفئة",
-    categoryDescLabel: "الوصف",
-    categoryNote: "تتحدث أزرار الفئات فور الحفظ.",
-    itemCardTitle: "العناصر",
-    itemCategoryLabel: "فئة العنصر",
-    itemSelectLabel: "تعديل العنصر",
-    itemDescLabel: "الوصف",
-    priceLabel: "الأسعار",
-    itemImageLabel: "رفع صورة العنصر",
-    itemNote: "يمكنك إضافة عناصر إلى أي فئة، حتى الفئات الجديدة.",
-    toolsCardTitle: "أدوات",
-    toolsNote: "يتم حفظ التعديلات تلقائيًا على الجهاز.",
-    saveLogo: "حفظ الشعار",
-    resetLogo: "إعادة الشعار",
-    saveCategory: "حفظ الفئة",
-    newCategory: "فئة جديدة",
-    deleteCategory: "حذف الفئة",
-    saveItem: "حفظ العنصر",
-    newItem: "عنصر جديد",
-    deleteItem: "حذف العنصر",
-    exportJson: "تصدير JSON",
-    resetMenu: "إعادة قائمة التجربة",
-    itemPreviewFallback: "عنصر",
-    categoryEmpty: "لا توجد فئات متاحة.",
-    itemEmpty: "لا توجد عناصر في هذه الفئة بعد.",
-    backToMenu: "العودة للقائمة"
-  },
-  ku: {
-    brand: "کافێی 1911",
-    brandSmall: "کۆن • نوێ • شیک",
-    tagline: "وه‌ربگرە ڕا و خۆشحاڵ بە",
-    since: "لە 2021",
-    design: "چیرۆک",
-    designValue: "مێنوی کافێی تایبەت",
-    languages: "خزمەتگوزاری",
-    languagesValue: "English • العربية • کوردی",
-    menuType: "ئەزموون",
-    menuTypeValue: "خێرا، پاک، جوان",
-    sectionHint: "لەسەر هەر item ـێک بکە بۆ بینینی وێنەی گەورەتر.",
-    footerLeft: "1911 • ئامادە بۆ Acode • یەک فایل HTML",
-    footerRight: "دوگمەکانی زمان و category chips لەسەرەوە بەکاربهێنە.",
-    previewCopy: "دوگمەکانی زمان لەسەرەوە بەکاربهێنە، پاشان لەسەر item ـێک بکە بۆ بینینی وێنەی گەورەتر.",
-    noDesc: "هیچ وەسفێک زیاد نەکراوە.",
-    searchPlaceholder: "گەڕان بۆ item...",
-    admin: "پانێڵی بەڕێوەبردن",
-    adminTitle: "پانێڵی بەڕێوەبردن",
-    openMenu: "کردنەوەی مێنوو",
-    topCardTitle: "کارتەکانی سەرەوە",
-    logoCardTitle: "لوگو",
-    logoInputLabel: "بارکردنی لوگو",
-    logoNote: "لوگۆی سەرەوە و لوگی هێرو یەکجار بگۆڕە.",
-    categoryCardTitle: "پۆلەکان",
-    categorySelectLabel: "دەستکاری پۆل",
-    categoryDescLabel: "وەسف",
-    categoryNote: "category chips ـەکان بەخێرایی نوێ دەبنەوە.",
-    itemCardTitle: "هەڵبژاردەکان",
-    itemCategoryLabel: "پۆلی item",
-    itemSelectLabel: "دەستکاری item",
-    itemDescLabel: "وەسف",
-    priceLabel: "نرخەکان",
-    itemImageLabel: "بارکردنی وێنەی item",
-    itemNote: "دەتوانیت بۆ هەر پۆلێک item زیاد بکەیت، تەنانەت پۆلە نوێکانیش.",
-    toolsCardTitle: "ئامرازەکان",
-    toolsNote: "گۆڕانکارییەکان خۆکار لەسەر ئامێرەکە هەڵدەگیرێن.",
-    saveLogo: "پاشەکەوتی لوگو",
-    resetLogo: "گەڕاندنەوەی لوگو",
-    saveCategory: "پاشەکەوتی پۆل",
-    newCategory: "پۆلی نوێ",
-    deleteCategory: "سڕینەوەی پۆل",
-    saveItem: "پاشەکەوتی item",
-    newItem: "item ـی نوێ",
-    deleteItem: "سڕینەوەی item",
-    exportJson: "JSON ـی دەرکردن",
-    resetMenu: "گەڕاندنەوەی مێنوی تاقیکردنەوە",
-    itemPreviewFallback: "item",
-    categoryEmpty: "هیچ پۆلێک نییە.",
-    itemEmpty: "هیچ item ـێک لەم پۆلەدا نییە.",
-    backToMenu: "گەڕانەوە بۆ مێنوو"
-  }
+const WORD_MAP = {
+  chocolate: { ar: "شوكولاتة", ku: "چۆکلێت" },
+  cake: { ar: "كيك", ku: "کەیک" },
+  coffee: { ar: "قهوة", ku: "کۆفی" },
+  ice: { ar: "آيس", ku: "ئایس" },
+  americano: { ar: "أمريكانو", ku: "ئامریکانۆ" },
+  latte: { ar: "لاتيه", ku: "لاتێ" },
+  mocha: { ar: "موكا", ku: "موکا" },
+  caramel: { ar: "كراميل", ku: "کارامێل" },
+  vanilla: { ar: "فانيلا", ku: "ڤانیلا" },
+  milk: { ar: "حليب", ku: "میلک" },
+  tea: { ar: "شاي", ku: "چای" },
+  hot: { ar: "ساخن", ku: "هات" },
+  cold: { ar: "بارد", ku: "سارد" },
+  small: { ar: "صغير", ku: "بچووک" },
+  large: { ar: "كبير", ku: "گەورە" },
+  special: { ar: "خاص", ku: "تایبەت" },
+  fresh: { ar: "طازج", ku: "تازە" },
+  blended: { ar: "مخلوط", ku: "تێکەڵ" },
+  mango: { ar: "مانجو", ku: "مانگۆ" },
+  strawberry: { ar: "فراولة", ku: "توت" },
+  banana: { ar: "موز", ku: "بانان" },
+  lemon: { ar: "ليمون", ku: "لیمو" },
+  mint: { ar: "نعناع", ku: "نعناع" },
+  water: { ar: "ماء", ku: "ئاو" },
+  pepsi: { ar: "بيبسي", ku: "پێپسی" },
+  cola: { ar: "كولا", ku: "کۆلا" },
+  chips: { ar: "شيبس", ku: "چیبس" },
+  sandwich: { ar: "ساندويتش", ku: "ساندویچ" }
 };
 
-const A2A = {
-  coffee: "قهوة",
-  ice: "آيس",
-  iced: "مبرد",
-  latte: "لاتيه",
-  americano: "أمريكانو",
-  cappuccino: "كابتشينو",
-  mocha: "موكا",
-  chocolate: "شوكولاتة",
-  cake: "كيك",
-  tea: "شاي",
-  milk: "حليب",
-  strawberry: "فراولة",
-  mango: "مانجو",
-  caramel: "كراميل",
-  water: "ماء",
-  juice: "عصير",
-  burger: "برغر",
-  fries: "بطاطا",
-  pizza: "بيتزا",
-  sandwich: "ساندويتش",
-  dessert: "حلويات",
-  fast: "سريع",
-  food: "طعام",
-  menu: "قائمة",
-  special: "خاص",
-  fresh: "طازج",
-  hot: "ساخن",
-  cold: "بارد",
-  large: "كبير",
-  small: "صغير",
-  smooth: "ناعم",
-  rich: "غني",
-  premium: "فاخر",
-  double: "مزدوج",
-  white: "أبيض",
-  black: "أسود",
-  whipped: "مخفوق",
-  cream: "كريمة",
-  syrup: "شراب",
-  cookie: "بسكويت",
-  cookies: "بسكويت",
-  brownie: "براوني",
-  toast: "توست",
-  cheese: "جبن",
-  cheesecakes: "تشيز كيك",
-  cheesecake: "تشيز كيك",
-  chocolatecake: "كيك شوكولاتة"
-};
-
-const E2K = {
-  coffee: "قاوە",
-  ice: "ئایس",
-  iced: "سارد",
-  latte: "لاتێ",
-  americano: "ئەمریکیانو",
-  cappuccino: "کاپوچینۆ",
-  mocha: "موکا",
-  chocolate: "چۆکلێت",
-  cake: "کەیک",
-  tea: "چەی",
-  milk: "شیر",
-  strawberry: "فرەولە",
-  mango: "مانگۆ",
-  caramel: "کارامێل",
-  water: "ئاو",
-  juice: "جوس",
-  burger: "بەرگەر",
-  fries: "فریز",
-  pizza: "پیتزا",
-  sandwich: "سەندویچ",
-  dessert: "دێسێرت",
-  fast: "خێرا",
-  food: "خواردن",
-  menu: "مێنوو",
-  special: "تایبەت",
-  fresh: "تازە",
-  hot: "گەرم",
-  cold: "سارد",
-  large: "گەورە",
-  small: "بچوک",
-  smooth: "نەرم",
-  rich: "دولەمەند",
-  premium: "پڕێمیوم",
-  double: "دووجار",
-  white: "سپی",
-  black: "ڕەش",
-  whipped: "هەڵمژراو",
-  cream: "کریم",
-  syrup: "شەربەت",
-  cookie: "کۆکی",
-  cookies: "کۆکی",
-  brownie: "براونی",
-  toast: "تۆست",
-  cheese: "پنیر",
-  cheesecakes: "چێزکێک",
-  cheesecake: "چێزکێک",
-  chocolatecake: "چۆکلێت کەیک"
-};
-
-const LAT_TO_AR = {
-  a:"ا", b:"ب", c:"ك", d:"د", e:"ي", f:"ف", g:"گ", h:"ه", i:"ي", j:"ج", k:"ك", l:"ل", m:"م", n:"ن", o:"و", p:"ب", q:"ق", r:"ر", s:"س", t:"ت", u:"و", v:"ڤ", w:"و", x:"كس", y:"ي", z:"ز"
-};
-const LAT_TO_KU = {
-  a:"ا", b:"ب", c:"ج", d:"د", e:"ێ", f:"ف", g:"گ", h:"ه", i:"ی", j:"ج", k:"ک", l:"ل", m:"م", n:"ن", o:"ۆ", p:"پ", q:"ق", r:"ر", s:"س", t:"ت", u:"و", v:"ڤ", w:"و", x:"کس", y:"ی", z:"ز"
-};
-
+function uid(){ return (crypto?.randomUUID?.() || `id_${Date.now()}_${Math.random().toString(36).slice(2,10)}`); }
 function $(id){ return document.getElementById(id); }
-function has(id){ return !!$(id); }
 function escapeHtml(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function escapeAttr(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function money(v){ return String(v ?? "").replace(/[^0-9]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-function uid(){ return (crypto?.randomUUID?.() || `id_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`); }
-function defaultText(obj, lang){ return (obj?.[lang] || obj?.en || obj?.ar || obj?.ku || ""); }
-function currentUI(){ return UI[state.lang] || UI.en; }
-
-function svgDataUri(svg){ return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg); }
-
-function defaultLogo(){
-  return DEFAULT_LOGO;
+function textFor(obj, lang, fallback = ""){ return obj?.[lang] || obj?.en || obj?.ar || obj?.ku || fallback; }
+function translateWord(word, lang){
+  const clean = word.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  if (!clean) return word;
+  const exact = WORD_MAP[clean]?.[lang];
+  if (exact) return exact;
+  const map = lang === "ar" ? {
+    ch:"تش", sh:"ش", zh:"ژ", kh:"خ", gh:"غ", ph:"ف", th:"ث", oo:"و", ee:"ي", aa:"ا", ai:"اي", ay:"اي", ow:"او",
+    a:"ا", b:"ب", c:"ك", d:"د", e:"ي", f:"ف", g:"ج", h:"ه", i:"ي", j:"ج", k:"ك", l:"ل", m:"م", n:"ن", o:"و", p:"پ", q:"ق", r:"ر", s:"س", t:"ت", u:"و", v:"ڤ", w:"و", x:"كس", y:"ي", z:"ز"
+  } : {
+    ch:"چ", sh:"ش", zh:"ژ", kh:"خ", gh:"غ", ph:"ف", th:"ث", oo:"ۆ", ee:"ی", aa:"ا", ai:"ای", ay:"ای", ow:"ۆ",
+    a:"ا", b:"ب", c:"ج", d:"د", e:"ێ", f:"ف", g:"گ", h:"ه", i:"ی", j:"ج", k:"ک", l:"ل", m:"م", n:"ن", o:"ۆ", p:"پ", q:"ق", r:"ر", s:"س", t:"ت", u:"و", v:"ڤ", w:"و", x:"خ", y:"ی", z:"ز"
+  };
+  let out = clean;
+  Object.entries(map).sort((a,b)=>b[0].length-a[0].length).forEach(([src,dst]) => { out = out.replaceAll(src, dst); });
+  return out;
 }
-
-function makeDefaultState(){
+function autoTranslateText(text, lang){
+  return String(text || "")
+    .split(/(\s+)/)
+    .map(part => {
+      if (/^\s+$/.test(part)) return part;
+      const match = part.match(/^([^A-Za-z0-9]*)([A-Za-z][A-Za-z0-9'\-]*)([^A-Za-z0-9]*)$/);
+      if (!match) return part;
+      const [, pre, core, post] = match;
+      return pre + translateWord(core, lang) + post;
+    }).join("");
+}
+function fileToDataUrl(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function makeDefaultContent(){
   return {
-    lang: "en",
-    activeSection: "landing",
+    updatedAt: 0,
     logo: DEFAULT_LOGO,
+    brand: {
+      en: "1911 Coffee Shop",
+      ar: "مقهى 1911",
+      ku: "کافێی 1911"
+    },
+    brandTag: {
+      en: "Vintage • Modern • Premium",
+      ar: "عتيق • عصري • فاخر",
+      ku: "کۆن • نوێ • شیک"
+    },
+    heroSub: {
+      en: "Since 2021",
+      ar: "منذ 2021",
+      ku: "لە 2021"
+    },
+    heroTag: {
+      en: "Take Rest and Be Happy",
+      ar: "خذ راحة وكن سعيدًا",
+      ku: "وه‌ربگرە ڕا و خۆشحاڵ بە"
+    },
+    footerLeft: {
+      en: "Temporary location near Titanic Hotel",
+      ar: "موقع مؤقت قرب فندق تيتانيك",
+      ku: "شوێنی کاتی لە نزیک هوتێلی تایتانیک"
+    },
+    footerRight: "07734468886",
     topCards: [
-      { labels: { en:"Fresh Every Day", ar:"طازج كل يوم", ku:"هەموو ڕۆژێک تازە" }, values: { en:"Premium café menu", ar:"قائمة مقهى فاخرة", ku:"مێنووی کافێی تایبەت" } },
-      { labels: { en:"Good Service", ar:"خدمة جيدة", ku:"خزمەتگوزاری باش" }, values: { en:"Fast, clean, elegant", ar:"سريع، نظيف، أنيق", ku:"خێرا، پاک، جوان" } },
-      { labels: { en:"Open Daily", ar:"مفتوح يوميًا", ku:"کراوە هەموو ڕۆژێک" }, values: { en:"From morning to night", ar:"من الصباح إلى الليل", ku:"لە بەیان تا شەو" } }
+      {
+        labels: { en:"Fresh Brew", ar:"مشروبات طازجة", ku:"خواردنەوەی تازە" },
+        values: { en:"Handcrafted drinks", ar:"مشروبات محضّرة بإتقان", ku:"خواردنەوەی بەدەست دروستکراو" }
+      },
+      {
+        labels: { en:"House Picks", ar:"اختياراتنا", ku:"هەڵبژاردەکانی ئێمە" },
+        values: { en:"Popular menu items", ar:"أصناف مميزة", ku:"خواردنی بەناوبانگ" }
+      },
+      {
+        labels: { en:"Open Daily", ar:"مفتوح يوميًا", ku:"هەموو ڕۆژێک کراوە" },
+        values: { en:"Service information", ar:"معلومات الخدمة", ku:"زانیاری خزمەتگوزاری" }
+      }
     ],
     categories: [
       {
-        id: "coffee",
-        names: { en: "Cold Coffee", ar: "قهوة باردة", ku: "قاوەی سارد" },
-        desc: {
-          en: "Smooth iced coffee drinks with a rich café presentation.",
-          ar: "مشروبات قهوة باردة بتقديم أنيق وغني.",
-          ku: "خواردنەوەی قاوی سارد بە پێشکەشکردنی جوان."
+        id:"coffee",
+        names:{ en:"Cold Coffee", ar:"قهوة باردة", ku:"قاوەی سارد" },
+        desc:{
+          en:"Smooth iced coffee drinks with a rich café presentation.",
+          ar:"مشروبات قهوة باردة بتقديم أنيق وغني.",
+          ku:"خواردنەوەی قاوی سارد بە پێشکەشکردنی جوان."
         },
-        items: [
+        items:[
           {
             id: uid(),
-            names: { en: "Ice Coffee", ar: "آيس كوفي", ku: "ئایس کۆفی" },
-            desc: {
-              en: "Classic iced coffee with a clean finish.",
-              ar: "قهوة باردة كلاسيكية بطعم ناعم.",
-              ku: "قاوەی ساردی کلاسیکی بە تەواوکردنی پاک."
-            },
-            prices: { small: "4000", large: "5000" },
-            kind: "coffee",
-            colors: ["#2b160c","#7a4a25","#d7a55c"],
-            image: ""
+            names:{ en:"Ice Coffee", ar:"آيس كوفي", ku:"ئایس کۆفی" },
+            desc:{ en:"Classic iced coffee with a clean finish.", ar:"قهوة باردة كلاسيكية بطعم ناعم.", ku:"قاوەی ساردی کلاسیکی بە تەواوکردنی پاک." },
+            prices:{ small:"4000", large:"5000" },
+            kind:"coffee",
+            colors:["#2b160c","#7a4a25","#d7a55c"],
+            image:""
           },
           {
             id: uid(),
-            names: { en: "Caramel Ice Coffee", ar: "آيس كوفي كراميل", ku: "ئایس کۆفی کارامێل" },
-            desc: {
-              en: "Sweet caramel layers with a smooth coffee base.",
-              ar: "طبقات كراميل حلوة مع قاعدة قهوة ناعمة.",
-              ku: "ڕیزەکانی کارامێلی خۆش لەگەڵ بنەمایەکی قاوەی نەرم."
-            },
-            prices: { small: "5000", large: "6000" },
-            kind: "coffee",
-            colors: ["#28150a","#9a5a22","#f1c06d"],
-            image: ""
+            names:{ en:"Caramel Ice Coffee", ar:"آيس كوفي كراميل", ku:"ئایس کۆفی کارامل" },
+            desc:{ en:"Sweet caramel layers with a smooth coffee base.", ar:"طبقات كراميل حلوة مع قاعدة قهوة ناعمة.", ku:"ڕیزەکانی کارامێلی خۆش لەگەڵ بنەمایەکی قاوەی نەرم." },
+            prices:{ small:"5000", large:"6000" },
+            kind:"coffee",
+            colors:["#28150a","#9a5a22","#f1c06d"],
+            image:""
           }
         ]
       },
       {
-        id: "drinks",
-        names: { en: "Cold Drinks", ar: "مشروبات باردة", ku: "خواردنەوە ساردەکان" },
-        desc: {
-          en: "Fresh drinks for a cool and refreshing break.",
-          ar: "مشروبات منعشة لفترة راحة باردة.",
-          ku: "خواردنەوەی تازە بۆ وەستاندنی سارد و خۆش."
+        id:"drinks",
+        names:{ en:"Cold Drinks", ar:"مشروبات باردة", ku:"خواردنەوە ساردەکان" },
+        desc:{
+          en:"Fresh drinks for a cool and refreshing break.",
+          ar:"مشروبات منعشة لفترة راحة باردة.",
+          ku:"خواردنەوەی تازە بۆ وەستاندنی سارد و خۆش."
         },
-        items: [
+        items:[
           {
             id: uid(),
-            names: { en: "Mojito", ar: "موهيتو", ku: "موهیيتۆ" },
-            desc: {
-              en: "Fresh mint and lime with a sparkling finish.",
-              ar: "نعناع وليمون مع لمسة فوارة.",
-              ku: "پەنیرەی سەوز و لیمۆ لەگەڵ کۆتایی فوارە."
-            },
-            prices: { small: "3500", large: "4500" },
-            kind: "drink",
-            colors: ["#1d2d22","#4a7b52","#baf0c8"],
-            image: ""
+            names:{ en:"Mojito", ar:"موهيتو", ku:"موهیيتۆ" },
+            desc:{ en:"Fresh mint and lime with a sparkling finish.", ar:"نعناع وليمون مع لمسة فوارة.", ku:"پەنیرەی سەوز و لیمۆ لەگەڵ کۆتایی فوارە." },
+            prices:{ small:"3500", large:"4500" },
+            kind:"drink",
+            colors:["#1d2d22","#4a7b52","#baf0c8"],
+            image:""
           }
         ]
       },
       {
-        id: "dessert",
-        names: { en: "Desserts", ar: "حلويات", ku: "شیرینی" },
-        desc: {
-          en: "Sweet bites to complete the café experience.",
-          ar: "قطع حلوة لإكمال تجربة المقهى.",
-          ku: "شیرینییەکان بۆ تەواوکردنی ئەزموونی کافێ."
+        id:"dessert",
+        names:{ en:"Desserts", ar:"حلويات", ku:"شیرینی" },
+        desc:{
+          en:"Sweet bites to complete the café experience.",
+          ar:"قطع حلوة لإكمال تجربة المقهى.",
+          ku:"شیرینییەکان بۆ تەواوکردنی ئەزموونی کافێ."
         },
-        items: [
+        items:[
           {
             id: uid(),
-            names: { en: "Cheesecake", ar: "تشيز كيك", ku: "چێزکێک" },
-            desc: {
-              en: "Creamy cake with a buttery base.",
-              ar: "كيك كريمي مع قاعدة هشة.",
-              ku: "کێکێکی کریمی بە بنەمایەکی نەرم."
-            },
-            prices: { small: "4500", large: "5500" },
-            kind: "dessert",
-            colors: ["#2d2134","#6f4e8a","#e7b8ff"],
-            image: ""
+            names:{ en:"Cheesecake", ar:"تشيز كيك", ku:"چێزکێک" },
+            desc:{ en:"Creamy cake with a buttery base.", ar:"كيك كريمي مع قاعدة هشة.", ku:"کێکێکی کریمی بە بنەمایەکی نەرم." },
+            prices:{ small:"4500", large:"5500" },
+            kind:"dessert",
+            colors:["#2d2134","#6f4e8a","#e7b8ff"],
+            image:""
           }
         ]
       }
     ]
   };
 }
-
-function normalizeState(raw){
-  const base = makeDefaultState();
+function normalizeContent(raw){
+  const base = makeDefaultContent();
   if (!raw || typeof raw !== "object") return base;
-
-  const state = {
-    ...base,
-    ...raw
-  };
-
-  state.lang = ["en","ar","ku"].includes(state.lang) ? state.lang : "en";
-  state.activeSection = raw.activeSection || "landing";
-  state.logo = raw.logo || DEFAULT_LOGO;
-
-  if (Array.isArray(raw.topCards) && raw.topCards.length){
-    state.topCards = raw.topCards.slice(0,3).map((card, idx) => ({
-      labels: {
-        en: String(card?.labels?.en ?? base.topCards[idx]?.labels?.en ?? ""),
-        ar: String(card?.labels?.ar ?? base.topCards[idx]?.labels?.ar ?? ""),
-        ku: String(card?.labels?.ku ?? base.topCards[idx]?.labels?.ku ?? "")
-      },
-      values: {
-        en: String(card?.values?.en ?? base.topCards[idx]?.values?.en ?? ""),
-        ar: String(card?.values?.ar ?? base.topCards[idx]?.values?.ar ?? ""),
-        ku: String(card?.values?.ku ?? base.topCards[idx]?.values?.ku ?? "")
-      }
-    }));
-  }
-
-  if (Array.isArray(raw.categories) && raw.categories.length){
-    state.categories = raw.categories.map((c, idx) => ({
-      id: String(c.id || uid()),
+  const categories = Array.isArray(raw.categories) ? raw.categories.map((c, idx) => ({
+    id: String(c.id || uid()),
+    names: {
+      en: String(c.names?.en || `Category ${idx + 1}`),
+      ar: String(c.names?.ar || c.names?.en || `الفئة ${idx + 1}`),
+      ku: String(c.names?.ku || c.names?.en || `پۆل ${idx + 1}`)
+    },
+    desc: {
+      en: String(c.desc?.en || ""),
+      ar: String(c.desc?.ar || ""),
+      ku: String(c.desc?.ku || "")
+    },
+    items: Array.isArray(c.items) ? c.items.map((i) => ({
+      id: String(i.id || uid()),
       names: {
-        en: String(c.names?.en || `Category ${idx + 1}`),
-        ar: String(c.names?.ar || c.names?.en || `الفئة ${idx + 1}`),
-        ku: String(c.names?.ku || c.names?.en || `پۆل ${idx + 1}`)
+        en: String(i.names?.en || "Item"),
+        ar: String(i.names?.ar || i.names?.en || "عنصر"),
+        ku: String(i.names?.ku || i.names?.en || "تکە")
       },
       desc: {
-        en: String(c.desc?.en || ""),
-        ar: String(c.desc?.ar || ""),
-        ku: String(c.desc?.ku || "")
+        en: String(i.desc?.en || ""),
+        ar: String(i.desc?.ar || ""),
+        ku: String(i.desc?.ku || "")
       },
-      items: Array.isArray(c.items) ? c.items.map((i) => ({
-        id: String(i.id || uid()),
-        names: {
-          en: String(i.names?.en || "Item"),
-          ar: String(i.names?.ar || i.names?.en || "عنصر"),
-          ku: String(i.names?.ku || i.names?.en || "تکە")
-        },
-        desc: {
-          en: String(i.desc?.en || ""),
-          ar: String(i.desc?.ar || ""),
-          ku: String(i.desc?.ku || "")
-        },
-        prices: {
-          small: String(i.prices?.small || ""),
-          large: String(i.prices?.large || "")
-        },
-        kind: String(i.kind || "coffee"),
-        colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
-        image: String(i.image || "")
-      })) : []
-    }));
-  }
+      prices: {
+        small: String(i.prices?.small || ""),
+        large: String(i.prices?.large || "")
+      },
+      kind: String(i.kind || "coffee"),
+      colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0, 3) : ["#2b160c","#7a4a25","#d7a55c"],
+      image: String(i.image || "")
+    })) : []
+  })) : base.categories;
 
-  if (!state.categories.length) state.categories = base.categories;
-  if (!state.categories.some(c => c.id === state.currentCategoryId)) state.currentCategoryId = state.categories[0].id;
-
-  return state;
-}
-
-function loadState(){
-  for (const key of STORAGE_KEYS){
-    try{
-      const raw = localStorage.getItem(key);
-      if (raw){
-        state = normalizeState(JSON.parse(raw));
-        return;
+  const out = {
+    ...base,
+    ...raw,
+    categories,
+    topCards: Array.isArray(raw.topCards) ? raw.topCards.slice(0, 3).map((c, idx) => ({
+      labels: {
+        en: String(c?.labels?.en || base.topCards[idx]?.labels.en || ""),
+        ar: String(c?.labels?.ar || base.topCards[idx]?.labels.ar || ""),
+        ku: String(c?.labels?.ku || base.topCards[idx]?.labels.ku || "")
+      },
+      values: {
+        en: String(c?.values?.en || base.topCards[idx]?.values.en || ""),
+        ar: String(c?.values?.ar || base.topCards[idx]?.values.ar || ""),
+        ku: String(c?.values?.ku || base.topCards[idx]?.values.ku || "")
       }
-    }catch(e){}
-  }
-  state = normalizeState(null);
+    })) : base.topCards,
+    brand: {
+      en: String(raw.brand?.en || base.brand.en),
+      ar: String(raw.brand?.ar || base.brand.ar),
+      ku: String(raw.brand?.ku || base.brand.ku)
+    },
+    brandTag: {
+      en: String(raw.brandTag?.en || base.brandTag.en),
+      ar: String(raw.brandTag?.ar || base.brandTag.ar),
+      ku: String(raw.brandTag?.ku || base.brandTag.ku)
+    },
+    heroSub: {
+      en: String(raw.heroSub?.en || base.heroSub.en),
+      ar: String(raw.heroSub?.ar || base.heroSub.ar),
+      ku: String(raw.heroSub?.ku || base.heroSub.ku)
+    },
+    heroTag: {
+      en: String(raw.heroTag?.en || base.heroTag.en),
+      ar: String(raw.heroTag?.ar || base.heroTag.ar),
+      ku: String(raw.heroTag?.ku || base.heroTag.ku)
+    },
+    footerLeft: {
+      en: String(raw.footerLeft?.en || base.footerLeft.en),
+      ar: String(raw.footerLeft?.ar || base.footerLeft.ar),
+      ku: String(raw.footerLeft?.ku || base.footerLeft.ku)
+    },
+    footerRight: String(raw.footerRight || base.footerRight),
+    logo: String(raw.logo || base.logo),
+    updatedAt: Number(raw.updatedAt || 0)
+  };
+  if (!out.categories.length) out.categories = base.categories;
+  return out;
 }
-
-function saveState(){
-  try{
-    localStorage.setItem(STORAGE_KEYS[0], JSON.stringify(state));
-  }catch(e){}
+function makeDefaultUi(){
+  return { lang:"en", section:"cafe", search:"" };
 }
-
-function setLang(lang){
-  state.lang = lang;
-  document.documentElement.lang = lang === "en" ? "en" : "ar";
-  document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
-  document.body.dataset.lang = lang;
-  updateStaticText();
-  renderAll();
-  saveState();
+function loadUi(){
+  try{ return { ...makeDefaultUi(), ...(JSON.parse(localStorage.getItem(UI_KEY) || "{}")) }; } catch { return makeDefaultUi(); }
 }
-
-function updateStaticText(){
-  const tr = currentUI();
-
-  if (has("brandTitle")) $("brandTitle").textContent = tr.brand;
-  if (has("brandSub")) $("brandSub").textContent = tr.brandSmall;
-  if (has("heroTitle")) $("heroTitle").textContent = tr.brand;
-  if (has("heroSub")) $("heroSub").textContent = tr.since;
-  if (has("heroTag")) $("heroTag").textContent = tr.tagline;
-
-  if (has("pill1Label")) $("pill1Label").textContent = tr.design;
-  if (has("pill1Value")) $("pill1Value").textContent = tr.designValue;
-  if (has("pill2Label")) $("pill2Label").textContent = tr.languages;
-  if (has("pill2Value")) $("pill2Value").textContent = tr.languagesValue;
-  if (has("pill3Label")) $("pill3Label").textContent = tr.menuType;
-  if (has("pill3Value")) $("pill3Value").textContent = tr.menuTypeValue;
-
-  if (has("sectionHint")) $("sectionHint").textContent = tr.sectionHint;
-  if (has("footerLeft")) $("footerLeft").innerHTML = `<strong>1911</strong> • ${escapeHtml(tr.footerLeft.replace("1911 • ", ""))}`;
-  if (has("footerRight")) $("footerRight").textContent = tr.footerRight;
-  if (has("searchInput")) $("searchInput").placeholder = tr.searchPlaceholder;
-  if (has("previewCopy")) $("previewCopy").textContent = tr.previewCopy;
-
-  if (has("adminTitle")) $("adminTitle").textContent = tr.adminTitle;
-  if (has("openMenuBtn")) $("openMenuBtn").textContent = tr.openMenu;
-  if (has("topCardTitle")) $("topCardTitle").textContent = tr.topCardTitle;
-  if (has("logoCardTitle")) $("logoCardTitle").textContent = tr.logoCardTitle;
-  if (has("logoInputLabel")) $("logoInputLabel").textContent = tr.logoInputLabel;
-  if (has("logoNote")) $("logoNote").textContent = tr.logoNote;
-  if (has("categoryCardTitle")) $("categoryCardTitle").textContent = tr.categoryCardTitle;
-  if (has("categorySelectLabel")) $("categorySelectLabel").textContent = tr.categorySelectLabel;
-  if (has("categoryDescLabel")) $("categoryDescLabel").textContent = tr.categoryDescLabel;
-  if (has("categoryNote")) $("categoryNote").textContent = tr.categoryNote;
-  if (has("itemCardTitle")) $("itemCardTitle").textContent = tr.itemCardTitle;
-  if (has("itemCategoryLabel")) $("itemCategoryLabel").textContent = tr.itemCategoryLabel;
-  if (has("itemSelectLabel")) $("itemSelectLabel").textContent = tr.itemSelectLabel;
-  if (has("itemDescLabel")) $("itemDescLabel").textContent = tr.itemDescLabel;
-  if (has("priceLabel")) $("priceLabel").textContent = tr.priceLabel;
-  if (has("itemImageLabel")) $("itemImageLabel").textContent = tr.itemImageLabel;
-  if (has("itemNote")) $("itemNote").textContent = tr.itemNote;
-  if (has("toolsCardTitle")) $("toolsCardTitle").textContent = tr.toolsCardTitle;
-  if (has("toolsNote")) $("toolsNote").textContent = tr.toolsNote;
-  if (has("saveLogoBtn")) $("saveLogoBtn").textContent = tr.saveLogo;
-  if (has("resetLogoBtn")) $("resetLogoBtn").textContent = tr.resetLogo;
-  if (has("saveCategoryBtn")) $("saveCategoryBtn").textContent = tr.saveCategory;
-  if (has("newCategoryBtn")) $("newCategoryBtn").textContent = tr.newCategory;
-  if (has("deleteCategoryBtn")) $("deleteCategoryBtn").textContent = tr.deleteCategory;
-  if (has("saveItemBtn")) $("saveItemBtn").textContent = tr.saveItem;
-  if (has("newItemBtn")) $("newItemBtn").textContent = tr.newItem;
-  if (has("deleteItemBtn")) $("deleteItemBtn").textContent = tr.deleteItem;
-  if (has("exportBtn")) $("exportBtn").textContent = tr.exportJson;
-  if (has("resetMenuBtn")) $("resetMenuBtn").textContent = tr.resetMenu;
-  if (has("adminNote")) $("adminNote").textContent = tr.toolsNote;
-  if (has("backToMenuBtn")) $("backToMenuBtn").textContent = tr.backToMenu;
+function saveUi(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch {} }
+function loadCache(){
+  try{ return normalizeContent(JSON.parse(localStorage.getItem(CACHE_KEY) || "null")); } catch { return normalizeContent(null); }
 }
-
-function translateWord(word, lang){
-  const source = String(word || "").trim();
-  if (!source) return "";
-
-  if (lang === "ar"){
-    const key = source.toLowerCase().replace(/[^a-z]/g, "");
-    if (A2A[key]) return A2A[key];
-    return transliterate(source, LAT_TO_AR);
-  }
-  if (lang === "ku"){
-    const key = source.toLowerCase().replace(/[^a-z]/g, "");
-    if (E2K[key]) return E2K[key];
-    return transliterate(source, LAT_TO_KU);
-  }
-  return source;
+function saveCache(){
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify(content)); } catch {}
 }
-
-function transliterate(text, map){
-  return String(text).split("").map(ch => {
-    const lower = ch.toLowerCase();
-    if (map[lower]) return map[lower];
-    if (/[A-Z]/.test(ch) && map[lower]) return map[lower];
-    return ch;
-  }).join("");
+function currentCategory(){
+  return content.categories.find(c => c.id === ui.section) || content.categories[0] || null;
 }
-
-function autoTranslatePhrase(text, lang){
-  const clean = String(text || "").trim();
-  if (!clean) return "";
-  return clean
-    .split(/(\s+|\/|\-)/)
-    .map(part => {
-      if (/^\s+$/.test(part) || part === "/" || part === "-") return part;
-      return translateWord(part, lang);
-    })
-    .join("");
+function currentItemPreviewData(item, index){
+  const img = item.image || placeholderImage(item, index);
+  const title = textFor(item.names, ui.lang);
+  const alt = ui.lang === "en" ? textFor(item.names, "ar") : textFor(item.names, "en");
+  const desc = textFor(item.desc, ui.lang);
+  return { img, title, alt, desc };
 }
-
-function makePlaceholderImage(item, index){
-  const title = defaultText(item.names, "en");
+function placeholderImage(item, index){
+  const title = textFor(item.names, "en", "Item");
   const c = item.colors || ["#2b160c","#7a4a25","#d7a55c"];
   const kind = item.kind || "coffee";
-  const extra = kind === "dessert" ? "✨" : kind === "tea" ? "🍵" : kind === "snack" ? "🍪" : "☕";
+  const icon = kind === "dessert" ? "✨" : kind === "drink" ? "🥤" : "☕";
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420">
-      <defs>
-        <linearGradient id="bg${index}" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="${c[0]}"/>
-          <stop offset="55%" stop-color="${c[1]}"/>
-          <stop offset="100%" stop-color="${c[2]}"/>
-        </linearGradient>
-        <radialGradient id="glow${index}" cx="35%" cy="25%" r="70%">
-          <stop offset="0%" stop-color="rgba(255,255,255,.30)"/>
-          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-        </radialGradient>
-      </defs>
-      <rect width="420" height="420" rx="36" fill="url(#bg${index})"/>
-      <circle cx="120" cy="110" r="120" fill="url(#glow${index})"/>
-      <circle cx="318" cy="78" r="76" fill="rgba(255,255,255,.08)"/>
-      <ellipse cx="210" cy="300" rx="126" ry="24" fill="rgba(0,0,0,.22)"/>
-      <circle cx="210" cy="208" r="88" fill="rgba(255,255,255,.08)"/>
-      <text x="210" y="205" text-anchor="middle" font-size="58">${extra}</text>
-      <text x="210" y="354" text-anchor="middle" fill="rgba(255,255,255,.94)" font-size="28" font-family="Georgia,serif" font-weight="700">${escapeHtml(title)}</text>
-    </svg>`;
-  return svgDataUri(svg);
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420">
+    <defs>
+      <linearGradient id="bg${index}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${c[0]}"/>
+        <stop offset="55%" stop-color="${c[1]}"/>
+        <stop offset="100%" stop-color="${c[2]}"/>
+      </linearGradient>
+      <radialGradient id="glow${index}" cx="35%" cy="25%" r="70%">
+        <stop offset="0%" stop-color="rgba(255,255,255,.30)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </radialGradient>
+    </defs>
+    <rect width="420" height="420" rx="36" fill="url(#bg${index})"/>
+    <circle cx="120" cy="110" r="120" fill="url(#glow${index})"/>
+    <circle cx="318" cy="78" r="76" fill="rgba(255,255,255,.08)"/>
+    <ellipse cx="210" cy="300" rx="126" ry="24" fill="rgba(0,0,0,.22)"/>
+    <circle cx="210" cy="208" r="88" fill="rgba(255,255,255,.10)"/>
+    <text x="210" y="198" text-anchor="middle" fill="rgba(255,255,255,.94)" font-size="34" font-family="Georgia,serif" font-weight="700">${escapeHtml(icon)}</text>
+    <text x="210" y="248" text-anchor="middle" fill="rgba(255,255,255,.94)" font-size="28" font-family="Georgia,serif" font-weight="700">${escapeHtml(title)}</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+function branchLabel(branch, lang){
+  const map = {
+    cafe: { en:"1911 Cafe", ar:"مقهى 1911", ku:"کافێی 1911" },
+    fastfood: { en:"1911 Fast Food", ar:"1911 وجبات سريعة", ku:"1911 خۆراکى خێرا" },
+    desserts: { en:"1911 Desserts", ar:"1911 حلويات", ku:"1911 شیرینی" }
+  };
+  return map[branch]?.[lang] || map[branch]?.en || branch;
+}
+function branchDesc(branch, lang){
+  const map = {
+    cafe: { en:"Open now", ar:"مفتوح الآن", ku:"ئێستا کراوە" },
+    fastfood: { en:"Coming soon", ar:"قريبًا", ku:"بەم زووانە" },
+    desserts: { en:"Coming soon", ar:"قريبًا", ku:"بەم زووانە" }
+  };
+  return map[branch]?.[lang] || map[branch]?.en || "";
+}
+function ensureFirebaseUi(){
+  document.documentElement.lang = ui.lang === "en" ? "en" : "ar";
+  document.documentElement.dir = ui.lang === "en" ? "ltr" : "rtl";
+  document.body.setAttribute("data-lang", ui.lang);
 }
 
-function getCurrentCategory(){
-  return state.categories.find(c => c.id === state.currentCategoryId) || state.categories[0] || null;
+let ui = loadUi();
+let content = loadCache();
+let db = null;
+let docRef = null;
+let unsub = null;
+let saveTimer = 0;
+let isHydrated = false;
+const appRoot = $("appRoot");
+
+function scheduleSave(){
+  saveCache();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(pushRemote, 450);
+  if (PAGE_MODE === "menu") renderMenu();
+  if (PAGE_MODE === "admin") renderAdmin();
 }
-
-function currentCategoryName(){
-  const cat = getCurrentCategory();
-  return cat ? defaultText(cat.names, state.lang) : currentUI().categoryEmpty;
+async function pushRemote(){
+  if (!docRef) return;
+  try{
+    await setDoc(docRef, { ...content, updatedAt: Date.now() }, { merge: false });
+    setStatus("Saved to Firebase");
+  }catch(err){
+    setStatus("Saved locally");
+  }
 }
-
-function currentCategoryDesc(){
-  const cat = getCurrentCategory();
-  return cat ? (defaultText(cat.desc, state.lang) || currentUI().noDesc) : currentUI().categoryEmpty;
+function setStatus(message){
+  const el = $("syncStatus");
+  if (el) el.textContent = message;
 }
-
-function renderTopCards(){
-  if (!has("topCards")) return;
-  const tr = currentUI();
-  $("topCards").innerHTML = state.topCards.map((card, idx) => `
-    <div class="meta">
-      <span>${escapeHtml(defaultText(card.labels, state.lang) || `${tr.design} ${idx+1}`)}</span>
-      <strong>${escapeHtml(defaultText(card.values, state.lang) || "")}</strong>
-    </div>
-  `).join("");
+function applyRemote(next){
+  const remote = normalizeContent(next);
+  if ((remote.updatedAt || 0) <= (content.updatedAt || 0)) return;
+  content = remote;
+  saveCache();
+  if (PAGE_MODE === "menu") renderMenu();
+  if (PAGE_MODE === "admin") renderAdmin();
+  setStatus("Synced from Firebase");
 }
-
-function renderLanding(){
-  if (!has("landing")) return;
-  const tr = currentUI();
-  const cards = [
-    { key:"cafe", label:"1911 Cafe", ar:"1911 كافيه", ku:"1911 کافێ", desc:"Current menu you are building", descAr:"القائمة الحالية التي تعمل عليها", descKu:"مێنووی ئێستای کارکردن", active:true },
-    { key:"fastfood", label:"1911 Fast Food", ar:"1911 وجبات سريعة", ku:"1911 خواردنە خێرا", desc:"Coming soon", descAr:"قريبًا", descKu:"لە نزیکدا", active:false },
-    { key:"desserts", label:"1911 Desserts", ar:"1911 حلويات", ku:"1911 شیرینی", desc:"Coming soon", descAr:"قريبًا", descKu:"لە نزیکدا", active:false },
-  ];
-  landing.innerHTML = cards.map(card => {
-    const title = state.lang === "en" ? card.label : state.lang === "ar" ? card.ar : card.ku;
-    const desc = state.lang === "en" ? card.desc : state.lang === "ar" ? card.descAr : card.descKu;
-    return `
-      <button class="section-card ${card.active ? 'active' : ''}" type="button" data-section="${card.key}">
-        <span class="small">${escapeHtml(card.key === "cafe" ? (state.lang === "en" ? "Open now" : state.lang === "ar" ? "مفتوح الآن" : "ئێستا کراوە") : (state.lang === "en" ? "Coming soon" : state.lang === "ar" ? "قريبًا" : "لە نزیکدا"))}</span>
-        <h2>${escapeHtml(title)}</h2>
-        <p>${escapeHtml(desc)}</p>
-      </button>
-    `;
-  }).join("");
-
-  landing.querySelectorAll("[data-section]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const section = btn.dataset.section;
-      if (section !== "cafe"){
-        alert(section === "fastfood" ? "Fast Food menu will be added later." : "Desserts menu will be added later.");
-        return;
-      }
-      showCafeMenu();
+async function initFirebase(){
+  try{
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+    const { getFirestore, doc, onSnapshot, setDoc, enableIndexedDbPersistence } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    enableIndexedDbPersistence(db).catch(() => {});
+    docRef = doc(db, FIRESTORE_PATH[0], FIRESTORE_PATH[1]);
+    unsub = onSnapshot(docRef, (snap) => {
+      if (!snap.exists()) return;
+      applyRemote(snap.data());
+    }, () => {
+      setStatus("Firebase listener failed");
     });
-  });
+    setStatus("Connected");
+  }catch(err){
+    setStatus("Firebase not connected");
+  }
 }
-
-function renderCategoryChips(){
-  if (!has("categoryBar")) return;
-  categoryBar.innerHTML = state.categories.map(cat => `
-    <button class="category-chip ${cat.id === state.currentCategoryId ? 'active' : ''}" type="button" data-cat-id="${escapeAttr(cat.id)}">
-      ${escapeHtml(defaultText(cat.names, state.lang))}
+function chooseSection(section){
+  ui.section = section;
+  saveUi();
+  ensureFirebaseUi();
+  if (PAGE_MODE === "menu") renderMenu();
+}
+function setLanguage(lang){
+  ui.lang = lang;
+  saveUi();
+  ensureFirebaseUi();
+  if (PAGE_MODE === "menu") renderMenu();
+}
+function toggleModal(id, open){
+  const modal = $(id);
+  if (!modal) return;
+  modal.classList.toggle("open", open);
+  modal.setAttribute("aria-hidden", open ? "false" : "true");
+  document.body.style.overflow = open ? "hidden" : "";
+}
+function openPreview(item, idx){
+  const p = currentItemPreviewData(item, idx);
+  $("previewTitle").textContent = p.title || "Item";
+  $("previewImg").src = p.img || DEFAULT_LOGO;
+  $("previewImg").alt = p.title || "Item";
+  $("previewCopy").textContent = p.desc || "";
+  toggleModal("previewModal", true);
+}
+function closePreview(){ toggleModal("previewModal", false); }
+function renderMenu(){
+  ensureFirebaseUi();
+  const lang = ui.lang;
+  const section = ui.section;
+  const cat = currentCategory();
+  $("brandLogo").src = content.logo || DEFAULT_LOGO;
+  $("heroLogo").src = content.logo || DEFAULT_LOGO;
+  $("brandTitle").textContent = textFor(content.brand, lang, "1911 Coffee Shop");
+  $("brandTag").textContent = textFor(content.brandTag, lang, "Vintage • Modern • Premium");
+  $("heroTitle").textContent = textFor(content.brand, lang, "1911 Coffee Shop");
+  $("heroSub").textContent = textFor(content.heroSub, lang, "Since 2021");
+  $("heroTag").textContent = textFor(content.heroTag, lang, "Take Rest and Be Happy");
+  $("footerLeft").innerHTML = `<strong>1911</strong> • ${escapeHtml(textFor(content.footerLeft, lang, "Temporary location near Titanic Hotel"))}`;
+  $("footerRight").innerHTML = `${escapeHtml(content.footerRight)} <a class="btn" href="admin.html" style="margin-left:10px;padding:8px 12px;font-size:.9rem;display:inline-flex;align-items:center;">Admin</a>`;
+  $("searchInput").placeholder = lang === "en" ? "Search items..." : lang === "ar" ? "ابحث عن item..." : "گەڕان بۆ item...";
+  $("sectionTitle").textContent = cat ? textFor(cat.names, lang, "Section") : "Section";
+  $("sectionDesc").textContent = cat ? (textFor(cat.desc, lang, "") || (lang === "en" ? "No description added yet." : lang === "ar" ? "لا يوجد وصف حتى الآن." : "هیچ وەسفێک زیاد نەکراوە.")) : "";
+  $("sectionHint").textContent = lang === "en" ? "Tap any item to preview a bigger image." : lang === "ar" ? "اضغط على أي item لمشاهدة صورة أكبر." : "لەسەر هەر item ـێک بکە بۆ بینینی وێنەی گەورەتر.";
+  document.querySelectorAll("[data-lang-btn]").forEach(btn => btn.classList.toggle("active", btn.dataset.langBtn === lang));
+  document.querySelectorAll("[data-section-btn]").forEach(btn => btn.classList.toggle("active", btn.dataset.sectionBtn === section));
+  $("sectionStatus").textContent = branchLabel(section, lang);
+  $("sectionStatusDesc").textContent = branchDesc(section, lang);
+  $("topCard1Label").textContent = textFor(content.topCards[0].labels, lang, DB_LABELS.en);
+  $("topCard1Value").textContent = textFor(content.topCards[0].values, lang, "");
+  $("topCard2Label").textContent = textFor(content.topCards[1].labels, lang, "House Picks");
+  $("topCard2Value").textContent = textFor(content.topCards[1].values, lang, "");
+  $("topCard3Label").textContent = textFor(content.topCards[2].labels, lang, "Open Daily");
+  $("topCard3Value").textContent = textFor(content.topCards[2].values, lang, "");
+  const chips = content.categories.map(catItem => `
+    <button class="category-chip ${catItem.id === section ? "active" : ""}" type="button" data-category-chip="${escapeAttr(catItem.id)}">
+      ${escapeHtml(textFor(catItem.names, lang))}
     </button>
   `).join("");
-
-  categoryBar.querySelectorAll("[data-cat-id]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      state.currentCategoryId = btn.dataset.catId;
-      saveState();
-      renderAll();
-    });
-  });
-}
-
-function renderItems(){
-  if (!has("items")) return;
-  const tr = currentUI();
-  const cat = getCurrentCategory();
-  const query = has("searchInput") ? $("searchInput").value.trim().toLowerCase() : "";
-
-  if (!cat){
-    items.innerHTML = `<div class="empty">${escapeHtml(tr.categoryEmpty)}</div>`;
-    return;
-  }
-
-  if (has("sectionTitle")) $("sectionTitle").textContent = defaultText(cat.names, state.lang);
-  if (has("sectionDesc")) $("sectionDesc").textContent = defaultText(cat.desc, state.lang) || tr.noDesc;
-
-  const itemsData = (cat.items || []).filter(item => {
-    if (!query) return true;
+  $("categoryBar").innerHTML = chips;
+  $("categoryBar").querySelectorAll("[data-category-chip]").forEach(btn => btn.addEventListener("click", () => chooseSection(btn.dataset.categoryChip)));
+  const query = ui.search.trim().toLowerCase();
+  const items = (cat?.items || []).filter(item => {
     const hay = [
-      defaultText(item.names, "en"),
-      defaultText(item.names, "ar"),
-      defaultText(item.names, "ku"),
-      defaultText(item.desc, "en"),
-      defaultText(item.desc, "ar"),
-      defaultText(item.desc, "ku")
+      textFor(item.names, "en"),
+      textFor(item.names, "ar"),
+      textFor(item.names, "ku"),
+      textFor(item.desc, "en"),
+      textFor(item.desc, "ar"),
+      textFor(item.desc, "ku")
     ].join(" ").toLowerCase();
-    return hay.includes(query);
+    return !query || hay.includes(query);
   });
-
-  if (!itemsData.length){
-    items.innerHTML = `<div class="empty">${escapeHtml(tr.itemEmpty)}</div>`;
-    return;
-  }
-
-  items.innerHTML = itemsData.map((item, idx) => {
-    const title = defaultText(item.names, state.lang);
-    const desc = defaultText(item.desc, state.lang);
-    const img = item.image || makePlaceholderImage(item, idx);
-    const small = item.prices?.small ? `<span class="price">${escapeHtml(money(item.prices.small))}</span>` : "";
-    const large = item.prices?.large ? `<span class="price secondary">${escapeHtml(money(item.prices.large))}</span>` : "";
+  $("items").innerHTML = items.length ? items.map((item, idx) => {
+    const title = textFor(item.names, lang);
+    const alt = lang === "en" ? textFor(item.names, "ar") : textFor(item.names, "en");
+    const desc = textFor(item.desc, lang);
+    const img = item.image || placeholderImage(item, idx);
+    const prices = [
+      item.prices?.small ? `<span class="price">${escapeHtml(money(item.prices.small))}</span>` : "",
+      item.prices?.large ? `<span class="price secondary">${escapeHtml(money(item.prices.large))}</span>` : ""
+    ].filter(Boolean).join("");
     return `
-      <button class="card" type="button"
-        data-title="${escapeAttr(title)}"
-        data-desc="${escapeAttr(desc)}"
-        data-img="${escapeAttr(img)}">
-        <div class="thumb"><img src="${escapeAttr(img)}" alt="${escapeAttr(title)}" loading="lazy" /></div>
+      <button class="card" type="button" data-index="${idx}">
+        <div class="thumb"><img src="${escapeAttr(img)}" alt="${escapeAttr(title)}" loading="lazy"></div>
         <div class="body">
           <div>
             <div class="name">
               <span class="main">${escapeHtml(title)}</span>
+              ${alt && alt !== title ? `<span class="small">${escapeHtml(alt)}</span>` : ""}
             </div>
             ${desc ? `<div class="desc">${escapeHtml(desc)}</div>` : ""}
           </div>
-          <div class="prices">${small}${large}</div>
+          <div class="prices">${prices}</div>
         </div>
       </button>
     `;
-  }).join("");
-
-  items.querySelectorAll(".card").forEach(card => {
-    card.addEventListener("click", () => openPreview({
-      title: card.dataset.title,
-      desc: card.dataset.desc,
-      img: card.dataset.img
-    }));
-  });
+  }).join("") : `<div class="empty">${escapeHtml(lang === "en" ? "No items in this section yet." : lang === "ar" ? "لا توجد عناصر في هذا القسم بعد." : "هنوز هیچ item ـێک لەم بەشەدا نییە.")}</div>`;
+  $("items").querySelectorAll(".card").forEach((card, idx) => card.addEventListener("click", () => openPreview(items[idx], idx)));
+  $("langButtons").querySelectorAll?.("[data-lang-btn]")?.forEach?.(()=>{});
 }
-
-function renderCustomerPanels(){
-  if (has("brandLogo")) $("brandLogo").src = state.logo || DEFAULT_LOGO;
-  if (has("heroLogo")) $("heroLogo").src = state.logo || DEFAULT_LOGO;
-  if (has("backToMenuBtn")) {
-    $("backToMenuBtn").style.display = state.activeSection === "landing" ? "none" : "inline-flex";
-  }
-  if (has("backToLandingBtn")) {
-    $("backToLandingBtn").style.display = state.activeSection === "landing" ? "none" : "inline-flex";
-  }
-  if (has("customerShell")) {
-    $("menuArea").style.display = state.activeSection === "landing" ? "none" : "block";
-    $("landingArea").style.display = state.activeSection === "landing" ? "grid" : "none";
-  }
-  if (has("heroTitle")) $("heroTitle").textContent = currentUI().brand;
-  if (has("heroSub")) $("heroSub").textContent = currentUI().since;
-  if (has("heroTag")) $("heroTag").textContent = currentUI().tagline;
-  renderLanding();
-  renderTopCards();
-  renderCategoryChips();
-  renderItems();
+function openSectionChooser(){ toggleModal("sectionModal", true); }
+function closeSectionChooser(){ toggleModal("sectionModal", false); }
+function renderLauncher(){
+  ensureFirebaseUi();
+  const lang = ui.lang;
+  $("launcherTitle").textContent = lang === "en" ? "Choose your section" : lang === "ar" ? "اختر القسم" : "بەشەکەت هەڵبژێرە";
+  $("launcherSub").textContent = lang === "en" ? "One owner, three stands. The café menu is ready now." : lang === "ar" ? "مالك واحد، ثلاث أقسام. قائمة المقهى جاهزة الآن." : "یەک خاوەن، سێ بەش. مێنوی کافێ ئامادەیە.";
+  $("launcherFoot").textContent = lang === "en" ? "Tap a section to switch instantly." : lang === "ar" ? "اضغط على قسم للتبديل فورًا." : "لەسەر بەشێک بکە بۆ گۆڕینی خێرا.";
+  document.querySelectorAll("[data-section-btn]").forEach(btn => btn.classList.toggle("active", btn.dataset.sectionBtn === ui.section));
+  $("launcherCafeTitle").textContent = branchLabel("cafe", lang);
+  $("launcherFastFoodTitle").textContent = branchLabel("fastfood", lang);
+  $("launcherDessertsTitle").textContent = branchLabel("desserts", lang);
+  $("launcherCafeDesc").textContent = branchDesc("cafe", lang);
+  $("launcherFastFoodDesc").textContent = branchDesc("fastfood", lang);
+  $("launcherDessertsDesc").textContent = branchDesc("desserts", lang);
+  $("launcherLogo").src = content.logo || DEFAULT_LOGO;
 }
-
-function openPreview(data){
-  if (!has("previewModal")) return;
-  $("previewTitle").textContent = data.title || currentUI().itemPreviewFallback;
-  $("previewImg").src = data.img || DEFAULT_LOGO;
-  $("previewImg").alt = data.title || currentUI().itemPreviewFallback;
-  $("previewCopy").textContent = data.desc || currentUI().previewCopy;
-  previewModal.classList.add("open");
-  previewModal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+function renderMenuShell(){
+  renderMenu();
+  renderLauncher();
 }
-function closePreview(){
-  if (!has("previewModal")) return;
-  previewModal.classList.remove("open");
-  previewModal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-}
+function makeIdIfMissing(v){ return String(v || uid()); }
 
-function ensureTopCards(){
-  if (!Array.isArray(state.topCards)) state.topCards = [];
-  while (state.topCards.length < 3){
-    state.topCards.push({
-      labels:{ en:"", ar:"", ku:"" },
-      values:{ en:"", ar:"", ku:"" }
-    });
-  }
-  if (state.topCards.length > 3) state.topCards = state.topCards.slice(0,3);
-}
+let selectedCategoryId = "";
+let selectedItemId = "";
+let pendingAction = "";
+let previewLogo = "";
+let previewItemImage = "";
 
-function populateTopCardForm(index){
-  if (!has("topCardSelect")) return;
-  ensureTopCards();
-  const i = Math.max(0, Math.min(2, Number(index) || 0));
-  const card = state.topCards[i];
-  $("topCardSelect").value = String(i);
-  $("topCardLabelEn").value = card.labels?.en || "";
-  $("topCardLabelAr").value = card.labels?.ar || "";
-  $("topCardLabelKu").value = card.labels?.ku || "";
-  $("topCardValueEn").value = card.values?.en || "";
-  $("topCardValueAr").value = card.values?.ar || "";
-  $("topCardValueKu").value = card.values?.ku || "";
+function ensureAdminSelections(){
+  if (!selectedCategoryId || !content.categories.some(c => c.id === selectedCategoryId)) selectedCategoryId = content.categories[0]?.id || "";
+  const cat = content.categories.find(c => c.id === selectedCategoryId);
+  if (!selectedItemId || !cat?.items?.some(i => i.id === selectedItemId)) selectedItemId = cat?.items?.[0]?.id || "";
 }
-
-function syncTopCardFromForm(){
-  if (!has("topCardSelect")) return;
-  ensureTopCards();
-  const i = Math.max(0, Math.min(2, Number($("topCardSelect").value) || 0));
-  state.topCards[i] = {
-    labels:{
-      en:$("topCardLabelEn").value.trim(),
-      ar:$("topCardLabelAr").value.trim(),
-      ku:$("topCardLabelKu").value.trim()
-    },
-    values:{
-      en:$("topCardValueEn").value.trim(),
-      ar:$("topCardValueAr").value.trim(),
-      ku:$("topCardValueKu").value.trim()
-    }
-  };
-  saveState();
-  renderTopCards();
-}
-
-function refreshCategorySelects(){
-  if (!has("categorySelect") || !has("itemCategorySelect")) return;
-  const optionHtml = state.categories.map(c => `<option value="${escapeAttr(c.id)}">${escapeHtml(defaultText(c.names, state.lang))}</option>`).join("");
-  $("categorySelect").innerHTML = optionHtml;
-  $("itemCategorySelect").innerHTML = optionHtml;
-}
-
-function populateCategoryForm(categoryId){
-  if (!has("categorySelect")) return;
-  const cat = state.categories.find(c => c.id === categoryId) || state.categories[0];
+function fillCategoryForm(){
+  ensureAdminSelections();
+  const cat = content.categories.find(c => c.id === selectedCategoryId);
   if (!cat) return;
   $("categorySelect").value = cat.id;
   $("categoryNameEn").value = cat.names.en || "";
   $("categoryNameAr").value = cat.names.ar || "";
   $("categoryNameKu").value = cat.names.ku || "";
-  $("categoryDesc").value = defaultText(cat.desc, "en");
+  $("categoryDescEn").value = cat.desc.en || "";
+  $("categoryDescAr").value = cat.desc.ar || "";
+  $("categoryDescKu").value = cat.desc.ku || "";
 }
-
-function populateItemSelect(categoryId){
-  if (!has("itemSelect")) return;
-  const cat = state.categories.find(c => c.id === categoryId);
+function fillItemForm(){
+  ensureAdminSelections();
+  const cat = content.categories.find(c => c.id === selectedCategoryId);
   if (!cat) return;
-  const options = (cat.items || []).map(i => `<option value="${escapeAttr(i.id)}">${escapeHtml(defaultText(i.names, state.lang))}</option>`).join("");
-  $("itemSelect").innerHTML = options || `<option value="">—</option>`;
-}
-
-function populateItemForm(categoryId, itemId){
-  if (!has("itemCategorySelect")) return;
-  const cat = state.categories.find(c => c.id === categoryId);
-  if (!cat) return;
-  $("itemCategorySelect").value = categoryId;
-  populateItemSelect(categoryId);
-
-  const item = (cat.items || []).find(i => i.id === itemId) || cat.items?.[0] || null;
+  $("itemCategorySelect").value = cat.id;
+  const item = cat.items.find(i => i.id === selectedItemId) || cat.items[0];
+  $("itemSelect").innerHTML = cat.items.map(i => `<option value="${escapeAttr(i.id)}">${escapeHtml(textFor(i.names, "en"))}</option>`).join("") || `<option value="">—</option>`;
+  $("itemSelect").value = item?.id || "";
   if (!item){
-    if (has("itemSelect")) $("itemSelect").value = "";
     $("itemNameEn").value = "";
     $("itemNameAr").value = "";
     $("itemNameKu").value = "";
-    $("itemNameAr").dataset.autoGenerated = "1";
-    $("itemNameKu").dataset.autoGenerated = "1";
-    $("itemDesc").value = "";
+    $("itemDescEn").value = "";
+    $("itemDescAr").value = "";
+    $("itemDescKu").value = "";
     $("priceSmall").value = "";
     $("priceLarge").value = "";
+    $("itemPreview").src = DEFAULT_LOGO;
     previewItemImage = "";
-    if (has("itemPreview")) $("itemPreview").src = DEFAULT_LOGO;
     return;
   }
-
-  adminItemId = item.id;
-  if (has("itemSelect")) $("itemSelect").value = item.id;
   $("itemNameEn").value = item.names.en || "";
   $("itemNameAr").value = item.names.ar || "";
   $("itemNameKu").value = item.names.ku || "";
-  const looksAutoAr = !item.names.ar || item.names.ar === autoTranslatePhrase(item.names.en || "", "ar");
-  const looksAutoKu = !item.names.ku || item.names.ku === autoTranslatePhrase(item.names.en || "", "ku");
-  $("itemNameAr").dataset.autoGenerated = looksAutoAr ? "1" : "0";
-  $("itemNameKu").dataset.autoGenerated = looksAutoKu ? "1" : "0";
-  $("itemDesc").value = defaultText(item.desc, "en");
-  $("priceSmall").value = item.prices?.small || "";
-  $("priceLarge").value = item.prices?.large || "";
+  $("itemDescEn").value = item.desc.en || "";
+  $("itemDescAr").value = item.desc.ar || "";
+  $("itemDescKu").value = item.desc.ku || "";
+  $("priceSmall").value = item.prices.small || "";
+  $("priceLarge").value = item.prices.large || "";
   previewItemImage = item.image || "";
-  if (has("itemPreview")) $("itemPreview").src = previewItemImage || makePlaceholderImage(item, 0);
+  $("itemPreview").src = previewItemImage || placeholderImage(item, 0);
 }
-
 function renderAdmin(){
-  if (!has("adminRoot")) return;
-  ensureTopCards();
-  renderTopCards();
-  if (has("brandLogoAdmin")) $("brandLogoAdmin").src = state.logo || DEFAULT_LOGO;
-  if (has("heroLogoAdmin")) $("heroLogoAdmin").src = state.logo || DEFAULT_LOGO;
-  if (has("logoPreview")) $("logoPreview").src = previewLogoImage || state.logo || DEFAULT_LOGO;
-  if (has("adminBackTitle")) $("adminBackTitle").textContent = currentUI().brand;
-  if (has("adminBackSub")) $("adminBackSub").textContent = currentUI().brandSmall;
-  if (has("adminHeroTitle")) $("adminHeroTitle").textContent = currentUI().adminTitle;
-  if (has("adminHeroSub")) $("adminHeroSub").textContent = currentUI().brandSmall;
-  if (has("adminHeroTag")) $("adminHeroTag").textContent = currentUI().since;
-
-  refreshCategorySelects();
-  populateTopCardForm(Number($("topCardSelect")?.value || 0));
-  populateCategoryForm(adminCategoryId || state.currentCategoryId);
-  populateItemForm(adminItemCategoryId || state.currentCategoryId, adminItemId);
-
-  if (has("exportBox")) $("exportBox").value = JSON.stringify(state, null, 2);
-  if (has("adminStateSummary")) {
-    $("adminStateSummary").textContent = `${state.categories.length} categories • ${state.categories.reduce((n,c)=>n+(c.items?.length||0),0)} items`;
+  ensureFirebaseUi();
+  if (!$("adminRoot")) return;
+  $("adminBrand").textContent = textFor(content.brand, "en", "1911 Coffee Shop");
+  $("adminStatus").textContent = `Firebase • ${new Date(content.updatedAt || Date.now()).toLocaleString()}`;
+  $("adminLogo").src = content.logo || DEFAULT_LOGO;
+  $("logoPreview").src = previewLogo || content.logo || DEFAULT_LOGO;
+  $("itemPreview").src = previewItemImage || $("itemPreview")?.src || DEFAULT_LOGO;
+  $("exportBox").value = JSON.stringify(content, null, 2);
+  $("categorySelect").innerHTML = content.categories.map(c => `<option value="${escapeAttr(c.id)}">${escapeHtml(textFor(c.names, "en"))}</option>`).join("");
+  $("itemCategorySelect").innerHTML = content.categories.map(c => `<option value="${escapeAttr(c.id)}">${escapeHtml(textFor(c.names, "en"))}</option>`).join("");
+  $("topCardSelect").innerHTML = content.topCards.map((_, idx) => `<option value="${idx}">Card ${idx + 1}</option>`).join("");
+  $("topCardSelect").value = $("topCardSelect").value || "0";
+  if ($("topCardSelect").value === "") $("topCardSelect").value = "0";
+  const topIndex = Number($("topCardSelect").value || 0);
+  $("topCardLabelEn").value = content.topCards[topIndex]?.labels?.en || "";
+  $("topCardLabelAr").value = content.topCards[topIndex]?.labels?.ar || "";
+  $("topCardLabelKu").value = content.topCards[topIndex]?.labels?.ku || "";
+  $("topCardValueEn").value = content.topCards[topIndex]?.values?.en || "";
+  $("topCardValueAr").value = content.topCards[topIndex]?.values?.ar || "";
+  $("topCardValueKu").value = content.topCards[topIndex]?.values?.ku || "";
+  fillCategoryForm();
+  fillItemForm();
+}
+function updateTopCardFromForm(){
+  const idx = Number($("topCardSelect").value || 0);
+  content.topCards[idx] = {
+    labels: { en: $("topCardLabelEn").value.trim(), ar: $("topCardLabelAr").value.trim(), ku: $("topCardLabelKu").value.trim() },
+    values: { en: $("topCardValueEn").value.trim(), ar: $("topCardValueAr").value.trim(), ku: $("topCardValueKu").value.trim() }
+  };
+  content.updatedAt = Date.now();
+  scheduleSave();
+}
+function saveLogo(){
+  if (!previewLogo) return;
+  content.logo = previewLogo;
+  content.updatedAt = Date.now();
+  previewLogo = "";
+  scheduleSave();
+}
+function resetLogo(){
+  content.logo = DEFAULT_LOGO;
+  content.updatedAt = Date.now();
+  previewLogo = "";
+  scheduleSave();
+}
+function saveCategory(){
+  ensureAdminSelections();
+  const cat = content.categories.find(c => c.id === selectedCategoryId);
+  if (!cat) return;
+  cat.names = { en: $("categoryNameEn").value.trim(), ar: $("categoryNameAr").value.trim(), ku: $("categoryNameKu").value.trim() };
+  cat.desc = { en: $("categoryDescEn").value.trim(), ar: $("categoryDescAr").value.trim(), ku: $("categoryDescKu").value.trim() };
+  content.updatedAt = Date.now();
+  scheduleSave();
+}
+function newCategory(){
+  const name = $("categoryNameEn").value.trim() || "New Category";
+  const cat = {
+    id: uid(),
+    names: { en: name, ar: autoTranslateText(name, "ar"), ku: autoTranslateText(name, "ku") },
+    desc: { en: "", ar: "", ku: "" },
+    items: []
+  };
+  content.categories.push(cat);
+  selectedCategoryId = cat.id;
+  selectedItemId = "";
+  content.updatedAt = Date.now();
+  scheduleSave();
+}
+function deleteCategory(){
+  ensureAdminSelections();
+  if (!selectedCategoryId) return;
+  if (!confirm("Delete this category?")) return;
+  content.categories = content.categories.filter(c => c.id !== selectedCategoryId);
+  selectedCategoryId = content.categories[0]?.id || "";
+  selectedItemId = "";
+  content.updatedAt = Date.now();
+  scheduleSave();
+}
+function saveItem(){
+  ensureAdminSelections();
+  const cat = content.categories.find(c => c.id === selectedCategoryId);
+  if (!cat) return;
+  let item = cat.items.find(i => i.id === selectedItemId);
+  if (!item){
+    item = { id: uid(), names:{en:"",ar:"",ku:""}, desc:{en:"",ar:"",ku:""}, prices:{small:"",large:""}, kind:"coffee", colors:["#2b160c","#7a4a25","#d7a55c"], image:"" };
+    cat.items.push(item);
+    selectedItemId = item.id;
   }
+  item.names = { en: $("itemNameEn").value.trim(), ar: $("itemNameAr").value.trim(), ku: $("itemNameKu").value.trim() };
+  item.desc = { en: $("itemDescEn").value.trim(), ar: $("itemDescAr").value.trim(), ku: $("itemDescKu").value.trim() };
+  item.prices = { small: $("priceSmall").value.trim(), large: $("priceLarge").value.trim() };
+  item.image = previewItemImage || item.image || "";
+  content.updatedAt = Date.now();
+  scheduleSave();
+}
+function newItem(){
+  ensureAdminSelections();
+  const cat = content.categories.find(c => c.id === selectedCategoryId);
+  if (!cat) return;
+  const name = $("itemNameEn").value.trim() || "New Item";
+  const item = {
+    id: uid(),
+    names: { en: name, ar: autoTranslateText(name, "ar"), ku: autoTranslateText(name, "ku") },
+    desc: { en: "", ar: "", ku: "" },
+    prices: { small:"", large:"" },
+    kind: "coffee",
+    colors: ["#2b160c","#7a4a25","#d7a55c"],
+    image: previewItemImage || ""
+  };
+  cat.items.push(item);
+  selectedItemId = item.id;
+  content.updatedAt = Date.now();
+  scheduleSave();
+}
+function deleteItem(){
+  ensureAdminSelections();
+  const cat = content.categories.find(c => c.id === selectedCategoryId);
+  if (!cat?.items?.length) return;
+  if (!confirm("Delete this item?")) return;
+  cat.items = cat.items.filter(i => i.id !== selectedItemId);
+  selectedItemId = cat.items[0]?.id || "";
+  content.updatedAt = Date.now();
+  scheduleSave();
+}
+function exportJSON(){ $("exportBox").value = JSON.stringify(content, null, 2); $("exportBox").focus(); $("exportBox").select(); }
+function resetDemo(){
+  if (!confirm("Reset back to the demo menu?")) return;
+  content = normalizeContent(null);
+  selectedCategoryId = content.categories[0]?.id || "";
+  selectedItemId = content.categories[0]?.items?.[0]?.id || "";
+  previewLogo = "";
+  previewItemImage = "";
+  content.updatedAt = Date.now();
+  scheduleSave();
 }
 
-function renderAll(){
-  const tr = currentUI();
-  if (has("langEN")) $("langEN").classList.toggle("active", state.lang === "en");
-  if (has("langAR")) $("langAR").classList.toggle("active", state.lang === "ar");
-  if (has("langKU")) $("langKU").classList.toggle("active", state.lang === "ku");
+function bindCommonEvents(){
+  document.querySelectorAll("[data-lang-btn]").forEach(btn => btn.addEventListener("click", () => setLanguage(btn.dataset.langBtn)));
+  document.querySelectorAll("[data-section-btn]").forEach(btn => btn.addEventListener("click", () => chooseSection(btn.dataset.sectionBtn)));
+  const openSectionBtn = $("openSectionBtn");
+  if (openSectionBtn) openSectionBtn.addEventListener("click", openSectionChooser);
+  const closeSectionBtn = $("closeSectionBtn");
+  if (closeSectionBtn) closeSectionBtn.addEventListener("click", closeSectionChooser);
+  const sectionBackdrop = $("sectionBackdrop");
+  if (sectionBackdrop) sectionBackdrop.addEventListener("click", closeSectionChooser);
+  const sectionModal = $("sectionModal");
+  if (sectionModal) sectionModal.addEventListener("click", (e) => { if (e.target === sectionModal) closeSectionChooser(); });
+  const closePreviewBtn = $("closePreview");
+  if (closePreviewBtn) closePreviewBtn.addEventListener("click", closePreview);
+  const previewBackdrop = $("previewBackdrop");
+  if (previewBackdrop) previewBackdrop.addEventListener("click", closePreview);
+  const previewModal = $("previewModal");
+  if (previewModal) previewModal.addEventListener("click", (e) => { if (e.target === previewModal) closePreview(); });
 
-  if (has("app")) $("app").setAttribute("data-lang", state.lang);
-  if (has("customerRoot")) renderCustomerPanels();
-  if (has("adminRoot")) renderAdmin();
-  if (has("mainActionBtn")) $("mainActionBtn").textContent = state.activeSection === "landing" ? tr.openMenu : tr.backToMenu;
-  if (has("backToLandingBtn")) $("backToLandingBtn").textContent = tr.backToSections || "Back to sections";
-}
+  const searchInput = $("searchInput");
+  if (searchInput) searchInput.addEventListener("input", (e) => { ui.search = e.target.value; saveUi(); renderMenu(); });
 
-function setCategory(categoryId){
-  state.currentCategoryId = categoryId;
-  saveState();
-  renderAll();
-}
+  const switchBtn = $("switchSectionBtn");
+  if (switchBtn) switchBtn.addEventListener("click", openSectionChooser);
 
-function showLandingSections(){
-  state.activeSection = "landing";
-  saveState();
-  renderAll();
-  if (has("landingArea")) setTimeout(() => $("landingArea").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
-}
+  const adminBack = $("adminBackBtn");
+  if (adminBack) adminBack.addEventListener("click", () => location.href = "index.html");
 
-function showCafeMenu(){
-  state.activeSection = "cafe";
-  saveState();
-  renderAll();
-  if (has("menuArea")) setTimeout(() => $("menuArea").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
-}
+  const logoInput = $("logoInput");
+  if (logoInput) logoInput.addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    previewLogo = await fileToDataUrl(file);
+    const preview = $("logoPreview");
+    if (preview) preview.src = previewLogo;
+  });
 
-function toggleMenuView(){
-  if (state.activeSection === "landing") showCafeMenu();
-  else showLandingSections();
-}
+  const itemImageInput = $("itemImageInput");
+  if (itemImageInput) itemImageInput.addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    previewItemImage = await fileToDataUrl(file);
+    const preview = $("itemPreview");
+    if (preview) preview.src = previewItemImage;
+  });
 
-function openAdminPageMaybe(){
-  // no-op: admin page is separate now
-}
+  const categorySelect = $("categorySelect");
+  if (categorySelect) categorySelect.addEventListener("change", (e) => { selectedCategoryId = e.target.value; selectedItemId = ""; fillCategoryForm(); fillItemForm(); });
+  const itemCategorySelect = $("itemCategorySelect");
+  if (itemCategorySelect) itemCategorySelect.addEventListener("change", (e) => { selectedCategoryId = e.target.value; selectedItemId = ""; fillCategoryForm(); fillItemForm(); });
+  const itemSelect = $("itemSelect");
+  if (itemSelect) itemSelect.addEventListener("change", (e) => { selectedItemId = e.target.value; fillItemForm(); });
 
-function bindEvents(){
-  if (has("langEN")) $("langEN").addEventListener("click", () => setLang("en"));
-  if (has("langAR")) $("langAR").addEventListener("click", () => setLang("ar"));
-  if (has("langKU")) $("langKU").addEventListener("click", () => setLang("ku"));
+  const topCardSelect = $("topCardSelect");
+  if (topCardSelect) topCardSelect.addEventListener("change", () => renderAdmin());
 
-  if (has("searchInput")) $("searchInput").addEventListener("input", () => renderItems());
-
-  if (has("backToLandingBtn")) $("backToLandingBtn").addEventListener("click", showLandingSections);
-  if (has("mainActionBtn")) $("mainActionBtn").addEventListener("click", toggleMenuView);
-
-  if (has("previewBackdrop")) $("previewBackdrop").addEventListener("click", closePreview);
-  if (has("closePreview")) $("closePreview").addEventListener("click", closePreview);
-  if (has("previewModal")) {
-    $("previewModal").addEventListener("click", (e) => {
-      if (e.target === $("previewModal")) closePreview();
-    });
-  }
-
-  // Admin bindings (only if elements exist)
-  if (has("topCardSelect")){
-    $("topCardSelect").addEventListener("change", (e) => populateTopCardForm(e.target.value));
-  }
   ["topCardLabelEn","topCardLabelAr","topCardLabelKu","topCardValueEn","topCardValueAr","topCardValueKu"].forEach(id => {
-    if (has(id)) $(id).addEventListener("input", syncTopCardFromForm);
+    const el = $(id);
+    if (el) el.addEventListener("input", updateTopCardFromForm);
   });
 
-  if (has("itemNameEn")) $("itemNameEn").addEventListener("input", () => {
-    const en = $("itemNameEn").value.trim();
-    if (!en) return;
-    if ($("itemNameAr") && ($("itemNameAr").dataset.autoGenerated !== "0" || !$("itemNameAr").value.trim())) {
-      $("itemNameAr").value = autoTranslatePhrase(en, "ar");
-      $("itemNameAr").dataset.autoGenerated = "1";
-    }
-    if ($("itemNameKu") && ($("itemNameKu").dataset.autoGenerated !== "0" || !$("itemNameKu").value.trim())) {
-      $("itemNameKu").value = autoTranslatePhrase(en, "ku");
-      $("itemNameKu").dataset.autoGenerated = "1";
-    }
-  });
-  ["itemNameAr","itemNameKu"].forEach(id => {
-    if (has(id)) $(id).addEventListener("input", () => { $(id).dataset.autoGenerated = "0"; });
-  });
-
-  if (has("categorySelect")) $("categorySelect").addEventListener("change", () => {
-    adminCategoryId = $("categorySelect").value;
-    populateCategoryForm(adminCategoryId);
-  });
-  if (has("itemCategorySelect")) $("itemCategorySelect").addEventListener("change", () => {
-    adminItemCategoryId = $("itemCategorySelect").value;
-    populateItemForm(adminItemCategoryId, "");
-  });
-  if (has("itemSelect")) $("itemSelect").addEventListener("change", () => {
-    adminItemId = $("itemSelect").value;
-    populateItemForm(adminItemCategoryId, adminItemId);
-  });
-
-  if (has("saveLogoBtn")) $("saveLogoBtn").addEventListener("click", () => {
-    if (previewLogoImage){
-      state.logo = previewLogoImage;
-      previewLogoImage = "";
-    }
-    saveState();
-    renderAll();
-    populateTopCardForm(Number($("topCardSelect")?.value || 0));
-  });
-  if (has("resetLogoBtn")) $("resetLogoBtn").addEventListener("click", () => {
-    state.logo = DEFAULT_LOGO;
-    previewLogoImage = "";
-    saveState();
-    renderAll();
-    populateTopCardForm(Number($("topCardSelect")?.value || 0));
-  });
-
-  if (has("saveCategoryBtn")) $("saveCategoryBtn").addEventListener("click", () => {
-    const id = adminCategoryId || state.currentCategoryId || uid();
-    const cat = {
-      id,
-      names: {
-        en: $("categoryNameEn").value.trim() || "New Category",
-        ar: $("categoryNameAr").value.trim() || $("categoryNameEn").value.trim() || "فئة جديدة",
-        ku: $("categoryNameKu").value.trim() || $("categoryNameEn").value.trim() || "پۆلی نوێ"
-      },
-      desc: {
-        en: $("categoryDesc").value.trim(),
-        ar: $("categoryDesc").value.trim(),
-        ku: $("categoryDesc").value.trim()
-      },
-      items: []
-    };
-    const idx = state.categories.findIndex(c => c.id === id);
-    if (idx >= 0){
-      cat.items = state.categories[idx].items || [];
-      state.categories[idx] = cat;
-    } else {
-      state.categories.push(cat);
-    }
-    state.currentCategoryId = id;
-    adminCategoryId = id;
-    saveState();
-    renderAll();
-  });
-  if (has("newCategoryBtn")) $("newCategoryBtn").addEventListener("click", () => {
-    if (!confirm("Create a new category?")) return;
-    const id = uid();
-    state.categories.push({
-      id,
-      names: { en: "New Category", ar: "فئة جديدة", ku: "پۆلی نوێ" },
-      desc: { en: "", ar: "", ku: "" },
-      items: []
+  ["categoryNameEn","categoryNameAr","categoryNameKu","categoryDescEn","categoryDescAr","categoryDescKu",
+   "itemNameEn","itemNameAr","itemNameKu","itemDescEn","itemDescAr","itemDescKu","priceSmall","priceLarge"].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener("input", () => { 
+      if (id === "itemNameEn") {
+        const en = $("itemNameEn").value.trim();
+        if ($("itemNameAr").value.trim() === "" || $("itemNameAr").dataset.autoGenerated !== "0") {
+          $("itemNameAr").value = autoTranslateText(en, "ar");
+          $("itemNameAr").dataset.autoGenerated = "1";
+        }
+        if ($("itemNameKu").value.trim() === "" || $("itemNameKu").dataset.autoGenerated !== "0") {
+          $("itemNameKu").value = autoTranslateText(en, "ku");
+          $("itemNameKu").dataset.autoGenerated = "1";
+        }
+      }
     });
-    adminCategoryId = id;
-    state.currentCategoryId = id;
-    saveState();
-    renderAll();
-  });
-  if (has("deleteCategoryBtn")) $("deleteCategoryBtn").addEventListener("click", () => {
-    if (!confirm("Delete this category and all its items?")) return;
-    if (state.categories.length <= 1){
-      alert("You need at least one category.");
-      return;
-    }
-    const id = adminCategoryId || state.currentCategoryId;
-    state.categories = state.categories.filter(c => c.id !== id);
-    adminCategoryId = state.categories[0].id;
-    state.currentCategoryId = state.categories[0].id;
-    saveState();
-    renderAll();
   });
 
-  if (has("saveItemBtn")) $("saveItemBtn").addEventListener("click", () => {
-    const catId = adminItemCategoryId || state.currentCategoryId;
-    const cat = state.categories.find(c => c.id === catId);
-    if (!cat) return;
-    const item = {
-      id: adminItemId || uid(),
-      names: {
-        en: $("itemNameEn").value.trim() || "New Item",
-        ar: $("itemNameAr").value.trim() || $("itemNameEn").value.trim() || "عنصر جديد",
-        ku: $("itemNameKu").value.trim() || $("itemNameEn").value.trim() || "تکەی نوێ"
-      },
-      desc: {
-        en: $("itemDesc").value.trim(),
-        ar: $("itemDesc").value.trim(),
-        ku: $("itemDesc").value.trim()
-      },
-      prices: {
-        small: $("priceSmall").value.trim(),
-        large: $("priceLarge").value.trim()
-      },
-      kind: "coffee",
-      colors: ["#2b160c","#7a4a25","#d7a55c"],
-      image: previewItemImage || ""
-    };
-    const idx = cat.items.findIndex(i => i.id === item.id);
-    if (idx >= 0) cat.items[idx] = item;
-    else cat.items.unshift(item);
-    adminItemId = item.id;
-    state.currentCategoryId = cat.id;
-    saveState();
-    renderAll();
-  });
-  if (has("newItemBtn")) $("newItemBtn").addEventListener("click", () => {
-    if (!confirm("Create a new item?")) return;
-    const catId = adminItemCategoryId || state.currentCategoryId;
-    const cat = state.categories.find(c => c.id === catId);
-    if (!cat) return;
-    const item = {
-      id: uid(),
-      names: { en: "", ar: "", ku: "" },
-      desc: { en: "", ar: "", ku: "" },
-      prices: { small: "", large: "" },
-      kind: "coffee",
-      colors: ["#2b160c","#7a4a25","#d7a55c"],
-      image: ""
-    };
-    cat.items.unshift(item);
-    adminItemCategoryId = cat.id;
-    adminItemId = item.id;
-    saveState();
-    renderAll();
-    populateItemForm(cat.id, item.id);
-  });
-  if (has("deleteItemBtn")) $("deleteItemBtn").addEventListener("click", () => {
-    if (!confirm("Delete this item?")) return;
-    const catId = adminItemCategoryId || state.currentCategoryId;
-    const cat = state.categories.find(c => c.id === catId);
-    if (!cat || !cat.items.length) return;
-    const id = adminItemId || cat.items[0].id;
-    cat.items = cat.items.filter(i => i.id !== id);
-    adminItemId = cat.items[0]?.id || "";
-    saveState();
-    renderAll();
-  });
-
-  if (has("exportBtn")) $("exportBtn").addEventListener("click", () => {
-    if (has("exportBox")) {
-      $("exportBox").value = JSON.stringify(state, null, 2);
-      $("exportBox").focus();
-      $("exportBox").select();
-    }
-  });
-  if (has("resetMenuBtn")) $("resetMenuBtn").addEventListener("click", () => {
-    if (!confirm("Reset the demo menu?")) return;
-    state = normalizeState(null);
-    saveState();
-    renderAll();
-  });
-
-  if (has("logoInput")) $("logoInput").addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      previewLogoImage = String(reader.result || "");
-      if (has("logoPreview")) $("logoPreview").src = previewLogoImage;
-      // Apply immediately so the logo is harder to miss on mobile browsers.
-      state.logo = previewLogoImage;
-      saveState();
-      renderAll();
-    };
-    reader.readAsDataURL(file);
-  });
-  if (has("itemImageInput")) $("itemImageInput").addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      previewItemImage = String(reader.result || "");
-      if (has("itemPreview")) $("itemPreview").src = previewItemImage;
-    };
-    reader.readAsDataURL(file);
-  });
+  const saveLogoBtn = $("saveLogoBtn"); if (saveLogoBtn) saveLogoBtn.addEventListener("click", saveLogo);
+  const resetLogoBtn = $("resetLogoBtn"); if (resetLogoBtn) resetLogoBtn.addEventListener("click", resetLogo);
+  const saveCategoryBtn = $("saveCategoryBtn"); if (saveCategoryBtn) saveCategoryBtn.addEventListener("click", saveCategory);
+  const newCategoryBtn = $("newCategoryBtn"); if (newCategoryBtn) newCategoryBtn.addEventListener("click", newCategory);
+  const deleteCategoryBtn = $("deleteCategoryBtn"); if (deleteCategoryBtn) deleteCategoryBtn.addEventListener("click", deleteCategory);
+  const saveItemBtn = $("saveItemBtn"); if (saveItemBtn) saveItemBtn.addEventListener("click", saveItem);
+  const newItemBtn = $("newItemBtn"); if (newItemBtn) newItemBtn.addEventListener("click", newItem);
+  const deleteItemBtn = $("deleteItemBtn"); if (deleteItemBtn) deleteItemBtn.addEventListener("click", deleteItem);
+  const exportBtn = $("exportBtn"); if (exportBtn) exportBtn.addEventListener("click", exportJSON);
+  const resetMenuBtn = $("resetMenuBtn"); if (resetMenuBtn) resetMenuBtn.addEventListener("click", resetDemo);
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closePreview();
+    if (e.key === "Escape") {
+      if ($("sectionModal")?.classList.contains("open")) closeSectionChooser();
+      if ($("previewModal")?.classList.contains("open")) closePreview();
+    }
   });
 }
 
-let state = null;
-let adminCategoryId = "";
-let adminItemCategoryId = "";
-let adminItemId = "";
-let previewLogoImage = "";
-let previewItemImage = "";
+async function init(){
+  content = normalizeContent(content);
+  ensureFirebaseUi();
+  bindCommonEvents();
 
-function init(){
-  loadState();
-  state.lang = ["en","ar","ku"].includes(state.lang) ? state.lang : "en";
-  state.currentCategoryId = state.currentCategoryId || state.categories[0].id;
-  ensureTopCards();
-  adminCategoryId = state.currentCategoryId;
-  adminItemCategoryId = state.currentCategoryId;
-  adminItemId = state.categories.find(c => c.id === state.currentCategoryId)?.items?.[0]?.id || "";
-  document.body.dataset.lang = state.lang;
-  bindEvents();
-  updateStaticText();
-  renderAll();
-  saveState();
+  // Render local cache immediately.
+  if (PAGE_MODE === "menu") renderMenuShell();
+  if (PAGE_MODE === "admin") renderAdmin();
+
+  await initFirebase();
+  isHydrated = true;
+  if (PAGE_MODE === "menu") renderMenuShell();
+  if (PAGE_MODE === "admin") renderAdmin();
+  if (PAGE_MODE === "admin") {
+    selectedCategoryId = content.categories[0]?.id || "";
+    selectedItemId = content.categories[0]?.items?.[0]?.id || "";
+    renderAdmin();
+  }
 }
-
 init();
-</script>
+  </script>
 </body>
 </html>
