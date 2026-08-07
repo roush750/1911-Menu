@@ -1925,8 +1925,8 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     function renderLauncherState(){
       const launcher = $("siteLauncher");
       const shell = $("app");
-      const ready = state.section === "cafe";
-      if (launcher) launcher.classList.toggle("hidden", ready);
+      const ready = PAGE_MODE === "admin" ? true : state.section === "cafe";
+      if (launcher) launcher.classList.toggle("hidden", PAGE_MODE === "admin" || ready);
       if (shell) shell.style.display = ready ? "block" : "none";
 
       const lang = state.lang;
@@ -1992,11 +1992,13 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
 
     function openBranchChooser(){
       state.section = null;
+      saveState();
       renderLauncherState();
     }
 
     function chooseBranch(branch){
       state.section = branch;
+      saveState();
       renderLauncherState();
       if (branch === "cafe") {
         render();
@@ -2442,9 +2444,12 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
         btn.addEventListener("click", () => chooseBranch(btn.dataset.branch));
       });
 
-      $("openAdminBtnFooter").addEventListener("click", () => {
-        location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
-      });
+      const footerAdminBtn = $("openAdminBtnFooter");
+      if (footerAdminBtn) {
+        footerAdminBtn.addEventListener("click", () => {
+          location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
+        });
+      }
       $("closeAdmin").addEventListener("click", closeAdmin);
       $("adminBackdrop").addEventListener("click", closeAdmin);
       $("adminModal").addEventListener("click", (e) => { if (e.target === adminModal) closeAdmin(); });
@@ -2534,13 +2539,19 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       await startFirebaseSync();
       setLanguage(state.lang);
       renderLauncherState();
-      $("siteLauncher")?.classList.add("hidden");
-      $("app").style.display = "block";
-      openAdmin();
+
+      if (PAGE_MODE === "admin") {
+        $("siteLauncher")?.classList.add("hidden");
+        $("app").style.display = "block";
+        openAdmin();
+      } else {
+        closeAdmin();
+      }
+
       clearCategoryAction();
       clearItemAction();
       populateAdmin();
-      if (state.section === "cafe") render();
+      if (PAGE_MODE !== "admin" && state.section === "cafe") render();
       saveState();
     }
 
