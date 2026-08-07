@@ -136,6 +136,11 @@
       flex-wrap:wrap;
       justify-content:flex-end;
     }
+    .lang-switch .btn{
+      padding:8px 10px;
+      font-size:.86rem;
+      line-height:1.1;
+    }
     .btn{
       appearance:none;
       border:1px solid rgba(213,171,83,.22);
@@ -938,7 +943,7 @@
 
     <footer class="footer">
       <div id="footerLeft"><strong>1911</strong> • Temporary location near Titanic Hotel</div>
-      <div id="footerRight">07734468886 <button class="btn" id="switchSectionBtn" type="button" style="margin-left:10px;padding:8px 12px;font-size:.9rem">Change section</button><button class="btn" id="openAdminBtnFooter" type="button" style="margin-left:8px;padding:8px 12px;font-size:.9rem">Admin</button></div>
+      <div id="footerRight">07734468886 <button class="btn" id="switchSectionBtn" type="button" style="margin-left:10px;padding:8px 12px;font-size:.9rem">Change section</button></div>
     </footer>
   </div>
 
@@ -1087,8 +1092,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
-
-    const STORAGE_KEY = "1911_menu_menu_v1";
 
     const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
@@ -1615,12 +1618,13 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "http
     const adminModal = $("adminModal");
 
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
-      apiKey: "PASTE_YOUR_API_KEY",
-      authDomain: "PASTE_YOUR_AUTH_DOMAIN",
-      projectId: "PASTE_YOUR_PROJECT_ID",
-      storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
-      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-      appId: "PASTE_YOUR_APP_ID"
+      apiKey: "AIzaSyB_m-t22EZJ7fShvRHdgPEhKYTOSzMpMYM",
+      authDomain: "menu-e4cef.firebaseapp.com",
+      projectId: "menu-e4cef",
+      storageBucket: "menu-e4cef.firebasestorage.app",
+      messagingSenderId: "686608343620",
+      appId: "1:686608343620:web:cbcf3c2c4e149caaee9211",
+      measurementId: "G-RDY676HQLB"
     };
 
     const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
@@ -1869,7 +1873,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       $("pill3Value").textContent = UI[lang].menuTypeValue;
       $("sectionHint").textContent = UI[lang].sectionHint;
       $("footerLeft").innerHTML = `<strong>1911</strong> • ${UI[lang].footerLeft}`;
-      $("footerRight").innerHTML = `${UI[lang].footerRight} <button class="btn" id="switchSectionBtn" type="button" style="margin-left:10px;padding:8px 12px;font-size:.9rem">Change section</button><button class="btn" id="openAdminBtnFooter" type="button" style="margin-left:8px;padding:8px 12px;font-size:.9rem">${PAGE_MODE === "admin" ? "Home" : "Admin"}</button>`;
+      $("footerRight").innerHTML = `${UI[lang].footerRight} <button class="btn" id="switchSectionBtn" type="button" style="margin-left:10px;padding:8px 12px;font-size:.9rem">Change section</button>`;
       const footerBtn = $("openAdminBtnFooter");
       if (footerBtn) footerBtn.addEventListener("click", () => {
         location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
@@ -1964,6 +1968,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
 
       document.title = state.section === "cafe" ? "1911 Coffee Shop Menu" : state.section === "fastfood" ? "1911 Fast Food" : state.section === "desserts" ? "1911 Deserts" : "1911 Group";
       const active = state.section || "cafe";
+      if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
       document.querySelectorAll(".launcher-card").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.branch === active);
         btn.classList.toggle("soon", btn.dataset.branch !== "cafe");
@@ -2102,6 +2107,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     function render(){
       $("brandLogo").src = state.logo || DEFAULT_LOGO;
       $("heroLogo").src = state.logo || DEFAULT_LOGO;
+      if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
       updateLangButtons();
       renderTopCards();
       renderCategories();
