@@ -1659,7 +1659,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
 
 async function startFirebaseSync(){
   if (!hasFirebaseConfig()){
-    console.warn("Firebase config is missing. The page will run locally until you paste the Firebase config.");
+    console.warn("Firebase config is missing.");
     return;
   }
 
@@ -1672,50 +1672,60 @@ async function startFirebaseSync(){
   firebaseReady = true;
   firebaseHydrated = false;
 
-  const applyRemoteSnapshot = (data) => {
-    remoteApplying = true;
-    try{
-      state = normalizeState(data);
-      browseCategoryId = browseCategoryId || state.currentCategoryId;
-      render();
-    }catch(err){
-      console.error("Failed to apply Firebase state:", err);
-    }finally{
-      remoteApplying = false;
-      firebaseHydrated = true;
-    }
-  };
-
-  onSnapshot(menuDocRef, async (snap) => {
-    if (remoteApplying) return;
+  // IMPORTANT: hydrate from Firebase BEFORE starting the realtime listener.
+  // This prevents the listener's first cached/default snapshot from replacing
+  // a change the admin just made on another device.
+  try{
+    const snap = await getDoc(menuDocRef);
 
     if (!snap.exists()){
       remoteApplying = true;
       try{
         await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
-        firebaseHydrated = true;
-      }catch(err){
-        console.error("Failed to bootstrap Firebase state:", err);
-      }finally{
+      } finally {
         remoteApplying = false;
       }
-      return;
+    } else {
+      remoteApplying = true;
+      try{
+        const previousLang = state.lang;
+        const previousSearch = state.search;
+        const previousSection = state.section;
+        const previousBrowse = browseCategoryId || state.currentCategoryId;
+        state = normalizeState(snap.data());
+        state.lang = previousLang || state.lang;
+        state.search = previousSearch || "";
+        state.section = previousSection ?? null;
+        browseCategoryId = previousBrowse || state.currentCategoryId;
+        render();
+      } finally {
+        remoteApplying = false;
+      }
     }
 
-    const previousLang = state.lang;
-    const previousSearch = state.search;
-    const previousSection = state.section;
-    const previousBrowse = browseCategoryId || state.currentCategoryId;
+    firebaseHydrated = true;
+  }catch(err){
+    console.error("Firebase initial load error:", err);
+    return;
+  }
+
+  // Only listen after the initial document has been loaded.
+  onSnapshot(menuDocRef, (snap) => {
+    if (remoteApplying || !firebaseHydrated || !snap.exists()) return;
 
     remoteApplying = true;
     try{
+      const previousLang = state.lang;
+      const previousSearch = state.search;
+      const previousSection = state.section;
+      const previousBrowse = browseCategoryId || state.currentCategoryId;
       state = normalizeState(snap.data());
       state.lang = previousLang || state.lang;
       state.search = previousSearch || "";
       state.section = previousSection ?? null;
       browseCategoryId = previousBrowse || state.currentCategoryId;
       render();
-      firebaseHydrated = true;
+      if (PAGE_MODE === "admin") populateAdmin();
     }catch(err){
       console.error("Failed to apply Firebase state:", err);
     }finally{
@@ -1724,30 +1734,39 @@ async function startFirebaseSync(){
   }, (err) => {
     console.error("Firebase listener error:", err);
   });
-
-  try{
-    const snap = await getDoc(menuDocRef);
-    if (!snap.exists()){
-      await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
-      firebaseHydrated = true;
-    } else {
-      applyRemoteSnapshot(snap.data());
-    }
-  }catch(err){
-    console.error("Firebase init error:", err);
-  }
 }
 
-function saveState(){
-      if (!firebaseReady || !firebaseHydrated || remoteApplying || !menuDocRef) return;
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(async () => {
-        try{
-          await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
-        }catch(err){
-          console.error("Failed to save state:", err);
-        }
-      }, 0);
+let saveInFlight = false;
+    let saveQueued = false;
+    let latestSaveSnapshot = null;
+
+    function saveState(){
+      if (!firebaseReady || !firebaseHydrated || !menuDocRef || remoteApplying) return;
+
+      // Capture the newest state immediately. A single queued writer prevents
+      // Firestore's realtime listener from racing an admin edit and restoring
+      // the previous menu on the phone.
+      latestSaveSnapshot = persistedStateSnapshot();
+      saveQueued = true;
+      runFirebaseSaveQueue();
+    }
+
+    async function runFirebaseSaveQueue(){
+      if (saveInFlight || !saveQueued || !menuDocRef) return;
+      saveInFlight = true;
+      saveQueued = false;
+
+      const snapshotToWrite = latestSaveSnapshot;
+      try{
+        remoteApplying = true;
+        await setDoc(menuDocRef, snapshotToWrite, { merge: true });
+      }catch(err){
+        console.error("Failed to save state to Firebase:", err);
+      }finally{
+        remoteApplying = false;
+        saveInFlight = false;
+        if (saveQueued) runFirebaseSaveQueue();
+      }
     }
 
     async function uploadFileToStorage(file, kind){
