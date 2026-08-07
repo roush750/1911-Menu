@@ -844,98 +844,7 @@ body::after{
     </div>
   </div>
 
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  onSnapshot,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-const FIREBASE_CONFIG = {
-  "apiKey": "AIzaSyB-mtJ22EJ7fShvRHdGPFbhKTYSOzMpMYM",
-  "authDomain": "menu-e4cef.firebaseapp.com",
-  "projectId": "menu-e4cef",
-  "storageBucket": "menu-e4cef.firebasestorage.app",
-  "messagingSenderId": "686608343620",
-  "appId": "1:686608343620:web:cbcf3c2c4e149caaee9211",
-  "measurementId": "G-RDY676HQLB"
-};
-const FIRESTORE_COLLECTION = "1911_menu";
-const FIRESTORE_DOCUMENT = "state";
-
-let firebaseApp = null;
-let firestoreDb = null;
-let firestoreDocRef = null;
-let firebaseReady = false;
-let firebaseInitPromise = null;
-let cloudWriteTimer = null;
-
-function saveLocalState(){
-  try{
-    localStorage.setItem(STORAGE_KEYS[0], JSON.stringify(state));
-  }catch(e){}
-}
-
-function scheduleCloudSave(){
-  if (!firebaseReady || !firestoreDocRef) return;
-  clearTimeout(cloudWriteTimer);
-  cloudWriteTimer = setTimeout(() => {
-    const payload = JSON.parse(JSON.stringify(state));
-    payload.updatedAt = Date.now();
-    setDoc(firestoreDocRef, payload, { merge: true }).catch((err) => {
-      console.warn("Firebase save failed:", err);
-    });
-  }, 350);
-}
-
-async function initFirebaseSync(){
-  if (firebaseInitPromise) return firebaseInitPromise;
-
-  firebaseInitPromise = (async () => {
-    try {
-      firebaseApp = initializeApp(FIREBASE_CONFIG);
-      firestoreDb = getFirestore(firebaseApp);
-      firestoreDocRef = doc(firestoreDb, FIRESTORE_COLLECTION, FIRESTORE_DOCUMENT);
-
-      onSnapshot(firestoreDocRef, (snapshot) => {
-        if (!snapshot.exists()) return;
-        const remote = normalizeState(snapshot.data());
-        state = remote;
-        ensureTopCards();
-        saveLocalState();
-        updateStaticText();
-        renderAll();
-      }, (err) => {
-        console.warn("Firebase snapshot failed:", err);
-      });
-
-      const existing = await getDoc(firestoreDocRef);
-      if (existing.exists()) {
-        state = normalizeState(existing.data());
-        ensureTopCards();
-        saveLocalState();
-      } else {
-        const seed = JSON.parse(JSON.stringify(state));
-        seed.updatedAt = Date.now();
-        await setDoc(firestoreDocRef, seed, { merge: true });
-      }
-
-      firebaseReady = true;
-      updateStaticText();
-      renderAll();
-    } catch (err) {
-      console.warn("Firebase init failed:", err);
-      firebaseReady = false;
-    }
-  })();
-
-  return firebaseInitPromise;
-}
-
+  <script>
 const STORAGE_KEYS = [
   "1911_menu_state_v7",
   "1911_menu_fixed_clean_v4_translation_cards_fixed",
@@ -1424,8 +1333,9 @@ function loadState(){
 }
 
 function saveState(){
-  saveLocalState();
-  scheduleCloudSave();
+  try{
+    localStorage.setItem(STORAGE_KEYS[0], JSON.stringify(state));
+  }catch(e){}
 }
 
 function setLang(lang){
@@ -1612,9 +1522,7 @@ function renderLanding(){
         alert(section === "fastfood" ? "Fast Food menu will be added later." : "Desserts menu will be added later.");
         return;
       }
-      state.activeSection = "cafe";
-      saveState();
-      renderAll();
+      showCafeMenu();
     });
   });
 }
@@ -1885,6 +1793,7 @@ function renderAll(){
   if (has("customerRoot")) renderCustomerPanels();
   if (has("adminRoot")) renderAdmin();
   if (has("mainActionBtn")) $("mainActionBtn").textContent = state.activeSection === "landing" ? tr.openMenu : tr.backToMenu;
+  if (has("backToLandingBtn")) $("backToLandingBtn").textContent = tr.backToSections || "Back to sections";
 }
 
 function setCategory(categoryId){
@@ -1893,11 +1802,23 @@ function setCategory(categoryId){
   renderAll();
 }
 
-function toggleMenuView(){
-  if (state.activeSection === "landing") state.activeSection = "cafe";
-  else state.activeSection = "landing";
+function showLandingSections(){
+  state.activeSection = "landing";
   saveState();
   renderAll();
+  if (has("landingArea")) setTimeout(() => $("landingArea").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+}
+
+function showCafeMenu(){
+  state.activeSection = "cafe";
+  saveState();
+  renderAll();
+  if (has("menuArea")) setTimeout(() => $("menuArea").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+}
+
+function toggleMenuView(){
+  if (state.activeSection === "landing") showCafeMenu();
+  else showLandingSections();
 }
 
 function openAdminPageMaybe(){
@@ -1911,16 +1832,8 @@ function bindEvents(){
 
   if (has("searchInput")) $("searchInput").addEventListener("input", () => renderItems());
 
-  if (has("backToLandingBtn")) $("backToLandingBtn").addEventListener("click", () => {
-    state.activeSection = "landing";
-    saveState();
-    renderAll();
-  });
-  if (has("mainActionBtn")) $("mainActionBtn").addEventListener("click", () => {
-    state.activeSection = state.activeSection === "landing" ? "cafe" : "landing";
-    saveState();
-    renderAll();
-  });
+  if (has("backToLandingBtn")) $("backToLandingBtn").addEventListener("click", showLandingSections);
+  if (has("mainActionBtn")) $("mainActionBtn").addEventListener("click", toggleMenuView);
 
   if (has("previewBackdrop")) $("previewBackdrop").addEventListener("click", closePreview);
   if (has("closePreview")) $("closePreview").addEventListener("click", closePreview);
@@ -1971,16 +1884,17 @@ function bindEvents(){
     if (previewLogoImage){
       state.logo = previewLogoImage;
       previewLogoImage = "";
-      saveState();
-      renderAll();
-      populateTopCardForm(Number($("topCardSelect")?.value || 0));
     }
+    saveState();
+    renderAll();
+    populateTopCardForm(Number($("topCardSelect")?.value || 0));
   });
   if (has("resetLogoBtn")) $("resetLogoBtn").addEventListener("click", () => {
     state.logo = DEFAULT_LOGO;
     previewLogoImage = "";
     saveState();
     renderAll();
+    populateTopCardForm(Number($("topCardSelect")?.value || 0));
   });
 
   if (has("saveCategoryBtn")) $("saveCategoryBtn").addEventListener("click", () => {
@@ -2125,6 +2039,10 @@ function bindEvents(){
     reader.onload = () => {
       previewLogoImage = String(reader.result || "");
       if (has("logoPreview")) $("logoPreview").src = previewLogoImage;
+      // Apply immediately so the logo is harder to miss on mobile browsers.
+      state.logo = previewLogoImage;
+      saveState();
+      renderAll();
     };
     reader.readAsDataURL(file);
   });
@@ -2163,7 +2081,7 @@ function init(){
   bindEvents();
   updateStaticText();
   renderAll();
-  initFirebaseSync();
+  saveState();
 }
 
 init();
