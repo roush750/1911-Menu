@@ -1636,6 +1636,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     let storage = null;
     let menuDocRef = null;
     let firebaseReady = false;
+    let firebaseHydrated = false;
     let remoteApplying = false;
     let saveTimer = null;
     let browseCategoryId = "";
@@ -1656,69 +1657,89 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       return snapshot;
     }
 
-    async function startFirebaseSync(){
-      if (!hasFirebaseConfig()){
-        console.warn("Firebase config is missing. The page will run locally until you paste the Firebase config.");
-        return;
-      }
+async function startFirebaseSync(){
+  if (!hasFirebaseConfig()){
+    console.warn("Firebase config is missing. The page will run locally until you paste the Firebase config.");
+    return;
+  }
 
-      if (fbApp) return;
+  if (fbApp) return;
 
-      fbApp = initializeApp(FIREBASE_CONFIG);
-      db = getFirestore(fbApp);
-      storage = getStorage(fbApp);
-      menuDocRef = doc(db, FIREBASE_DOC_PATH[0], FIREBASE_DOC_PATH[1]);
-      firebaseReady = true;
+  fbApp = initializeApp(FIREBASE_CONFIG);
+  db = getFirestore(fbApp);
+  storage = getStorage(fbApp);
+  menuDocRef = doc(db, FIREBASE_DOC_PATH[0], FIREBASE_DOC_PATH[1]);
+  firebaseReady = true;
+  firebaseHydrated = false;
 
-      onSnapshot(menuDocRef, async (snap) => {
-        if (remoteApplying) return;
+  const applyRemoteSnapshot = (data) => {
+    remoteApplying = true;
+    try{
+      state = normalizeState(data);
+      browseCategoryId = browseCategoryId || state.currentCategoryId;
+      render();
+    }catch(err){
+      console.error("Failed to apply Firebase state:", err);
+    }finally{
+      remoteApplying = false;
+      firebaseHydrated = true;
+    }
+  };
 
-        if (!snap.exists()){
-          remoteApplying = true;
-          try{
-            await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
-          }catch(err){
-            console.error("Failed to bootstrap Firebase state:", err);
-          }finally{
-            remoteApplying = false;
-          }
-          return;
-        }
+  onSnapshot(menuDocRef, async (snap) => {
+    if (remoteApplying) return;
 
-        const previousLang = state.lang;
-        const previousSearch = state.search;
-        const previousSection = state.section;
-        const previousBrowse = browseCategoryId || state.currentCategoryId;
-
-        remoteApplying = true;
-        try{
-          state = normalizeState(snap.data());
-          state.lang = previousLang || state.lang;
-          state.search = previousSearch || "";
-          state.section = previousSection ?? null;
-          browseCategoryId = previousBrowse || state.currentCategoryId;
-          render();
-        }catch(err){
-          console.error("Failed to apply Firebase state:", err);
-        }finally{
-          remoteApplying = false;
-        }
-      }, (err) => {
-        console.error("Firebase listener error:", err);
-      });
-
+    if (!snap.exists()){
+      remoteApplying = true;
       try{
-        const snap = await getDoc(menuDocRef);
-        if (!snap.exists()){
-          await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
-        }
+        await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
+        firebaseHydrated = true;
       }catch(err){
-        console.error("Firebase init error:", err);
+        console.error("Failed to bootstrap Firebase state:", err);
+      }finally{
+        remoteApplying = false;
       }
+      return;
     }
 
-    function saveState(){
-      if (!firebaseReady || remoteApplying || !menuDocRef) return;
+    const previousLang = state.lang;
+    const previousSearch = state.search;
+    const previousSection = state.section;
+    const previousBrowse = browseCategoryId || state.currentCategoryId;
+
+    remoteApplying = true;
+    try{
+      state = normalizeState(snap.data());
+      state.lang = previousLang || state.lang;
+      state.search = previousSearch || "";
+      state.section = previousSection ?? null;
+      browseCategoryId = previousBrowse || state.currentCategoryId;
+      render();
+      firebaseHydrated = true;
+    }catch(err){
+      console.error("Failed to apply Firebase state:", err);
+    }finally{
+      remoteApplying = false;
+    }
+  }, (err) => {
+    console.error("Firebase listener error:", err);
+  });
+
+  try{
+    const snap = await getDoc(menuDocRef);
+    if (!snap.exists()){
+      await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
+      firebaseHydrated = true;
+    } else {
+      applyRemoteSnapshot(snap.data());
+    }
+  }catch(err){
+    console.error("Firebase init error:", err);
+  }
+}
+
+function saveState(){
+      if (!firebaseReady || !firebaseHydrated || remoteApplying || !menuDocRef) return;
       clearTimeout(saveTimer);
       saveTimer = setTimeout(async () => {
         try{
@@ -1726,7 +1747,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
         }catch(err){
           console.error("Failed to save state:", err);
         }
-      }, 260);
+      }, 0);
     }
 
     async function uploadFileToStorage(file, kind){
@@ -1915,7 +1936,6 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       updateLangButtons();
       renderLauncherState();
       populateAdmin();
-      saveState();
     }
 
     function updateLangButtons(){
@@ -2552,7 +2572,6 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       clearItemAction();
       populateAdmin();
       if (PAGE_MODE !== "admin" && state.section === "cafe") render();
-      saveState();
     }
 
     init();
