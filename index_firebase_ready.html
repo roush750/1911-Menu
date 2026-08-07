@@ -1,0 +1,2172 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>1911 Coffee Shop Menu</title>
+  <meta name="theme-color" content="#120c08" />
+  <style>
+:root{
+  --bg:#120c08;
+  --bg2:#1a120b;
+  --panel:rgba(21,16,12,.86);
+  --panel2:rgba(12,10,8,.94);
+  --text:#f8eee0;
+  --muted:rgba(248,238,224,.72);
+  --gold:#d5ab53;
+  --gold2:#f1d58d;
+  --line:rgba(213,171,83,.18);
+  --shadow:0 18px 54px rgba(0,0,0,.38);
+  --radius:28px;
+  --max:1200px;
+}
+*{box-sizing:border-box}
+html{
+  scroll-behavior:smooth;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(213,171,83,.18), transparent 28%),
+    radial-gradient(circle at 10% 18%, rgba(255,255,255,.06), transparent 16%),
+    linear-gradient(180deg, #090705 0%, #120c08 42%, #0b0a09 100%);
+}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 25% 14%, rgba(213,171,83,.12), transparent 16%),
+    radial-gradient(circle at 80% 15%, rgba(241,213,141,.06), transparent 18%),
+    linear-gradient(180deg, #090705 0%, #120c08 40%, #0b0a09 100%);
+  overflow-x:hidden;
+}
+body::before, body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+body::before{
+  background:
+    radial-gradient(circle at 18% 18%, rgba(213,171,83,.16), transparent 12%),
+    radial-gradient(circle at 78% 20%, rgba(241,213,141,.08), transparent 12%),
+    radial-gradient(circle at 22% 80%, rgba(255,255,255,.05), transparent 12%),
+    radial-gradient(circle at 80% 76%, rgba(213,171,83,.10), transparent 14%);
+  filter:blur(22px);
+  animation: drift 16s ease-in-out infinite alternate;
+  opacity:.92;
+}
+body::after{
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size:28px 28px;
+  opacity:.14;
+  mix-blend-mode:screen;
+}
+@keyframes drift{
+  from{transform:translate3d(-8px,-12px,0) scale(1)}
+  to{transform:translate3d(8px,10px,0) scale(1.02)}
+}
+.shell{
+  position:relative;
+  z-index:1;
+  width:min(var(--max), calc(100% - 16px));
+  margin:0 auto;
+  padding:10px 0 24px;
+}
+.topbar{
+  position:sticky;
+  top:8px;
+  z-index:30;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border:1px solid rgba(213,171,83,.16);
+  border-radius:999px;
+  background:rgba(10,8,7,.76);
+  backdrop-filter: blur(16px);
+  box-shadow:var(--shadow);
+  margin-bottom:14px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.brand-logo{
+  width:42px;height:42px;border-radius:50%;
+  object-fit:contain;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.18), transparent 28%),
+    linear-gradient(180deg, rgba(213,171,83,.18), rgba(0,0,0,.25));
+  box-shadow:0 0 0 1px rgba(213,171,83,.25), 0 0 0 4px rgba(213,171,83,.08);
+  flex:0 0 auto;
+  padding:2px;
+}
+.brand-text{min-width:0}
+.brand-text strong{
+  display:block;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:.98rem;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.brand-text span{
+  display:block;
+  font-size:.78rem;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.lang-switch{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.btn{
+  appearance:none;
+  border:1px solid rgba(213,171,83,.22);
+  background:linear-gradient(180deg, rgba(34,26,19,.95), rgba(17,13,10,.95));
+  color:var(--text);
+  padding:10px 14px;
+  border-radius:999px;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  box-shadow:0 10px 26px rgba(0,0,0,.28);
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn:hover{transform:translateY(-1px);border-color:rgba(213,171,83,.42)}
+.btn.active{
+  color:#170f08;
+  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(178,126,30,.98));
+  border-color:rgba(255,240,193,.58);
+}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:34px;
+  border:1px solid rgba(213,171,83,.16);
+  background:
+    radial-gradient(circle at top, rgba(213,171,83,.20), transparent 30%),
+    linear-gradient(180deg, rgba(29,20,12,.88), rgba(11,9,8,.96));
+  box-shadow:var(--shadow);
+  padding:26px 16px 20px;
+  text-align:center;
+  margin-bottom:14px;
+}
+.hero::before,.hero::after{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+}
+.hero::before{
+  inset:auto -20% -44% -20%;
+  height:220px;
+  background:radial-gradient(circle, rgba(213,171,83,.14), transparent 60%);
+  filter:blur(10px);
+  animation:steam 8s ease-in-out infinite alternate;
+}
+.hero::after{
+  inset:-40% -30% auto auto;
+  width:320px;height:320px;
+  background:radial-gradient(circle, rgba(241,213,141,.08), transparent 64%);
+}
+@keyframes steam{
+  from{transform:translateY(0) scale(1);opacity:.72}
+  to{transform:translateY(-14px) scale(1.04);opacity:1}
+}
+.logo-wrap{
+  width:148px;height:148px;
+  margin:0 auto 12px;
+  border-radius:50%;
+  padding:10px;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,.18), transparent 26%),
+    linear-gradient(145deg, rgba(241,213,141,.36), rgba(213,171,83,.08) 42%, rgba(0,0,0,.6) 100%);
+  box-shadow:0 0 0 1px rgba(213,171,83,.28), 0 18px 45px rgba(0,0,0,.45);
+  animation:floaty 6s ease-in-out infinite;
+}
+.logo-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  border-radius:50%;
+  background:rgba(0,0,0,.22);
+}
+@keyframes floaty{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-7px) rotate(.9deg)}
+}
+.title{
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(2rem, 5vw, 4.6rem);
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  text-shadow:0 2px 0 rgba(0,0,0,.55);
+}
+.sub{
+  margin-top:6px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-size:clamp(.92rem, 2vw, 1.05rem);
+}
+.tagline{
+  margin-top:8px;
+  color:var(--gold2);
+  font-style:italic;
+  font-size:1rem;
+  letter-spacing:.05em;
+}
+.divider{
+  width:min(250px, 82%);
+  height:1px;
+  margin:18px auto 0;
+  background:linear-gradient(90deg, transparent, rgba(213,171,83,.92), transparent);
+  position:relative;
+}
+.divider::before,.divider::after{
+  content:"✦";
+  position:absolute;
+  top:-11px;
+  color:rgba(241,213,141,.9);
+  font-size:.9rem;
+}
+.divider::before{left:0}
+.divider::after{right:0}
+
+.meta-row{
+  display:grid;
+  gap:12px;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  margin-bottom:14px;
+}
+.meta{
+  background:linear-gradient(180deg, rgba(25,20,16,.95), rgba(12,10,8,.94));
+  border:1px solid rgba(213,171,83,.15);
+  box-shadow:var(--shadow);
+  border-radius:18px;
+  padding:12px 14px;
+  min-height:70px;
+}
+.meta span{
+  display:block;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:.78rem;
+}
+.meta strong{
+  display:block;
+  margin-top:5px;
+  font-size:1.03rem;
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.search{
+  flex:1 1 280px;
+  border-radius:999px;
+  border:1px solid rgba(213,171,83,.16);
+  background:rgba(0,0,0,.22);
+  color:var(--text);
+  padding:12px 16px;
+  font:inherit;
+  outline:none;
+  min-height:46px;
+}
+.search::placeholder{color:rgba(248,238,224,.48)}
+
+.landing{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:14px;
+}
+.section-card{
+  border-radius:24px;
+  padding:18px;
+  border:1px solid rgba(213,171,83,.16);
+  background:
+    radial-gradient(circle at top, rgba(213,171,83,.12), transparent 35%),
+    linear-gradient(180deg, rgba(24,18,13,.95), rgba(10,8,7,.97));
+  color:var(--text);
+  box-shadow:var(--shadow);
+  text-align:left;
+  cursor:pointer;
+  transition:transform .16s ease, border-color .16s ease, background .16s ease;
+  position:relative;
+  overflow:hidden;
+}
+.section-card:hover{transform:translateY(-2px);border-color:rgba(213,171,83,.38)}
+.section-card.active{
+  border-color:rgba(241,213,141,.62);
+  background:
+    radial-gradient(circle at top, rgba(213,171,83,.20), transparent 35%),
+    linear-gradient(180deg, rgba(47,34,17,.98), rgba(15,12,10,.97));
+}
+.section-card .small{
+  display:block;
+  color:var(--gold2);
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  font-size:.78rem;
+}
+.section-card h2{
+  margin:6px 0 4px;
+  font-family:Georgia, serif;
+  font-size:clamp(1.15rem, 2.7vw, 1.8rem);
+  line-height:1.05;
+}
+.section-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:.94rem;
+  max-width:40ch;
+}
+.section-card::after{
+  content:"";
+  position:absolute;
+  inset:auto -14% -46% auto;
+  width:180px;height:180px;
+  background:radial-gradient(circle, rgba(213,171,83,.16), transparent 65%);
+  border-radius:50%;
+  filter:blur(4px);
+}
+.section-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.panel{
+  position:relative;
+  overflow:hidden;
+  border-radius:34px;
+  padding:18px;
+  border:1px solid rgba(213,171,83,.14);
+  background:
+    radial-gradient(circle at top, rgba(213,171,83,.08), transparent 30%),
+    linear-gradient(180deg, rgba(17,13,11,.96), rgba(9,8,7,.98));
+  box-shadow:var(--shadow);
+}
+.panel-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+  position:relative;
+  z-index:1;
+}
+.panel-head h3{
+  margin:0;
+  font-family:Georgia, serif;
+  font-size:clamp(1.45rem, 3.8vw, 2.2rem);
+  letter-spacing:.04em;
+}
+.panel-head p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+  max-width:56ch;
+  font-size:.96rem;
+}
+.hint{
+  color:var(--muted);
+  font-size:.88rem;
+  line-height:1.45;
+  margin-top:2px;
+}
+
+.category-bar{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:4px 2px 12px;
+  margin-bottom:8px;
+  scrollbar-width:none;
+}
+.category-bar::-webkit-scrollbar{display:none}
+.category-chip{
+  flex:0 0 auto;
+  border-radius:999px;
+  padding:11px 15px;
+  border:1px solid rgba(213,171,83,.16);
+  background:linear-gradient(180deg, rgba(24,18,13,.96), rgba(10,8,7,.98));
+  color:var(--text);
+  font-weight:700;
+  cursor:pointer;
+  min-width:fit-content;
+  box-shadow:0 10px 26px rgba(0,0,0,.24);
+  transition:transform .14s ease, border-color .14s ease, background .14s ease, color .14s ease;
+}
+.category-chip:hover{transform:translateY(-1px)}
+.category-chip.active{
+  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
+  color:#170f08;
+}
+
+.items{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:12px;
+}
+.card{
+  width:100%;
+  text-align:left;
+  color:inherit;
+  cursor:pointer;
+  border:1px solid rgba(213,171,83,.14);
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,.05), transparent 40%),
+    linear-gradient(180deg, rgba(28,22,18,.96), rgba(11,10,9,.98));
+  border-radius:22px;
+  box-shadow:0 12px 34px rgba(0,0,0,.28);
+  padding:10px;
+  display:flex;
+  gap:10px;
+  align-items:stretch;
+  transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+  position:relative;
+  overflow:hidden;
+  appearance:none;
+  outline:none;
+}
+.card:hover,.card:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(241,213,141,.5);
+  box-shadow:0 18px 44px rgba(0,0,0,.36);
+}
+.thumb{
+  width:118px;
+  min-width:118px;
+  height:118px;
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+  border:1px solid rgba(213,171,83,.24);
+  background:linear-gradient(180deg, rgba(213,171,83,.16), rgba(0,0,0,.28));
+  flex:0 0 auto;
+}
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transform:scale(1);
+  transition:transform .18s ease;
+}
+.card:hover .thumb img{transform:scale(1.03)}
+.thumb::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(255,255,255,.08), transparent 45%);
+  pointer-events:none;
+}
+.body{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  justify-content:space-between;
+}
+.name{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:baseline;
+  line-height:1.12;
+}
+.name .main{
+  font-size:1.04rem;
+  font-weight:800;
+  letter-spacing:.01em;
+}
+.desc{
+  color:var(--muted);
+  font-size:.84rem;
+  line-height:1.36;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  min-height:2.6em;
+}
+.prices{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  direction:ltr;
+}
+.price{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  min-width:76px;
+  padding:0 12px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
+  color:#170f08;
+  font-weight:900;
+  box-shadow:0 10px 22px rgba(213,171,83,.18);
+  border:1px solid rgba(255,255,255,.12);
+}
+.price.secondary{
+  background:linear-gradient(180deg, rgba(38,35,32,.96), rgba(20,18,16,.96));
+  color:var(--text);
+  border-color:rgba(213,171,83,.14);
+  box-shadow:none;
+}
+.price.single{min-width:94px}
+
+.empty{
+  padding:24px;
+  border-radius:22px;
+  border:1px dashed rgba(213,171,83,.22);
+  color:var(--muted);
+  background:rgba(255,255,255,.02);
+  grid-column:1/-1;
+}
+
+.footer{
+  margin-top:14px;
+  padding:16px 18px;
+  border-radius:24px;
+  border:1px solid rgba(213,171,83,.14);
+  background:linear-gradient(180deg, rgba(18,14,12,.94), rgba(9,8,7,.96));
+  color:var(--muted);
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 18px;
+  justify-content:space-between;
+  align-items:center;
+  font-size:.95rem;
+  position:relative;
+  z-index:1;
+}
+.footer strong{color:var(--text)}
+.hidden{display:none!important}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.modal.open{display:flex}
+.backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.68);
+  backdrop-filter:blur(10px);
+}
+.dialog{
+  position:relative;
+  z-index:1;
+  width:min(980px,100%);
+  max-height:min(92vh,920px);
+  overflow:auto;
+  border-radius:30px;
+  border:1px solid rgba(241,213,141,.22);
+  background:linear-gradient(180deg, rgba(20,15,12,.98), rgba(9,8,7,.99));
+  box-shadow:0 30px 120px rgba(0,0,0,.62);
+  padding:16px;
+  animation:pop .16s ease-out;
+}
+@keyframes pop{
+  from{transform:translateY(10px) scale(.98); opacity:.5}
+  to{transform:translateY(0) scale(1); opacity:1}
+}
+.dialog-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.dialog-top strong{
+  font-family:Georgia, serif;
+  letter-spacing:.04em;
+  font-size:1.15rem;
+}
+.close{
+  appearance:none;
+  border:none;
+  background:rgba(255,255,255,.08);
+  color:var(--text);
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  font-size:1.5rem;
+  cursor:pointer;
+}
+.preview{
+  width:100%;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(213,171,83,.16);
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08));
+  display:block;
+}
+.preview img{
+  width:100%;
+  height:auto;
+  display:block;
+  background:#0c0907;
+}
+.dialog-copy{
+  margin-top:12px;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:.96rem;
+}
+
+.admin-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.admin-card{
+  border:1px solid rgba(213,171,83,.14);
+  border-radius:22px;
+  background:rgba(255,255,255,.03);
+  padding:14px;
+}
+.admin-card h4{
+  margin:0 0 10px;
+  font-size:1rem;
+  font-family:Georgia, serif;
+  letter-spacing:.03em;
+}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:10px;
+}
+.field label{
+  font-size:.8rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+.field input,.field textarea,.field select{
+  width:100%;
+  border-radius:14px;
+  border:1px solid rgba(213,171,83,.18);
+  background:rgba(0,0,0,.28);
+  color:var(--text);
+  padding:11px 12px;
+  font:inherit;
+  outline:none;
+}
+.field textarea{min-height:84px;resize:vertical}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.action{
+  border-radius:999px;
+  padding:10px 14px;
+  border:1px solid rgba(213,171,83,.18);
+  background:linear-gradient(180deg, rgba(34,26,19,.95), rgba(17,13,10,.95));
+  color:var(--text);
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none;
+}
+.action.primary{
+  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
+  color:#170f08;
+}
+.admin-note{
+  color:var(--muted);
+  font-size:.86rem;
+  line-height:1.5;
+}
+.preview-mini{
+  width:100%;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(213,171,83,.14);
+  background:rgba(255,255,255,.03);
+  min-height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.preview-mini img{
+  width:100%;
+  display:block;
+  object-fit:cover;
+  background:#0c0907;
+}
+
+[data-lang="ar"], [data-lang="ku"]{direction:rtl}
+[data-lang="ar"] .topbar,
+[data-lang="ar"] .hero,
+[data-lang="ar"] .panel-head,
+[data-lang="ar"] .footer,
+[data-lang="ku"] .topbar,
+[data-lang="ku"] .hero,
+[data-lang="ku"] .panel-head,
+[data-lang="ku"] .footer{
+  direction:rtl;
+}
+
+@media (max-width: 1060px){
+  .landing{grid-template-columns:1fr}
+  .admin-grid,.meta-row{grid-template-columns:1fr}
+}
+@media (max-width: 640px){
+  .shell{width:min(var(--max), calc(100% - 12px))}
+  .hero{padding:22px 12px 16px}
+  .logo-wrap{width:126px;height:126px}
+  .card{padding:9px}
+  .thumb{width:100px;min-width:100px;height:100px}
+  .brand-text span{display:none}
+  .btn{flex:1 1 auto}
+  .lang-switch{flex:1}
+  .items{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+  <div class="shell" id="app" data-lang="en">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-logo" id="brandLogo" src="" alt="1911 logo" />
+        <div class="brand-text">
+          <strong id="brandTitle">1911 Coffee Shop</strong>
+          <span id="brandSub">Vintage • Modern • Premium</span>
+        </div>
+      </div>
+      <div class="lang-switch">
+        <button class="btn active" id="langEN" type="button">English</button>
+        <button class="btn" id="langAR" type="button">العربية</button>
+        <button class="btn" id="langKU" type="button">کوردی</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="logo-wrap"><img id="heroLogo" src="" alt="1911 logo" /></div>
+      <h1 class="title" id="heroTitle">1911 Coffee Shop</h1>
+      <div class="sub" id="heroSub">Since 2021</div>
+      <div class="tagline" id="heroTag">Take Rest and Be Happy</div>
+      <div class="divider"></div>
+    </section>
+
+    <section class="landing" id="landingArea"></section>
+
+    <div class="section-actions" id="menuActions">
+      <button class="btn" id="mainActionBtn" type="button">Open Menu</button>
+      <button class="btn" id="backToLandingBtn" type="button">Back to sections</button>
+    </div>
+
+    <section class="meta-row" id="topCards" aria-label="highlights"></section>
+
+    <div id="customerRoot">
+      <div id="menuArea">
+        <div class="toolbar">
+          <input class="search" id="searchInput" type="search" placeholder="Search items..." />
+        </div>
+
+        <div class="category-bar" id="categoryBar" aria-label="categories"></div>
+
+        <main class="panel">
+          <div class="panel-head">
+            <div>
+              <h3 id="sectionTitle">Cold Coffee</h3>
+              <p id="sectionDesc">A clean, premium café menu built for phones and tablets.</p>
+            </div>
+            <div class="hint" id="sectionHint">Tap any item to preview a bigger image.</div>
+          </div>
+          <div style="height:1px;background:linear-gradient(90deg, transparent, rgba(213,171,83,.55), transparent);"></div>
+          <div class="items" id="items"></div>
+        </main>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div id="footerLeft"><strong>1911</strong> • Ready for Acode • Single-file HTML</div>
+      <div id="footerRight">Use the language buttons and category chips above.</div>
+    </footer>
+  </div>
+
+  <div class="modal" id="previewModal" aria-hidden="true">
+    <div class="backdrop" id="previewBackdrop"></div>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+      <div class="dialog-top">
+        <strong id="previewTitle">Item</strong>
+        <button class="close" id="closePreview" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="preview">
+        <img id="previewImg" alt="" />
+      </div>
+      <div class="dialog-copy" id="previewCopy"></div>
+    </div>
+  </div>
+
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const FIREBASE_CONFIG = {
+  "apiKey": "AIzaSyB-mtJ22EJ7fShvRHdGPFbhKTYSOzMpMYM",
+  "authDomain": "menu-e4cef.firebaseapp.com",
+  "projectId": "menu-e4cef",
+  "storageBucket": "menu-e4cef.firebasestorage.app",
+  "messagingSenderId": "686608343620",
+  "appId": "1:686608343620:web:cbcf3c2c4e149caaee9211",
+  "measurementId": "G-RDY676HQLB"
+};
+const FIRESTORE_COLLECTION = "1911_menu";
+const FIRESTORE_DOCUMENT = "state";
+
+let firebaseApp = null;
+let firestoreDb = null;
+let firestoreDocRef = null;
+let firebaseReady = false;
+let firebaseInitPromise = null;
+let cloudWriteTimer = null;
+
+function saveLocalState(){
+  try{
+    localStorage.setItem(STORAGE_KEYS[0], JSON.stringify(state));
+  }catch(e){}
+}
+
+function scheduleCloudSave(){
+  if (!firebaseReady || !firestoreDocRef) return;
+  clearTimeout(cloudWriteTimer);
+  cloudWriteTimer = setTimeout(() => {
+    const payload = JSON.parse(JSON.stringify(state));
+    payload.updatedAt = Date.now();
+    setDoc(firestoreDocRef, payload, { merge: true }).catch((err) => {
+      console.warn("Firebase save failed:", err);
+    });
+  }, 350);
+}
+
+async function initFirebaseSync(){
+  if (firebaseInitPromise) return firebaseInitPromise;
+
+  firebaseInitPromise = (async () => {
+    try {
+      firebaseApp = initializeApp(FIREBASE_CONFIG);
+      firestoreDb = getFirestore(firebaseApp);
+      firestoreDocRef = doc(firestoreDb, FIRESTORE_COLLECTION, FIRESTORE_DOCUMENT);
+
+      onSnapshot(firestoreDocRef, (snapshot) => {
+        if (!snapshot.exists()) return;
+        const remote = normalizeState(snapshot.data());
+        state = remote;
+        ensureTopCards();
+        saveLocalState();
+        updateStaticText();
+        renderAll();
+      }, (err) => {
+        console.warn("Firebase snapshot failed:", err);
+      });
+
+      const existing = await getDoc(firestoreDocRef);
+      if (existing.exists()) {
+        state = normalizeState(existing.data());
+        ensureTopCards();
+        saveLocalState();
+      } else {
+        const seed = JSON.parse(JSON.stringify(state));
+        seed.updatedAt = Date.now();
+        await setDoc(firestoreDocRef, seed, { merge: true });
+      }
+
+      firebaseReady = true;
+      updateStaticText();
+      renderAll();
+    } catch (err) {
+      console.warn("Firebase init failed:", err);
+      firebaseReady = false;
+    }
+  })();
+
+  return firebaseInitPromise;
+}
+
+const STORAGE_KEYS = [
+  "1911_menu_state_v7",
+  "1911_menu_fixed_clean_v4_translation_cards_fixed",
+  "1911_menu_menu_v1",
+  "1911_menu_state_v6"
+];
+
+const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <defs>
+      <radialGradient id="g" cx="35%" cy="30%" r="80%">
+        <stop offset="0%" stop-color="#f7ebc5"/>
+        <stop offset="48%" stop-color="#d5ab53"/>
+        <stop offset="100%" stop-color="#7a4e16"/>
+      </radialGradient>
+    </defs>
+    <circle cx="120" cy="120" r="118" fill="#120c08"/>
+    <circle cx="120" cy="120" r="104" fill="url(#g)" opacity=".92"/>
+    <circle cx="120" cy="120" r="76" fill="#2a1a0f"/>
+    <text x="120" y="130" text-anchor="middle" font-size="62" font-weight="700" fill="#f8eee0" font-family="Georgia,serif">1911</text>
+  </svg>
+`);
+
+const UI = {
+  en: {
+    brand: "1911 Coffee Shop",
+    brandSmall: "Vintage • Modern • Premium",
+    tagline: "Take Rest and Be Happy",
+    since: "Since 2021",
+    design: "Story",
+    designValue: "Premium café menu",
+    languages: "Service",
+    languagesValue: "English • العربية • کوردی",
+    menuType: "Experience",
+    menuTypeValue: "Fast, clean, elegant",
+    sectionHint: "Tap any item to preview a bigger image.",
+    footerLeft: "1911 • Ready for Acode • Single-file HTML",
+    footerRight: "Use the language buttons and category chips above.",
+    previewCopy: "Use the language buttons above, and tap any item to see a bigger preview.",
+    noDesc: "No description added yet.",
+    searchPlaceholder: "Search items...",
+    admin: "Admin",
+    adminTitle: "Admin Panel",
+    openMenu: "Open Menu",
+    topCardTitle: "Top info cards",
+    logoCardTitle: "Logo",
+    logoInputLabel: "Upload logo",
+    logoNote: "Change the top logo and the hero logo together.",
+    categoryCardTitle: "Categories",
+    categorySelectLabel: "Edit category",
+    categoryDescLabel: "Description",
+    categoryNote: "Category chips update instantly on save.",
+    itemCardTitle: "Items",
+    itemCategoryLabel: "Item category",
+    itemSelectLabel: "Edit item",
+    itemDescLabel: "Description",
+    priceLabel: "Prices",
+    itemImageLabel: "Upload item picture",
+    itemNote: "You can add items to any category, including ones you create later.",
+    toolsCardTitle: "Tools",
+    toolsNote: "Your edits are saved on the device automatically.",
+    saveLogo: "Save Logo",
+    resetLogo: "Reset Logo",
+    saveCategory: "Save Category",
+    newCategory: "New Category",
+    deleteCategory: "Delete Category",
+    saveItem: "Save Item",
+    newItem: "New Item",
+    deleteItem: "Delete Item",
+    exportJson: "Export JSON",
+    resetMenu: "Reset Demo Menu",
+    itemPreviewFallback: "Item",
+    categoryEmpty: "No category available.",
+    itemEmpty: "No items in this category yet.",
+    backToMenu: "Back to menu"
+  },
+  ar: {
+    brand: "مقهى 1911",
+    brandSmall: "عتيق • عصري • فاخر",
+    tagline: "خذ راحة وكن سعيدًا",
+    since: "منذ 2021",
+    design: "القصة",
+    designValue: "قائمة مقهى فاخرة",
+    languages: "الخدمة",
+    languagesValue: "English • العربية • کوردی",
+    menuType: "التجربة",
+    menuTypeValue: "سريعة، نظيفة، أنيقة",
+    sectionHint: "اضغط على أي item لمشاهدة صورة أكبر.",
+    footerLeft: "1911 • جاهز لـ Acode • ملف HTML واحد",
+    footerRight: "استخدم أزرار اللغة وفئات القائمة بالأعلى.",
+    previewCopy: "استخدم أزرار اللغة بالأعلى، ثم اضغط على أي item لرؤية صورة أكبر.",
+    noDesc: "لا يوجد وصف حتى الآن.",
+    searchPlaceholder: "ابحث عن item...",
+    admin: "لوحة الإدارة",
+    adminTitle: "لوحة الإدارة",
+    openMenu: "فتح القائمة",
+    topCardTitle: "بطاقات المعلومات العلوية",
+    logoCardTitle: "الشعار",
+    logoInputLabel: "رفع الشعار",
+    logoNote: "غيّر الشعار العلوي وشعار الهيرو معًا.",
+    categoryCardTitle: "الفئات",
+    categorySelectLabel: "تعديل الفئة",
+    categoryDescLabel: "الوصف",
+    categoryNote: "تتحدث أزرار الفئات فور الحفظ.",
+    itemCardTitle: "العناصر",
+    itemCategoryLabel: "فئة العنصر",
+    itemSelectLabel: "تعديل العنصر",
+    itemDescLabel: "الوصف",
+    priceLabel: "الأسعار",
+    itemImageLabel: "رفع صورة العنصر",
+    itemNote: "يمكنك إضافة عناصر إلى أي فئة، حتى الفئات الجديدة.",
+    toolsCardTitle: "أدوات",
+    toolsNote: "يتم حفظ التعديلات تلقائيًا على الجهاز.",
+    saveLogo: "حفظ الشعار",
+    resetLogo: "إعادة الشعار",
+    saveCategory: "حفظ الفئة",
+    newCategory: "فئة جديدة",
+    deleteCategory: "حذف الفئة",
+    saveItem: "حفظ العنصر",
+    newItem: "عنصر جديد",
+    deleteItem: "حذف العنصر",
+    exportJson: "تصدير JSON",
+    resetMenu: "إعادة قائمة التجربة",
+    itemPreviewFallback: "عنصر",
+    categoryEmpty: "لا توجد فئات متاحة.",
+    itemEmpty: "لا توجد عناصر في هذه الفئة بعد.",
+    backToMenu: "العودة للقائمة"
+  },
+  ku: {
+    brand: "کافێی 1911",
+    brandSmall: "کۆن • نوێ • شیک",
+    tagline: "وه‌ربگرە ڕا و خۆشحاڵ بە",
+    since: "لە 2021",
+    design: "چیرۆک",
+    designValue: "مێنوی کافێی تایبەت",
+    languages: "خزمەتگوزاری",
+    languagesValue: "English • العربية • کوردی",
+    menuType: "ئەزموون",
+    menuTypeValue: "خێرا، پاک، جوان",
+    sectionHint: "لەسەر هەر item ـێک بکە بۆ بینینی وێنەی گەورەتر.",
+    footerLeft: "1911 • ئامادە بۆ Acode • یەک فایل HTML",
+    footerRight: "دوگمەکانی زمان و category chips لەسەرەوە بەکاربهێنە.",
+    previewCopy: "دوگمەکانی زمان لەسەرەوە بەکاربهێنە، پاشان لەسەر item ـێک بکە بۆ بینینی وێنەی گەورەتر.",
+    noDesc: "هیچ وەسفێک زیاد نەکراوە.",
+    searchPlaceholder: "گەڕان بۆ item...",
+    admin: "پانێڵی بەڕێوەبردن",
+    adminTitle: "پانێڵی بەڕێوەبردن",
+    openMenu: "کردنەوەی مێنوو",
+    topCardTitle: "کارتەکانی سەرەوە",
+    logoCardTitle: "لوگو",
+    logoInputLabel: "بارکردنی لوگو",
+    logoNote: "لوگۆی سەرەوە و لوگی هێرو یەکجار بگۆڕە.",
+    categoryCardTitle: "پۆلەکان",
+    categorySelectLabel: "دەستکاری پۆل",
+    categoryDescLabel: "وەسف",
+    categoryNote: "category chips ـەکان بەخێرایی نوێ دەبنەوە.",
+    itemCardTitle: "هەڵبژاردەکان",
+    itemCategoryLabel: "پۆلی item",
+    itemSelectLabel: "دەستکاری item",
+    itemDescLabel: "وەسف",
+    priceLabel: "نرخەکان",
+    itemImageLabel: "بارکردنی وێنەی item",
+    itemNote: "دەتوانیت بۆ هەر پۆلێک item زیاد بکەیت، تەنانەت پۆلە نوێکانیش.",
+    toolsCardTitle: "ئامرازەکان",
+    toolsNote: "گۆڕانکارییەکان خۆکار لەسەر ئامێرەکە هەڵدەگیرێن.",
+    saveLogo: "پاشەکەوتی لوگو",
+    resetLogo: "گەڕاندنەوەی لوگو",
+    saveCategory: "پاشەکەوتی پۆل",
+    newCategory: "پۆلی نوێ",
+    deleteCategory: "سڕینەوەی پۆل",
+    saveItem: "پاشەکەوتی item",
+    newItem: "item ـی نوێ",
+    deleteItem: "سڕینەوەی item",
+    exportJson: "JSON ـی دەرکردن",
+    resetMenu: "گەڕاندنەوەی مێنوی تاقیکردنەوە",
+    itemPreviewFallback: "item",
+    categoryEmpty: "هیچ پۆلێک نییە.",
+    itemEmpty: "هیچ item ـێک لەم پۆلەدا نییە.",
+    backToMenu: "گەڕانەوە بۆ مێنوو"
+  }
+};
+
+const A2A = {
+  coffee: "قهوة",
+  ice: "آيس",
+  iced: "مبرد",
+  latte: "لاتيه",
+  americano: "أمريكانو",
+  cappuccino: "كابتشينو",
+  mocha: "موكا",
+  chocolate: "شوكولاتة",
+  cake: "كيك",
+  tea: "شاي",
+  milk: "حليب",
+  strawberry: "فراولة",
+  mango: "مانجو",
+  caramel: "كراميل",
+  water: "ماء",
+  juice: "عصير",
+  burger: "برغر",
+  fries: "بطاطا",
+  pizza: "بيتزا",
+  sandwich: "ساندويتش",
+  dessert: "حلويات",
+  fast: "سريع",
+  food: "طعام",
+  menu: "قائمة",
+  special: "خاص",
+  fresh: "طازج",
+  hot: "ساخن",
+  cold: "بارد",
+  large: "كبير",
+  small: "صغير",
+  smooth: "ناعم",
+  rich: "غني",
+  premium: "فاخر",
+  double: "مزدوج",
+  white: "أبيض",
+  black: "أسود",
+  whipped: "مخفوق",
+  cream: "كريمة",
+  syrup: "شراب",
+  cookie: "بسكويت",
+  cookies: "بسكويت",
+  brownie: "براوني",
+  toast: "توست",
+  cheese: "جبن",
+  cheesecakes: "تشيز كيك",
+  cheesecake: "تشيز كيك",
+  chocolatecake: "كيك شوكولاتة"
+};
+
+const E2K = {
+  coffee: "قاوە",
+  ice: "ئایس",
+  iced: "سارد",
+  latte: "لاتێ",
+  americano: "ئەمریکیانو",
+  cappuccino: "کاپوچینۆ",
+  mocha: "موکا",
+  chocolate: "چۆکلێت",
+  cake: "کەیک",
+  tea: "چەی",
+  milk: "شیر",
+  strawberry: "فرەولە",
+  mango: "مانگۆ",
+  caramel: "کارامێل",
+  water: "ئاو",
+  juice: "جوس",
+  burger: "بەرگەر",
+  fries: "فریز",
+  pizza: "پیتزا",
+  sandwich: "سەندویچ",
+  dessert: "دێسێرت",
+  fast: "خێرا",
+  food: "خواردن",
+  menu: "مێنوو",
+  special: "تایبەت",
+  fresh: "تازە",
+  hot: "گەرم",
+  cold: "سارد",
+  large: "گەورە",
+  small: "بچوک",
+  smooth: "نەرم",
+  rich: "دولەمەند",
+  premium: "پڕێمیوم",
+  double: "دووجار",
+  white: "سپی",
+  black: "ڕەش",
+  whipped: "هەڵمژراو",
+  cream: "کریم",
+  syrup: "شەربەت",
+  cookie: "کۆکی",
+  cookies: "کۆکی",
+  brownie: "براونی",
+  toast: "تۆست",
+  cheese: "پنیر",
+  cheesecakes: "چێزکێک",
+  cheesecake: "چێزکێک",
+  chocolatecake: "چۆکلێت کەیک"
+};
+
+const LAT_TO_AR = {
+  a:"ا", b:"ب", c:"ك", d:"د", e:"ي", f:"ف", g:"گ", h:"ه", i:"ي", j:"ج", k:"ك", l:"ل", m:"م", n:"ن", o:"و", p:"ب", q:"ق", r:"ر", s:"س", t:"ت", u:"و", v:"ڤ", w:"و", x:"كس", y:"ي", z:"ز"
+};
+const LAT_TO_KU = {
+  a:"ا", b:"ب", c:"ج", d:"د", e:"ێ", f:"ف", g:"گ", h:"ه", i:"ی", j:"ج", k:"ک", l:"ل", m:"م", n:"ن", o:"ۆ", p:"پ", q:"ق", r:"ر", s:"س", t:"ت", u:"و", v:"ڤ", w:"و", x:"کس", y:"ی", z:"ز"
+};
+
+function $(id){ return document.getElementById(id); }
+function has(id){ return !!$(id); }
+function escapeHtml(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function escapeAttr(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function money(v){ return String(v ?? "").replace(/[^0-9]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+function uid(){ return (crypto?.randomUUID?.() || `id_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`); }
+function defaultText(obj, lang){ return (obj?.[lang] || obj?.en || obj?.ar || obj?.ku || ""); }
+function currentUI(){ return UI[state.lang] || UI.en; }
+
+function svgDataUri(svg){ return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg); }
+
+function defaultLogo(){
+  return DEFAULT_LOGO;
+}
+
+function makeDefaultState(){
+  return {
+    lang: "en",
+    activeSection: "landing",
+    logo: DEFAULT_LOGO,
+    topCards: [
+      { labels: { en:"Fresh Every Day", ar:"طازج كل يوم", ku:"هەموو ڕۆژێک تازە" }, values: { en:"Premium café menu", ar:"قائمة مقهى فاخرة", ku:"مێنووی کافێی تایبەت" } },
+      { labels: { en:"Good Service", ar:"خدمة جيدة", ku:"خزمەتگوزاری باش" }, values: { en:"Fast, clean, elegant", ar:"سريع، نظيف، أنيق", ku:"خێرا، پاک، جوان" } },
+      { labels: { en:"Open Daily", ar:"مفتوح يوميًا", ku:"کراوە هەموو ڕۆژێک" }, values: { en:"From morning to night", ar:"من الصباح إلى الليل", ku:"لە بەیان تا شەو" } }
+    ],
+    categories: [
+      {
+        id: "coffee",
+        names: { en: "Cold Coffee", ar: "قهوة باردة", ku: "قاوەی سارد" },
+        desc: {
+          en: "Smooth iced coffee drinks with a rich café presentation.",
+          ar: "مشروبات قهوة باردة بتقديم أنيق وغني.",
+          ku: "خواردنەوەی قاوی سارد بە پێشکەشکردنی جوان."
+        },
+        items: [
+          {
+            id: uid(),
+            names: { en: "Ice Coffee", ar: "آيس كوفي", ku: "ئایس کۆفی" },
+            desc: {
+              en: "Classic iced coffee with a clean finish.",
+              ar: "قهوة باردة كلاسيكية بطعم ناعم.",
+              ku: "قاوەی ساردی کلاسیکی بە تەواوکردنی پاک."
+            },
+            prices: { small: "4000", large: "5000" },
+            kind: "coffee",
+            colors: ["#2b160c","#7a4a25","#d7a55c"],
+            image: ""
+          },
+          {
+            id: uid(),
+            names: { en: "Caramel Ice Coffee", ar: "آيس كوفي كراميل", ku: "ئایس کۆفی کارامێل" },
+            desc: {
+              en: "Sweet caramel layers with a smooth coffee base.",
+              ar: "طبقات كراميل حلوة مع قاعدة قهوة ناعمة.",
+              ku: "ڕیزەکانی کارامێلی خۆش لەگەڵ بنەمایەکی قاوەی نەرم."
+            },
+            prices: { small: "5000", large: "6000" },
+            kind: "coffee",
+            colors: ["#28150a","#9a5a22","#f1c06d"],
+            image: ""
+          }
+        ]
+      },
+      {
+        id: "drinks",
+        names: { en: "Cold Drinks", ar: "مشروبات باردة", ku: "خواردنەوە ساردەکان" },
+        desc: {
+          en: "Fresh drinks for a cool and refreshing break.",
+          ar: "مشروبات منعشة لفترة راحة باردة.",
+          ku: "خواردنەوەی تازە بۆ وەستاندنی سارد و خۆش."
+        },
+        items: [
+          {
+            id: uid(),
+            names: { en: "Mojito", ar: "موهيتو", ku: "موهیيتۆ" },
+            desc: {
+              en: "Fresh mint and lime with a sparkling finish.",
+              ar: "نعناع وليمون مع لمسة فوارة.",
+              ku: "پەنیرەی سەوز و لیمۆ لەگەڵ کۆتایی فوارە."
+            },
+            prices: { small: "3500", large: "4500" },
+            kind: "drink",
+            colors: ["#1d2d22","#4a7b52","#baf0c8"],
+            image: ""
+          }
+        ]
+      },
+      {
+        id: "dessert",
+        names: { en: "Desserts", ar: "حلويات", ku: "شیرینی" },
+        desc: {
+          en: "Sweet bites to complete the café experience.",
+          ar: "قطع حلوة لإكمال تجربة المقهى.",
+          ku: "شیرینییەکان بۆ تەواوکردنی ئەزموونی کافێ."
+        },
+        items: [
+          {
+            id: uid(),
+            names: { en: "Cheesecake", ar: "تشيز كيك", ku: "چێزکێک" },
+            desc: {
+              en: "Creamy cake with a buttery base.",
+              ar: "كيك كريمي مع قاعدة هشة.",
+              ku: "کێکێکی کریمی بە بنەمایەکی نەرم."
+            },
+            prices: { small: "4500", large: "5500" },
+            kind: "dessert",
+            colors: ["#2d2134","#6f4e8a","#e7b8ff"],
+            image: ""
+          }
+        ]
+      }
+    ]
+  };
+}
+
+function normalizeState(raw){
+  const base = makeDefaultState();
+  if (!raw || typeof raw !== "object") return base;
+
+  const state = {
+    ...base,
+    ...raw
+  };
+
+  state.lang = ["en","ar","ku"].includes(state.lang) ? state.lang : "en";
+  state.activeSection = raw.activeSection || "landing";
+  state.logo = raw.logo || DEFAULT_LOGO;
+
+  if (Array.isArray(raw.topCards) && raw.topCards.length){
+    state.topCards = raw.topCards.slice(0,3).map((card, idx) => ({
+      labels: {
+        en: String(card?.labels?.en ?? base.topCards[idx]?.labels?.en ?? ""),
+        ar: String(card?.labels?.ar ?? base.topCards[idx]?.labels?.ar ?? ""),
+        ku: String(card?.labels?.ku ?? base.topCards[idx]?.labels?.ku ?? "")
+      },
+      values: {
+        en: String(card?.values?.en ?? base.topCards[idx]?.values?.en ?? ""),
+        ar: String(card?.values?.ar ?? base.topCards[idx]?.values?.ar ?? ""),
+        ku: String(card?.values?.ku ?? base.topCards[idx]?.values?.ku ?? "")
+      }
+    }));
+  }
+
+  if (Array.isArray(raw.categories) && raw.categories.length){
+    state.categories = raw.categories.map((c, idx) => ({
+      id: String(c.id || uid()),
+      names: {
+        en: String(c.names?.en || `Category ${idx + 1}`),
+        ar: String(c.names?.ar || c.names?.en || `الفئة ${idx + 1}`),
+        ku: String(c.names?.ku || c.names?.en || `پۆل ${idx + 1}`)
+      },
+      desc: {
+        en: String(c.desc?.en || ""),
+        ar: String(c.desc?.ar || ""),
+        ku: String(c.desc?.ku || "")
+      },
+      items: Array.isArray(c.items) ? c.items.map((i) => ({
+        id: String(i.id || uid()),
+        names: {
+          en: String(i.names?.en || "Item"),
+          ar: String(i.names?.ar || i.names?.en || "عنصر"),
+          ku: String(i.names?.ku || i.names?.en || "تکە")
+        },
+        desc: {
+          en: String(i.desc?.en || ""),
+          ar: String(i.desc?.ar || ""),
+          ku: String(i.desc?.ku || "")
+        },
+        prices: {
+          small: String(i.prices?.small || ""),
+          large: String(i.prices?.large || "")
+        },
+        kind: String(i.kind || "coffee"),
+        colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
+        image: String(i.image || "")
+      })) : []
+    }));
+  }
+
+  if (!state.categories.length) state.categories = base.categories;
+  if (!state.categories.some(c => c.id === state.currentCategoryId)) state.currentCategoryId = state.categories[0].id;
+
+  return state;
+}
+
+function loadState(){
+  for (const key of STORAGE_KEYS){
+    try{
+      const raw = localStorage.getItem(key);
+      if (raw){
+        state = normalizeState(JSON.parse(raw));
+        return;
+      }
+    }catch(e){}
+  }
+  state = normalizeState(null);
+}
+
+function saveState(){
+  saveLocalState();
+  scheduleCloudSave();
+}
+
+function setLang(lang){
+  state.lang = lang;
+  document.documentElement.lang = lang === "en" ? "en" : "ar";
+  document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
+  document.body.dataset.lang = lang;
+  updateStaticText();
+  renderAll();
+  saveState();
+}
+
+function updateStaticText(){
+  const tr = currentUI();
+
+  if (has("brandTitle")) $("brandTitle").textContent = tr.brand;
+  if (has("brandSub")) $("brandSub").textContent = tr.brandSmall;
+  if (has("heroTitle")) $("heroTitle").textContent = tr.brand;
+  if (has("heroSub")) $("heroSub").textContent = tr.since;
+  if (has("heroTag")) $("heroTag").textContent = tr.tagline;
+
+  if (has("pill1Label")) $("pill1Label").textContent = tr.design;
+  if (has("pill1Value")) $("pill1Value").textContent = tr.designValue;
+  if (has("pill2Label")) $("pill2Label").textContent = tr.languages;
+  if (has("pill2Value")) $("pill2Value").textContent = tr.languagesValue;
+  if (has("pill3Label")) $("pill3Label").textContent = tr.menuType;
+  if (has("pill3Value")) $("pill3Value").textContent = tr.menuTypeValue;
+
+  if (has("sectionHint")) $("sectionHint").textContent = tr.sectionHint;
+  if (has("footerLeft")) $("footerLeft").innerHTML = `<strong>1911</strong> • ${escapeHtml(tr.footerLeft.replace("1911 • ", ""))}`;
+  if (has("footerRight")) $("footerRight").textContent = tr.footerRight;
+  if (has("searchInput")) $("searchInput").placeholder = tr.searchPlaceholder;
+  if (has("previewCopy")) $("previewCopy").textContent = tr.previewCopy;
+
+  if (has("adminTitle")) $("adminTitle").textContent = tr.adminTitle;
+  if (has("openMenuBtn")) $("openMenuBtn").textContent = tr.openMenu;
+  if (has("topCardTitle")) $("topCardTitle").textContent = tr.topCardTitle;
+  if (has("logoCardTitle")) $("logoCardTitle").textContent = tr.logoCardTitle;
+  if (has("logoInputLabel")) $("logoInputLabel").textContent = tr.logoInputLabel;
+  if (has("logoNote")) $("logoNote").textContent = tr.logoNote;
+  if (has("categoryCardTitle")) $("categoryCardTitle").textContent = tr.categoryCardTitle;
+  if (has("categorySelectLabel")) $("categorySelectLabel").textContent = tr.categorySelectLabel;
+  if (has("categoryDescLabel")) $("categoryDescLabel").textContent = tr.categoryDescLabel;
+  if (has("categoryNote")) $("categoryNote").textContent = tr.categoryNote;
+  if (has("itemCardTitle")) $("itemCardTitle").textContent = tr.itemCardTitle;
+  if (has("itemCategoryLabel")) $("itemCategoryLabel").textContent = tr.itemCategoryLabel;
+  if (has("itemSelectLabel")) $("itemSelectLabel").textContent = tr.itemSelectLabel;
+  if (has("itemDescLabel")) $("itemDescLabel").textContent = tr.itemDescLabel;
+  if (has("priceLabel")) $("priceLabel").textContent = tr.priceLabel;
+  if (has("itemImageLabel")) $("itemImageLabel").textContent = tr.itemImageLabel;
+  if (has("itemNote")) $("itemNote").textContent = tr.itemNote;
+  if (has("toolsCardTitle")) $("toolsCardTitle").textContent = tr.toolsCardTitle;
+  if (has("toolsNote")) $("toolsNote").textContent = tr.toolsNote;
+  if (has("saveLogoBtn")) $("saveLogoBtn").textContent = tr.saveLogo;
+  if (has("resetLogoBtn")) $("resetLogoBtn").textContent = tr.resetLogo;
+  if (has("saveCategoryBtn")) $("saveCategoryBtn").textContent = tr.saveCategory;
+  if (has("newCategoryBtn")) $("newCategoryBtn").textContent = tr.newCategory;
+  if (has("deleteCategoryBtn")) $("deleteCategoryBtn").textContent = tr.deleteCategory;
+  if (has("saveItemBtn")) $("saveItemBtn").textContent = tr.saveItem;
+  if (has("newItemBtn")) $("newItemBtn").textContent = tr.newItem;
+  if (has("deleteItemBtn")) $("deleteItemBtn").textContent = tr.deleteItem;
+  if (has("exportBtn")) $("exportBtn").textContent = tr.exportJson;
+  if (has("resetMenuBtn")) $("resetMenuBtn").textContent = tr.resetMenu;
+  if (has("adminNote")) $("adminNote").textContent = tr.toolsNote;
+  if (has("backToMenuBtn")) $("backToMenuBtn").textContent = tr.backToMenu;
+}
+
+function translateWord(word, lang){
+  const source = String(word || "").trim();
+  if (!source) return "";
+
+  if (lang === "ar"){
+    const key = source.toLowerCase().replace(/[^a-z]/g, "");
+    if (A2A[key]) return A2A[key];
+    return transliterate(source, LAT_TO_AR);
+  }
+  if (lang === "ku"){
+    const key = source.toLowerCase().replace(/[^a-z]/g, "");
+    if (E2K[key]) return E2K[key];
+    return transliterate(source, LAT_TO_KU);
+  }
+  return source;
+}
+
+function transliterate(text, map){
+  return String(text).split("").map(ch => {
+    const lower = ch.toLowerCase();
+    if (map[lower]) return map[lower];
+    if (/[A-Z]/.test(ch) && map[lower]) return map[lower];
+    return ch;
+  }).join("");
+}
+
+function autoTranslatePhrase(text, lang){
+  const clean = String(text || "").trim();
+  if (!clean) return "";
+  return clean
+    .split(/(\s+|\/|\-)/)
+    .map(part => {
+      if (/^\s+$/.test(part) || part === "/" || part === "-") return part;
+      return translateWord(part, lang);
+    })
+    .join("");
+}
+
+function makePlaceholderImage(item, index){
+  const title = defaultText(item.names, "en");
+  const c = item.colors || ["#2b160c","#7a4a25","#d7a55c"];
+  const kind = item.kind || "coffee";
+  const extra = kind === "dessert" ? "✨" : kind === "tea" ? "🍵" : kind === "snack" ? "🍪" : "☕";
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420">
+      <defs>
+        <linearGradient id="bg${index}" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${c[0]}"/>
+          <stop offset="55%" stop-color="${c[1]}"/>
+          <stop offset="100%" stop-color="${c[2]}"/>
+        </linearGradient>
+        <radialGradient id="glow${index}" cx="35%" cy="25%" r="70%">
+          <stop offset="0%" stop-color="rgba(255,255,255,.30)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </radialGradient>
+      </defs>
+      <rect width="420" height="420" rx="36" fill="url(#bg${index})"/>
+      <circle cx="120" cy="110" r="120" fill="url(#glow${index})"/>
+      <circle cx="318" cy="78" r="76" fill="rgba(255,255,255,.08)"/>
+      <ellipse cx="210" cy="300" rx="126" ry="24" fill="rgba(0,0,0,.22)"/>
+      <circle cx="210" cy="208" r="88" fill="rgba(255,255,255,.08)"/>
+      <text x="210" y="205" text-anchor="middle" font-size="58">${extra}</text>
+      <text x="210" y="354" text-anchor="middle" fill="rgba(255,255,255,.94)" font-size="28" font-family="Georgia,serif" font-weight="700">${escapeHtml(title)}</text>
+    </svg>`;
+  return svgDataUri(svg);
+}
+
+function getCurrentCategory(){
+  return state.categories.find(c => c.id === state.currentCategoryId) || state.categories[0] || null;
+}
+
+function currentCategoryName(){
+  const cat = getCurrentCategory();
+  return cat ? defaultText(cat.names, state.lang) : currentUI().categoryEmpty;
+}
+
+function currentCategoryDesc(){
+  const cat = getCurrentCategory();
+  return cat ? (defaultText(cat.desc, state.lang) || currentUI().noDesc) : currentUI().categoryEmpty;
+}
+
+function renderTopCards(){
+  if (!has("topCards")) return;
+  const tr = currentUI();
+  $("topCards").innerHTML = state.topCards.map((card, idx) => `
+    <div class="meta">
+      <span>${escapeHtml(defaultText(card.labels, state.lang) || `${tr.design} ${idx+1}`)}</span>
+      <strong>${escapeHtml(defaultText(card.values, state.lang) || "")}</strong>
+    </div>
+  `).join("");
+}
+
+function renderLanding(){
+  if (!has("landing")) return;
+  const tr = currentUI();
+  const cards = [
+    { key:"cafe", label:"1911 Cafe", ar:"1911 كافيه", ku:"1911 کافێ", desc:"Current menu you are building", descAr:"القائمة الحالية التي تعمل عليها", descKu:"مێنووی ئێستای کارکردن", active:true },
+    { key:"fastfood", label:"1911 Fast Food", ar:"1911 وجبات سريعة", ku:"1911 خواردنە خێرا", desc:"Coming soon", descAr:"قريبًا", descKu:"لە نزیکدا", active:false },
+    { key:"desserts", label:"1911 Desserts", ar:"1911 حلويات", ku:"1911 شیرینی", desc:"Coming soon", descAr:"قريبًا", descKu:"لە نزیکدا", active:false },
+  ];
+  landing.innerHTML = cards.map(card => {
+    const title = state.lang === "en" ? card.label : state.lang === "ar" ? card.ar : card.ku;
+    const desc = state.lang === "en" ? card.desc : state.lang === "ar" ? card.descAr : card.descKu;
+    return `
+      <button class="section-card ${card.active ? 'active' : ''}" type="button" data-section="${card.key}">
+        <span class="small">${escapeHtml(card.key === "cafe" ? (state.lang === "en" ? "Open now" : state.lang === "ar" ? "مفتوح الآن" : "ئێستا کراوە") : (state.lang === "en" ? "Coming soon" : state.lang === "ar" ? "قريبًا" : "لە نزیکدا"))}</span>
+        <h2>${escapeHtml(title)}</h2>
+        <p>${escapeHtml(desc)}</p>
+      </button>
+    `;
+  }).join("");
+
+  landing.querySelectorAll("[data-section]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const section = btn.dataset.section;
+      if (section !== "cafe"){
+        alert(section === "fastfood" ? "Fast Food menu will be added later." : "Desserts menu will be added later.");
+        return;
+      }
+      state.activeSection = "cafe";
+      saveState();
+      renderAll();
+    });
+  });
+}
+
+function renderCategoryChips(){
+  if (!has("categoryBar")) return;
+  categoryBar.innerHTML = state.categories.map(cat => `
+    <button class="category-chip ${cat.id === state.currentCategoryId ? 'active' : ''}" type="button" data-cat-id="${escapeAttr(cat.id)}">
+      ${escapeHtml(defaultText(cat.names, state.lang))}
+    </button>
+  `).join("");
+
+  categoryBar.querySelectorAll("[data-cat-id]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.currentCategoryId = btn.dataset.catId;
+      saveState();
+      renderAll();
+    });
+  });
+}
+
+function renderItems(){
+  if (!has("items")) return;
+  const tr = currentUI();
+  const cat = getCurrentCategory();
+  const query = has("searchInput") ? $("searchInput").value.trim().toLowerCase() : "";
+
+  if (!cat){
+    items.innerHTML = `<div class="empty">${escapeHtml(tr.categoryEmpty)}</div>`;
+    return;
+  }
+
+  if (has("sectionTitle")) $("sectionTitle").textContent = defaultText(cat.names, state.lang);
+  if (has("sectionDesc")) $("sectionDesc").textContent = defaultText(cat.desc, state.lang) || tr.noDesc;
+
+  const itemsData = (cat.items || []).filter(item => {
+    if (!query) return true;
+    const hay = [
+      defaultText(item.names, "en"),
+      defaultText(item.names, "ar"),
+      defaultText(item.names, "ku"),
+      defaultText(item.desc, "en"),
+      defaultText(item.desc, "ar"),
+      defaultText(item.desc, "ku")
+    ].join(" ").toLowerCase();
+    return hay.includes(query);
+  });
+
+  if (!itemsData.length){
+    items.innerHTML = `<div class="empty">${escapeHtml(tr.itemEmpty)}</div>`;
+    return;
+  }
+
+  items.innerHTML = itemsData.map((item, idx) => {
+    const title = defaultText(item.names, state.lang);
+    const desc = defaultText(item.desc, state.lang);
+    const img = item.image || makePlaceholderImage(item, idx);
+    const small = item.prices?.small ? `<span class="price">${escapeHtml(money(item.prices.small))}</span>` : "";
+    const large = item.prices?.large ? `<span class="price secondary">${escapeHtml(money(item.prices.large))}</span>` : "";
+    return `
+      <button class="card" type="button"
+        data-title="${escapeAttr(title)}"
+        data-desc="${escapeAttr(desc)}"
+        data-img="${escapeAttr(img)}">
+        <div class="thumb"><img src="${escapeAttr(img)}" alt="${escapeAttr(title)}" loading="lazy" /></div>
+        <div class="body">
+          <div>
+            <div class="name">
+              <span class="main">${escapeHtml(title)}</span>
+            </div>
+            ${desc ? `<div class="desc">${escapeHtml(desc)}</div>` : ""}
+          </div>
+          <div class="prices">${small}${large}</div>
+        </div>
+      </button>
+    `;
+  }).join("");
+
+  items.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => openPreview({
+      title: card.dataset.title,
+      desc: card.dataset.desc,
+      img: card.dataset.img
+    }));
+  });
+}
+
+function renderCustomerPanels(){
+  if (has("brandLogo")) $("brandLogo").src = state.logo || DEFAULT_LOGO;
+  if (has("heroLogo")) $("heroLogo").src = state.logo || DEFAULT_LOGO;
+  if (has("backToMenuBtn")) {
+    $("backToMenuBtn").style.display = state.activeSection === "landing" ? "none" : "inline-flex";
+  }
+  if (has("backToLandingBtn")) {
+    $("backToLandingBtn").style.display = state.activeSection === "landing" ? "none" : "inline-flex";
+  }
+  if (has("customerShell")) {
+    $("menuArea").style.display = state.activeSection === "landing" ? "none" : "block";
+    $("landingArea").style.display = state.activeSection === "landing" ? "grid" : "none";
+  }
+  if (has("heroTitle")) $("heroTitle").textContent = currentUI().brand;
+  if (has("heroSub")) $("heroSub").textContent = currentUI().since;
+  if (has("heroTag")) $("heroTag").textContent = currentUI().tagline;
+  renderLanding();
+  renderTopCards();
+  renderCategoryChips();
+  renderItems();
+}
+
+function openPreview(data){
+  if (!has("previewModal")) return;
+  $("previewTitle").textContent = data.title || currentUI().itemPreviewFallback;
+  $("previewImg").src = data.img || DEFAULT_LOGO;
+  $("previewImg").alt = data.title || currentUI().itemPreviewFallback;
+  $("previewCopy").textContent = data.desc || currentUI().previewCopy;
+  previewModal.classList.add("open");
+  previewModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+function closePreview(){
+  if (!has("previewModal")) return;
+  previewModal.classList.remove("open");
+  previewModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+function ensureTopCards(){
+  if (!Array.isArray(state.topCards)) state.topCards = [];
+  while (state.topCards.length < 3){
+    state.topCards.push({
+      labels:{ en:"", ar:"", ku:"" },
+      values:{ en:"", ar:"", ku:"" }
+    });
+  }
+  if (state.topCards.length > 3) state.topCards = state.topCards.slice(0,3);
+}
+
+function populateTopCardForm(index){
+  if (!has("topCardSelect")) return;
+  ensureTopCards();
+  const i = Math.max(0, Math.min(2, Number(index) || 0));
+  const card = state.topCards[i];
+  $("topCardSelect").value = String(i);
+  $("topCardLabelEn").value = card.labels?.en || "";
+  $("topCardLabelAr").value = card.labels?.ar || "";
+  $("topCardLabelKu").value = card.labels?.ku || "";
+  $("topCardValueEn").value = card.values?.en || "";
+  $("topCardValueAr").value = card.values?.ar || "";
+  $("topCardValueKu").value = card.values?.ku || "";
+}
+
+function syncTopCardFromForm(){
+  if (!has("topCardSelect")) return;
+  ensureTopCards();
+  const i = Math.max(0, Math.min(2, Number($("topCardSelect").value) || 0));
+  state.topCards[i] = {
+    labels:{
+      en:$("topCardLabelEn").value.trim(),
+      ar:$("topCardLabelAr").value.trim(),
+      ku:$("topCardLabelKu").value.trim()
+    },
+    values:{
+      en:$("topCardValueEn").value.trim(),
+      ar:$("topCardValueAr").value.trim(),
+      ku:$("topCardValueKu").value.trim()
+    }
+  };
+  saveState();
+  renderTopCards();
+}
+
+function refreshCategorySelects(){
+  if (!has("categorySelect") || !has("itemCategorySelect")) return;
+  const optionHtml = state.categories.map(c => `<option value="${escapeAttr(c.id)}">${escapeHtml(defaultText(c.names, state.lang))}</option>`).join("");
+  $("categorySelect").innerHTML = optionHtml;
+  $("itemCategorySelect").innerHTML = optionHtml;
+}
+
+function populateCategoryForm(categoryId){
+  if (!has("categorySelect")) return;
+  const cat = state.categories.find(c => c.id === categoryId) || state.categories[0];
+  if (!cat) return;
+  $("categorySelect").value = cat.id;
+  $("categoryNameEn").value = cat.names.en || "";
+  $("categoryNameAr").value = cat.names.ar || "";
+  $("categoryNameKu").value = cat.names.ku || "";
+  $("categoryDesc").value = defaultText(cat.desc, "en");
+}
+
+function populateItemSelect(categoryId){
+  if (!has("itemSelect")) return;
+  const cat = state.categories.find(c => c.id === categoryId);
+  if (!cat) return;
+  const options = (cat.items || []).map(i => `<option value="${escapeAttr(i.id)}">${escapeHtml(defaultText(i.names, state.lang))}</option>`).join("");
+  $("itemSelect").innerHTML = options || `<option value="">—</option>`;
+}
+
+function populateItemForm(categoryId, itemId){
+  if (!has("itemCategorySelect")) return;
+  const cat = state.categories.find(c => c.id === categoryId);
+  if (!cat) return;
+  $("itemCategorySelect").value = categoryId;
+  populateItemSelect(categoryId);
+
+  const item = (cat.items || []).find(i => i.id === itemId) || cat.items?.[0] || null;
+  if (!item){
+    if (has("itemSelect")) $("itemSelect").value = "";
+    $("itemNameEn").value = "";
+    $("itemNameAr").value = "";
+    $("itemNameKu").value = "";
+    $("itemNameAr").dataset.autoGenerated = "1";
+    $("itemNameKu").dataset.autoGenerated = "1";
+    $("itemDesc").value = "";
+    $("priceSmall").value = "";
+    $("priceLarge").value = "";
+    previewItemImage = "";
+    if (has("itemPreview")) $("itemPreview").src = DEFAULT_LOGO;
+    return;
+  }
+
+  adminItemId = item.id;
+  if (has("itemSelect")) $("itemSelect").value = item.id;
+  $("itemNameEn").value = item.names.en || "";
+  $("itemNameAr").value = item.names.ar || "";
+  $("itemNameKu").value = item.names.ku || "";
+  const looksAutoAr = !item.names.ar || item.names.ar === autoTranslatePhrase(item.names.en || "", "ar");
+  const looksAutoKu = !item.names.ku || item.names.ku === autoTranslatePhrase(item.names.en || "", "ku");
+  $("itemNameAr").dataset.autoGenerated = looksAutoAr ? "1" : "0";
+  $("itemNameKu").dataset.autoGenerated = looksAutoKu ? "1" : "0";
+  $("itemDesc").value = defaultText(item.desc, "en");
+  $("priceSmall").value = item.prices?.small || "";
+  $("priceLarge").value = item.prices?.large || "";
+  previewItemImage = item.image || "";
+  if (has("itemPreview")) $("itemPreview").src = previewItemImage || makePlaceholderImage(item, 0);
+}
+
+function renderAdmin(){
+  if (!has("adminRoot")) return;
+  ensureTopCards();
+  renderTopCards();
+  if (has("brandLogoAdmin")) $("brandLogoAdmin").src = state.logo || DEFAULT_LOGO;
+  if (has("heroLogoAdmin")) $("heroLogoAdmin").src = state.logo || DEFAULT_LOGO;
+  if (has("logoPreview")) $("logoPreview").src = previewLogoImage || state.logo || DEFAULT_LOGO;
+  if (has("adminBackTitle")) $("adminBackTitle").textContent = currentUI().brand;
+  if (has("adminBackSub")) $("adminBackSub").textContent = currentUI().brandSmall;
+  if (has("adminHeroTitle")) $("adminHeroTitle").textContent = currentUI().adminTitle;
+  if (has("adminHeroSub")) $("adminHeroSub").textContent = currentUI().brandSmall;
+  if (has("adminHeroTag")) $("adminHeroTag").textContent = currentUI().since;
+
+  refreshCategorySelects();
+  populateTopCardForm(Number($("topCardSelect")?.value || 0));
+  populateCategoryForm(adminCategoryId || state.currentCategoryId);
+  populateItemForm(adminItemCategoryId || state.currentCategoryId, adminItemId);
+
+  if (has("exportBox")) $("exportBox").value = JSON.stringify(state, null, 2);
+  if (has("adminStateSummary")) {
+    $("adminStateSummary").textContent = `${state.categories.length} categories • ${state.categories.reduce((n,c)=>n+(c.items?.length||0),0)} items`;
+  }
+}
+
+function renderAll(){
+  const tr = currentUI();
+  if (has("langEN")) $("langEN").classList.toggle("active", state.lang === "en");
+  if (has("langAR")) $("langAR").classList.toggle("active", state.lang === "ar");
+  if (has("langKU")) $("langKU").classList.toggle("active", state.lang === "ku");
+
+  if (has("app")) $("app").setAttribute("data-lang", state.lang);
+  if (has("customerRoot")) renderCustomerPanels();
+  if (has("adminRoot")) renderAdmin();
+  if (has("mainActionBtn")) $("mainActionBtn").textContent = state.activeSection === "landing" ? tr.openMenu : tr.backToMenu;
+}
+
+function setCategory(categoryId){
+  state.currentCategoryId = categoryId;
+  saveState();
+  renderAll();
+}
+
+function toggleMenuView(){
+  if (state.activeSection === "landing") state.activeSection = "cafe";
+  else state.activeSection = "landing";
+  saveState();
+  renderAll();
+}
+
+function openAdminPageMaybe(){
+  // no-op: admin page is separate now
+}
+
+function bindEvents(){
+  if (has("langEN")) $("langEN").addEventListener("click", () => setLang("en"));
+  if (has("langAR")) $("langAR").addEventListener("click", () => setLang("ar"));
+  if (has("langKU")) $("langKU").addEventListener("click", () => setLang("ku"));
+
+  if (has("searchInput")) $("searchInput").addEventListener("input", () => renderItems());
+
+  if (has("backToLandingBtn")) $("backToLandingBtn").addEventListener("click", () => {
+    state.activeSection = "landing";
+    saveState();
+    renderAll();
+  });
+  if (has("mainActionBtn")) $("mainActionBtn").addEventListener("click", () => {
+    state.activeSection = state.activeSection === "landing" ? "cafe" : "landing";
+    saveState();
+    renderAll();
+  });
+
+  if (has("previewBackdrop")) $("previewBackdrop").addEventListener("click", closePreview);
+  if (has("closePreview")) $("closePreview").addEventListener("click", closePreview);
+  if (has("previewModal")) {
+    $("previewModal").addEventListener("click", (e) => {
+      if (e.target === $("previewModal")) closePreview();
+    });
+  }
+
+  // Admin bindings (only if elements exist)
+  if (has("topCardSelect")){
+    $("topCardSelect").addEventListener("change", (e) => populateTopCardForm(e.target.value));
+  }
+  ["topCardLabelEn","topCardLabelAr","topCardLabelKu","topCardValueEn","topCardValueAr","topCardValueKu"].forEach(id => {
+    if (has(id)) $(id).addEventListener("input", syncTopCardFromForm);
+  });
+
+  if (has("itemNameEn")) $("itemNameEn").addEventListener("input", () => {
+    const en = $("itemNameEn").value.trim();
+    if (!en) return;
+    if ($("itemNameAr") && ($("itemNameAr").dataset.autoGenerated !== "0" || !$("itemNameAr").value.trim())) {
+      $("itemNameAr").value = autoTranslatePhrase(en, "ar");
+      $("itemNameAr").dataset.autoGenerated = "1";
+    }
+    if ($("itemNameKu") && ($("itemNameKu").dataset.autoGenerated !== "0" || !$("itemNameKu").value.trim())) {
+      $("itemNameKu").value = autoTranslatePhrase(en, "ku");
+      $("itemNameKu").dataset.autoGenerated = "1";
+    }
+  });
+  ["itemNameAr","itemNameKu"].forEach(id => {
+    if (has(id)) $(id).addEventListener("input", () => { $(id).dataset.autoGenerated = "0"; });
+  });
+
+  if (has("categorySelect")) $("categorySelect").addEventListener("change", () => {
+    adminCategoryId = $("categorySelect").value;
+    populateCategoryForm(adminCategoryId);
+  });
+  if (has("itemCategorySelect")) $("itemCategorySelect").addEventListener("change", () => {
+    adminItemCategoryId = $("itemCategorySelect").value;
+    populateItemForm(adminItemCategoryId, "");
+  });
+  if (has("itemSelect")) $("itemSelect").addEventListener("change", () => {
+    adminItemId = $("itemSelect").value;
+    populateItemForm(adminItemCategoryId, adminItemId);
+  });
+
+  if (has("saveLogoBtn")) $("saveLogoBtn").addEventListener("click", () => {
+    if (previewLogoImage){
+      state.logo = previewLogoImage;
+      previewLogoImage = "";
+      saveState();
+      renderAll();
+      populateTopCardForm(Number($("topCardSelect")?.value || 0));
+    }
+  });
+  if (has("resetLogoBtn")) $("resetLogoBtn").addEventListener("click", () => {
+    state.logo = DEFAULT_LOGO;
+    previewLogoImage = "";
+    saveState();
+    renderAll();
+  });
+
+  if (has("saveCategoryBtn")) $("saveCategoryBtn").addEventListener("click", () => {
+    const id = adminCategoryId || state.currentCategoryId || uid();
+    const cat = {
+      id,
+      names: {
+        en: $("categoryNameEn").value.trim() || "New Category",
+        ar: $("categoryNameAr").value.trim() || $("categoryNameEn").value.trim() || "فئة جديدة",
+        ku: $("categoryNameKu").value.trim() || $("categoryNameEn").value.trim() || "پۆلی نوێ"
+      },
+      desc: {
+        en: $("categoryDesc").value.trim(),
+        ar: $("categoryDesc").value.trim(),
+        ku: $("categoryDesc").value.trim()
+      },
+      items: []
+    };
+    const idx = state.categories.findIndex(c => c.id === id);
+    if (idx >= 0){
+      cat.items = state.categories[idx].items || [];
+      state.categories[idx] = cat;
+    } else {
+      state.categories.push(cat);
+    }
+    state.currentCategoryId = id;
+    adminCategoryId = id;
+    saveState();
+    renderAll();
+  });
+  if (has("newCategoryBtn")) $("newCategoryBtn").addEventListener("click", () => {
+    if (!confirm("Create a new category?")) return;
+    const id = uid();
+    state.categories.push({
+      id,
+      names: { en: "New Category", ar: "فئة جديدة", ku: "پۆلی نوێ" },
+      desc: { en: "", ar: "", ku: "" },
+      items: []
+    });
+    adminCategoryId = id;
+    state.currentCategoryId = id;
+    saveState();
+    renderAll();
+  });
+  if (has("deleteCategoryBtn")) $("deleteCategoryBtn").addEventListener("click", () => {
+    if (!confirm("Delete this category and all its items?")) return;
+    if (state.categories.length <= 1){
+      alert("You need at least one category.");
+      return;
+    }
+    const id = adminCategoryId || state.currentCategoryId;
+    state.categories = state.categories.filter(c => c.id !== id);
+    adminCategoryId = state.categories[0].id;
+    state.currentCategoryId = state.categories[0].id;
+    saveState();
+    renderAll();
+  });
+
+  if (has("saveItemBtn")) $("saveItemBtn").addEventListener("click", () => {
+    const catId = adminItemCategoryId || state.currentCategoryId;
+    const cat = state.categories.find(c => c.id === catId);
+    if (!cat) return;
+    const item = {
+      id: adminItemId || uid(),
+      names: {
+        en: $("itemNameEn").value.trim() || "New Item",
+        ar: $("itemNameAr").value.trim() || $("itemNameEn").value.trim() || "عنصر جديد",
+        ku: $("itemNameKu").value.trim() || $("itemNameEn").value.trim() || "تکەی نوێ"
+      },
+      desc: {
+        en: $("itemDesc").value.trim(),
+        ar: $("itemDesc").value.trim(),
+        ku: $("itemDesc").value.trim()
+      },
+      prices: {
+        small: $("priceSmall").value.trim(),
+        large: $("priceLarge").value.trim()
+      },
+      kind: "coffee",
+      colors: ["#2b160c","#7a4a25","#d7a55c"],
+      image: previewItemImage || ""
+    };
+    const idx = cat.items.findIndex(i => i.id === item.id);
+    if (idx >= 0) cat.items[idx] = item;
+    else cat.items.unshift(item);
+    adminItemId = item.id;
+    state.currentCategoryId = cat.id;
+    saveState();
+    renderAll();
+  });
+  if (has("newItemBtn")) $("newItemBtn").addEventListener("click", () => {
+    if (!confirm("Create a new item?")) return;
+    const catId = adminItemCategoryId || state.currentCategoryId;
+    const cat = state.categories.find(c => c.id === catId);
+    if (!cat) return;
+    const item = {
+      id: uid(),
+      names: { en: "", ar: "", ku: "" },
+      desc: { en: "", ar: "", ku: "" },
+      prices: { small: "", large: "" },
+      kind: "coffee",
+      colors: ["#2b160c","#7a4a25","#d7a55c"],
+      image: ""
+    };
+    cat.items.unshift(item);
+    adminItemCategoryId = cat.id;
+    adminItemId = item.id;
+    saveState();
+    renderAll();
+    populateItemForm(cat.id, item.id);
+  });
+  if (has("deleteItemBtn")) $("deleteItemBtn").addEventListener("click", () => {
+    if (!confirm("Delete this item?")) return;
+    const catId = adminItemCategoryId || state.currentCategoryId;
+    const cat = state.categories.find(c => c.id === catId);
+    if (!cat || !cat.items.length) return;
+    const id = adminItemId || cat.items[0].id;
+    cat.items = cat.items.filter(i => i.id !== id);
+    adminItemId = cat.items[0]?.id || "";
+    saveState();
+    renderAll();
+  });
+
+  if (has("exportBtn")) $("exportBtn").addEventListener("click", () => {
+    if (has("exportBox")) {
+      $("exportBox").value = JSON.stringify(state, null, 2);
+      $("exportBox").focus();
+      $("exportBox").select();
+    }
+  });
+  if (has("resetMenuBtn")) $("resetMenuBtn").addEventListener("click", () => {
+    if (!confirm("Reset the demo menu?")) return;
+    state = normalizeState(null);
+    saveState();
+    renderAll();
+  });
+
+  if (has("logoInput")) $("logoInput").addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      previewLogoImage = String(reader.result || "");
+      if (has("logoPreview")) $("logoPreview").src = previewLogoImage;
+    };
+    reader.readAsDataURL(file);
+  });
+  if (has("itemImageInput")) $("itemImageInput").addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      previewItemImage = String(reader.result || "");
+      if (has("itemPreview")) $("itemPreview").src = previewItemImage;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePreview();
+  });
+}
+
+let state = null;
+let adminCategoryId = "";
+let adminItemCategoryId = "";
+let adminItemId = "";
+let previewLogoImage = "";
+let previewItemImage = "";
+
+function init(){
+  loadState();
+  state.lang = ["en","ar","ku"].includes(state.lang) ? state.lang : "en";
+  state.currentCategoryId = state.currentCategoryId || state.categories[0].id;
+  ensureTopCards();
+  adminCategoryId = state.currentCategoryId;
+  adminItemCategoryId = state.currentCategoryId;
+  adminItemId = state.categories.find(c => c.id === state.currentCategoryId)?.items?.[0]?.id || "";
+  document.body.dataset.lang = state.lang;
+  bindEvents();
+  updateStaticText();
+  renderAll();
+  initFirebaseSync();
+}
+
+init();
+</script>
+</body>
+</html>
