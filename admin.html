@@ -985,7 +985,14 @@
             <button class="action primary" id="saveLogoBtn" type="button">Save Logo</button>
             <button class="action" id="resetLogoBtn" type="button">Reset Logo</button>
           </div>
-          <div class="admin-note" id="logoNote">Change the top logo and the hero logo together.</div>
+          <div class="confirm-row hidden" id="logoConfirmRow">
+            <div class="confirm-msg" id="logoConfirmMsg">Confirm logo save?</div>
+            <div class="actions">
+              <button class="action primary" id="confirmLogoBtn" type="button">Confirm Save</button>
+              <button class="action" id="cancelLogoBtn" type="button">Cancel</button>
+            </div>
+          </div>
+          <div class="admin-note" id="logoNote">Select a logo, press Save Logo, then confirm. The image is uploaded to Firebase Storage before the menu is saved.</div>
           <div class="preview-mini" style="margin-top:12px;"><img id="logoPreview" alt="" /></div>
         </section>
 
@@ -1051,7 +1058,7 @@
               <button class="action" id="cancelItemBtn" type="button">Cancel</button>
             </div>
           </div>
-          <div class="admin-note" id="itemNote">You can add items to any category, including ones you create later.</div>
+          <div class="admin-note" id="itemNote">Select a picture, press Save Item, then confirm. Pictures are uploaded to Firebase Storage and their permanent URL is saved with the item.</div>
           <div class="preview-mini" style="margin-top:12px;"><img id="itemPreview" alt="" /></div>
         </section>
 
@@ -1814,13 +1821,29 @@ let saveInFlight = false;
     }
 
     async function uploadFileToStorage(file, kind){
-      if (!storage || !file) return "";
-      const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
-      const safeExt = ext || "png";
+      if (!file) throw new Error("No image file selected");
+      if (!storage) throw new Error("Firebase Storage is not initialized");
+      if (!String(file.type || "").startsWith("image/")) throw new Error("Please select an image file");
+      if (file.size > 8 * 1024 * 1024) throw new Error("Image is too large. Maximum size is 8 MB");
+
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const safeExt = ext || "jpg";
       const path = `${FIREBASE_ASSET_PREFIX}/${kind}/${Date.now()}_${Math.random().toString(36).slice(2, 10)}.${safeExt}`;
       const ref = storageRef(storage, path);
-      await uploadBytes(ref, file, { contentType: file.type || "application/octet-stream" });
-      return await getDownloadURL(ref);
+      const metadata = {
+        contentType: file.type || "image/jpeg",
+        cacheControl: "public,max-age=31536000,immutable"
+      };
+
+      try {
+        await uploadBytes(ref, file, metadata);
+        const url = await getDownloadURL(ref);
+        if (!url) throw new Error("Firebase Storage returned no download URL");
+        return url;
+      } catch (err) {
+        console.error(`Firebase Storage ${kind} upload failed:`, err);
+        throw err;
+      }
     }
 
     function t(){ return UI[state.lang] || UI.en; }
@@ -1924,10 +1947,10 @@ let saveInFlight = false;
       clearCategoryAction();
     }
 
-    function confirmItemAction(){
+    async function confirmItemAction(){
       const action = pendingItemAction;
       if (!action) return;
-      if (action === "save") saveItem();
+      if (action === "save") await saveItem();
       if (action === "new") newItem();
       if (action === "delete") deleteItem();
       clearItemAction();
@@ -2387,45 +2410,56 @@ let saveInFlight = false;
       const cat = state.categories.find(c => c.id === catId);
       if (!cat) return;
 
-      let imageUrl = previewItemImage || "";
-      if (pendingItemFile){
-        const uploaded = await uploadFileToStorage(pendingItemFile, "item");
-        if (uploaded) imageUrl = uploaded;
+      const existing = (cat.items || []).find(i => i.id === adminItemId);
+      // Never save a temporary blob/object URL to Firebase. It only exists on this phone.
+      let imageUrl = existing?.image || "";
+
+      try {
+        if (pendingItemFile) {
+          setSyncStatus("Uploading item picture…", "connecting");
+          imageUrl = await uploadFileToStorage(pendingItemFile, "item");
+        } else if (previewItemImage && !previewItemImage.startsWith("blob:")) {
+          imageUrl = previewItemImage;
+        }
+
+        const item = {
+          id: adminItemId || uid(),
+          names: {
+            en: $("itemNameEn").value.trim() || "New Item",
+            ar: $("itemNameAr").value.trim() || $("itemNameEn").value.trim() || "عنصر جديد",
+            ku: $("itemNameKu").value.trim() || $("itemNameEn").value.trim() || "تکەی نوێ"
+          },
+          desc: {
+            en: $("itemDesc").value.trim(),
+            ar: $("itemDesc").value.trim(),
+            ku: $("itemDesc").value.trim()
+          },
+          prices: {
+            small: $("priceSmall").value.trim(),
+            large: $("priceLarge").value.trim()
+          },
+          kind: existing?.kind || "coffee",
+          colors: Array.isArray(existing?.colors) && existing.colors.length >= 3 ? existing.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
+          image: imageUrl
+        };
+
+        if (item.prices.small && !item.prices.large) item.prices.large = item.prices.small;
+        const idx = (cat.items || []).findIndex(i => i.id === item.id);
+        if (idx >= 0) cat.items[idx] = item;
+        else cat.items.push(item);
+
+        adminItemId = item.id;
+        state.currentCategoryId = cat.id;
+        pendingItemFile = null;
+        previewItemImage = item.image || "";
+        saveState();
+        render();
+        populateAdmin();
+      } catch (err) {
+        console.error("Item save failed:", err);
+        setSyncStatus(`Picture upload failed — ${err?.code || err?.message || "check Firebase Storage"}`, "error", err);
+        // Keep the selected file pending so the user can retry instead of losing it.
       }
-
-      const item = {
-        id: adminItemId || uid(),
-        names: {
-          en: $("itemNameEn").value.trim() || "New Item",
-          ar: $("itemNameAr").value.trim() || $("itemNameEn").value.trim() || "عنصر جديد",
-          ku: $("itemNameKu").value.trim() || $("itemNameEn").value.trim() || "تکەی نوێ"
-        },
-        desc: {
-          en: $("itemDesc").value.trim(),
-          ar: $("itemDesc").value.trim(),
-          ku: $("itemDesc").value.trim()
-        },
-        prices: {
-          small: $("priceSmall").value.trim(),
-          large: $("priceLarge").value.trim()
-        },
-        kind: "coffee",
-        colors: ["#2b160c","#7a4a25","#d7a55c"],
-        image: imageUrl
-      };
-
-      if (item.prices.small && !item.prices.large) item.prices.large = item.prices.small;
-      const idx = (cat.items || []).findIndex(i => i.id === item.id);
-      if (idx >= 0) cat.items[idx] = item;
-      else cat.items.push(item);
-
-      adminItemId = item.id;
-      state.currentCategoryId = cat.id;
-      pendingItemFile = null;
-      previewItemImage = "";
-      saveState();
-      render();
-      populateAdmin();
     }
 
     function newItem(){
@@ -2464,26 +2498,34 @@ let saveInFlight = false;
     }
 
     async function saveLogo(){
+      if (!pendingLogoFile && !previewLogoImage) return;
+      $("logoConfirmRow")?.classList.remove("hidden");
+    }
+
+    function clearLogoAction(){
+      $("logoConfirmRow")?.classList.add("hidden");
+    }
+
+    async function confirmLogoSave(){
       try{
         if (pendingLogoFile){
-          if (!storage){
-            setSyncStatus("Firebase Storage unavailable", "error");
-            return;
-          }
+          setSyncStatus("Uploading logo…", "connecting");
           const url = await uploadFileToStorage(pendingLogoFile, "logo");
-          if (!url) throw new Error("Logo upload returned no URL");
           state.logo = url;
           pendingLogoFile = null;
-        } else if (previewLogoImage) {
+        } else if (previewLogoImage && !previewLogoImage.startsWith("blob:")) {
           state.logo = previewLogoImage;
+        } else if (previewLogoImage) {
+          throw new Error("The selected logo has not been uploaded yet");
         }
         previewLogoImage = "";
+        clearLogoAction();
         saveState();
         render();
         populateAdmin();
       }catch(err){
         console.error("Logo save failed:", err);
-        setSyncStatus("Logo upload failed — check Storage rules", "error", err);
+        setSyncStatus(`Logo upload failed — ${err?.code || err?.message || "check Firebase Storage"}`, "error", err);
       }
     }
 
@@ -2491,6 +2533,7 @@ let saveInFlight = false;
       state.logo = DEFAULT_LOGO;
       previewLogoImage = "";
       pendingLogoFile = null;
+      clearLogoAction();
       saveState();
       render();
       populateAdmin();
@@ -2596,6 +2639,8 @@ let saveInFlight = false;
       $("cancelItemBtn").addEventListener("click", clearItemAction);
 
       $("saveLogoBtn").addEventListener("click", saveLogo);
+      $("confirmLogoBtn").addEventListener("click", confirmLogoSave);
+      $("cancelLogoBtn").addEventListener("click", clearLogoAction);
       $("resetLogoBtn").addEventListener("click", resetLogo);
 
       $("exportBtn").addEventListener("click", exportJSON);
