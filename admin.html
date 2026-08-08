@@ -864,11 +864,20 @@ function scheduleSave(){
   if (PAGE_MODE === "admin") renderAdmin();
 }
 async function pushRemote(){
-  if (!docRef || !setDoc) return;
+  if (!docRef) {
+    setStatus("Firebase not ready yet");
+    return;
+  }
   try{
-    await setDoc(docRef, { ...content, updatedAt: Date.now() }, { merge: false });
+    const firestore = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
+    const firebaseSetDoc = firestore.setDoc;
+    if (typeof firebaseSetDoc !== "function") {
+      throw new Error("Firebase Firestore setDoc could not be loaded");
+    }
+    await firebaseSetDoc(docRef, { ...content, updatedAt: Date.now() }, { merge: false });
     setStatus("Saved to Firebase");
   }catch(err){
+    console.error("Firebase save failed:", err);
     setStatus(`Firebase save failed: ${err?.code || err?.message || "unknown error"}`);
   }
 }
