@@ -1383,8 +1383,8 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
           ku: $("topCardValueKu").value.trim()
         }
       };
-      saveState();
       renderTopCards();
+      scheduleSaveState();
     }
 
     function syncItemTranslationsFromEnglish(){
@@ -1622,7 +1622,7 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
     const adminModal = $("adminModal");
 
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
-      apiKey: "AIzaSyB_m-lt22FJ7fShyRHDgPEbkYTSOzMpMYM",
+      apiKey: "AIzaSyB_m-t22EZJ7fShvRHdgPEhKYTOSzMpMYM",
       authDomain: "menu-e4cef.firebaseapp.com",
       projectId: "menu-e4cef",
       storageBucket: "menu-e4cef.firebasestorage.app",
@@ -1795,6 +1795,14 @@ let saveInFlight = false;
       runFirebaseSaveQueue();
     }
 
+    function scheduleSaveState(delay = 450){
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        saveTimer = null;
+        saveState();
+      }, delay);
+    }
+
     async function runFirebaseSaveQueue(){
       if (saveInFlight || !saveQueued || !menuDocRef) return;
       saveInFlight = true;
@@ -1857,6 +1865,15 @@ let saveInFlight = false;
         throw new Error(result?.message || result?.error || `ImageKit upload failed (${uploadResponse.status})`);
       }
       return result.url;
+    }
+
+    async function fileToDataUrl(file){
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(reader.error || new Error("Unable to read image file"));
+        reader.readAsDataURL(file);
+      });
     }
 
     function t(){ return UI[state.lang] || UI.en; }
@@ -2425,8 +2442,15 @@ let saveInFlight = false;
 
       let imageUrl = previewItemImage || "";
       if (pendingItemFile){
-        const uploaded = await uploadFileToImageKit(pendingItemFile, "item");
-        if (uploaded) imageUrl = uploaded;
+        try{
+          const uploaded = await uploadFileToImageKit(pendingItemFile, "item");
+          if (uploaded) {
+            imageUrl = uploaded;
+          }
+        }catch(uploadErr){
+          console.warn("Item upload failed, using embedded image fallback:", uploadErr);
+          imageUrl = await fileToDataUrl(pendingItemFile);
+        }
       }
 
       const item = {
@@ -2502,9 +2526,17 @@ let saveInFlight = false;
     async function saveLogo(){
       try{
         if (pendingLogoFile){
-          const url = await uploadFileToImageKit(pendingLogoFile, "logo");
-          if (!url) throw new Error("Logo upload returned no URL");
-          state.logo = url;
+          try{
+            const url = await uploadFileToImageKit(pendingLogoFile, "logo");
+            if (url) {
+              state.logo = url;
+            } else {
+              state.logo = await fileToDataUrl(pendingLogoFile);
+            }
+          }catch(uploadErr){
+            console.warn("Logo upload failed, using embedded image fallback:", uploadErr);
+            state.logo = await fileToDataUrl(pendingLogoFile);
+          }
           pendingLogoFile = null;
         } else if (previewLogoImage) {
           state.logo = previewLogoImage;
@@ -2515,7 +2547,7 @@ let saveInFlight = false;
         populateAdmin();
       }catch(err){
         console.error("Logo save failed:", err);
-        setSyncStatus("Logo upload failed — check Storage rules", "error", err);
+        setSyncStatus("Logo save failed", "error", err);
       }
     }
 
