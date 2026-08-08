@@ -1709,16 +1709,12 @@ async function requireAdminAuth(){
   if (authReadyPromise) return authReadyPromise;
 
   authReadyPromise = new Promise((resolve, reject) => {
-    let settled = false;
+    let resolved = false;
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (!user) {
         gate.classList.remove("hidden");
         logoutBtn.style.display = "none";
-        if (!settled) {
-          settled = true;
-          resolve(false);
-        }
         return;
       }
 
@@ -1727,24 +1723,20 @@ async function requireAdminAuth(){
           error.textContent = "This account is not authorized for the admin panel.";
           gate.classList.remove("hidden");
           logoutBtn.style.display = "none";
-          if (!settled) {
-            settled = true;
-            resolve(false);
-          }
         });
         return;
       }
 
       gate.classList.add("hidden");
       logoutBtn.style.display = "block";
-      if (!settled) {
-        settled = true;
+      if (!resolved) {
+        resolved = true;
         resolve(true);
       }
     }, (err) => {
       error.textContent = err?.message || "Authentication error.";
-      if (!settled) {
-        settled = true;
+      if (!resolved) {
+        resolved = true;
         reject(err);
       }
     });
@@ -1760,9 +1752,9 @@ async function requireAdminAuth(){
         console.error("Admin login failed:", err);
         const code = err?.code || "";
         if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
-          error.textContent = "Login failed. Check your email and password.";
+          error.textContent = `Login failed (${code}). Check your email and password.`;
         } else {
-          error.textContent = err?.message || "Login failed.";
+          error.textContent = err?.message || `Login failed${code ? ` (${code})` : ""}.`;
         }
       } finally {
         loginBtn.disabled = false;
@@ -1782,7 +1774,7 @@ async function startFirebaseSync(){
     return;
   }
 
-  if (fbApp) return;
+  if (firebaseReady) return;
 
   if (!fbApp) fbApp = initializeApp(FIREBASE_CONFIG);
   db = getFirestore(fbApp);
