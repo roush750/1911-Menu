@@ -1096,7 +1096,6 @@
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
     const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
@@ -1635,11 +1634,14 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
+    // ImageKit stores the actual menu images. The private key never appears in this file.
+    const IMAGEKIT_PUBLIC_KEY = "public_PuL65ZSX9Mbdofd/9uXDomIzKH0=";
+    const IMAGEKIT_AUTH_URL = "https://roushworker.zamoahmad490.workers.dev/auth";
+    const IMAGEKIT_UPLOAD_URL = "https://upload.imagekit.io/api/v1/files/upload";
     const PAGE_MODE = document.body.dataset.page || "index";
 
     let fbApp = null;
     let db = null;
-    let storage = null;
     let menuDocRef = null;
     let firebaseReady = false;
     let firebaseHydrated = false;
@@ -1674,7 +1676,6 @@ async function startFirebaseSync(){
   try{
     fbApp = initializeApp(FIREBASE_CONFIG);
     db = getFirestore(fbApp);
-    storage = getStorage(fbApp);
     menuDocRef = doc(db, FIREBASE_DOC_PATH[0], FIREBASE_DOC_PATH[1]);
     firebaseReady = true;
     firebaseHydrated = false;
@@ -1812,14 +1813,50 @@ let saveInFlight = false;
       }
     }
 
-    async function uploadFileToStorage(file, kind){
-      if (!storage || !file) return "";
-      const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
-      const safeExt = ext || "png";
-      const path = `${FIREBASE_ASSET_PREFIX}/${kind}/${Date.now()}_${Math.random().toString(36).slice(2, 10)}.${safeExt}`;
-      const ref = storageRef(storage, path);
-      await uploadBytes(ref, file, { contentType: file.type || "application/octet-stream" });
-      return await getDownloadURL(ref);
+    async function uploadFileToImageKit(file, kind){
+      if (!file) throw new Error("No image file selected");
+      if (!String(file.type || "").startsWith("image/")) throw new Error("Please select an image file");
+      if (file.size > 25 * 1024 * 1024) throw new Error("Image is too large. Maximum size is 25 MB");
+
+      // Ask the secure Cloudflare Worker for one-time ImageKit upload credentials.
+      const authResponse = await fetch(IMAGEKIT_AUTH_URL, {
+        method: "GET",
+        cache: "no-store",
+        headers: { "Accept": "application/json" }
+      });
+      if (!authResponse.ok) {
+        const detail = await authResponse.text().catch(() => "");
+        throw new Error(`Image upload authentication failed (${authResponse.status}) ${detail}`.trim());
+      }
+      const auth = await authResponse.json();
+      if (!auth?.token || !auth?.expire || !auth?.signature) {
+        throw new Error("ImageKit authentication response is incomplete");
+      }
+
+      const original = String(file.name || "image.jpg");
+      const cleaned = original.replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^[-_.]+/, "") || "image.jpg";
+      const fileName = `1911_${kind}_${Date.now()}_${cleaned}`;
+
+      const form = new FormData();
+      form.append("file", file);
+      form.append("fileName", fileName);
+      form.append("publicKey", IMAGEKIT_PUBLIC_KEY);
+      form.append("signature", auth.signature);
+      form.append("expire", String(auth.expire));
+      form.append("token", auth.token);
+      form.append("useUniqueFileName", "true");
+      form.append("folder", `/1911-menu/${kind}`);
+
+      const uploadResponse = await fetch(IMAGEKIT_UPLOAD_URL, {
+        method: "POST",
+        body: form,
+        headers: { "Accept": "application/json" }
+      });
+      const result = await uploadResponse.json().catch(() => ({}));
+      if (!uploadResponse.ok || !result?.url) {
+        throw new Error(result?.message || result?.error || `ImageKit upload failed (${uploadResponse.status})`);
+      }
+      return result.url;
     }
 
     function t(){ return UI[state.lang] || UI.en; }
@@ -2388,7 +2425,7 @@ let saveInFlight = false;
 
       let imageUrl = previewItemImage || "";
       if (pendingItemFile){
-        const uploaded = await uploadFileToStorage(pendingItemFile, "item");
+        const uploaded = await uploadFileToImageKit(pendingItemFile, "item");
         if (uploaded) imageUrl = uploaded;
       }
 
@@ -2466,10 +2503,10 @@ let saveInFlight = false;
       try{
         if (pendingLogoFile){
           if (!storage){
-            setSyncStatus("Firebase Storage unavailable", "error");
+            setSyncStatus("Image upload service unavailable", "error");
             return;
           }
-          const url = await uploadFileToStorage(pendingLogoFile, "logo");
+          const url = await uploadFileToImageKit(pendingLogoFile, "logo");
           if (!url) throw new Error("Logo upload returned no URL");
           state.logo = url;
           pendingLogoFile = null;
