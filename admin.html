@@ -1705,7 +1705,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       return snapshot;
     }
 
-async async function startFirebaseSync(){
+async function startFirebaseSync(){
   if (!hasFirebaseConfig()){
     setSyncStatus("Offline — local mode", "offline");
     return;
