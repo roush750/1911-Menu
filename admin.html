@@ -864,10 +864,45 @@
 #syncStatus{position:fixed;top:12px;right:12px;z-index:9999;padding:8px 12px;border-radius:999px;background:rgba(18,12,8,.92);border:1px solid rgba(213,171,83,.35);color:#f8eee0;font-size:12px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(10px)}
 #bottomSectionBtn{display:block;width:min(92%,520px);margin:18px auto 26px;padding:13px 18px;border-radius:16px;border:1px solid rgba(213,171,83,.35);background:rgba(213,171,83,.12);color:var(--text);font-weight:800;font-size:15px;cursor:pointer}
 #bottomSectionBtn:hover{background:rgba(213,171,83,.2)}
+.auth-gate{position:fixed;inset:0;z-index:175;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(4,3,2,.74);backdrop-filter:blur(14px)}
+.auth-gate.open{display:flex}
+.auth-card{width:min(460px,100%);border-radius:30px;border:1px solid rgba(213,171,83,.2);background:linear-gradient(180deg, rgba(23,17,13,.98), rgba(9,8,7,.99));box-shadow:0 28px 100px rgba(0,0,0,.56);padding:22px}
+.auth-kicker{text-transform:uppercase;letter-spacing:.16em;color:var(--gold2);font-size:.76rem;margin-bottom:6px}
+.auth-title{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:.04em;text-transform:uppercase}
+.auth-copy{margin:10px 0 18px;color:var(--muted);line-height:1.55;font-size:.96rem}
+.auth-status{margin-top:12px;color:var(--gold2);font-size:.9rem;line-height:1.45}
+.auth-card .actions{margin-top:4px}
+.auth-card .action,.auth-card .action.primary{min-height:46px}
+#signOutTopBtn{margin-left:10px}
+@media (max-width: 560px){
+  #signOutTopBtn{width:100%;margin-left:0}
+}
+body[data-page="admin"] .site-launcher{display:none !important}
 </style>
 </head>
 
 <body data-page="admin"><div id="syncStatus">Starting Firebase…</div>
+  <div class="auth-gate open" id="authGate">
+    <div class="auth-card">
+      <div class="auth-kicker">Firebase login</div>
+      <h2 class="auth-title" id="authTitle">Sign in to edit and sync</h2>
+      <p class="auth-copy" id="authCopy">Use your email and password. Once signed in, your edits save to Firebase in real time.</p>
+      <div class="field">
+        <label for="authEmail">Email</label>
+        <input id="authEmail" type="email" autocomplete="email" placeholder="admin@example.com" />
+      </div>
+      <div class="field">
+        <label for="authPassword">Password</label>
+        <input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••••" />
+      </div>
+      <div class="actions">
+        <button class="action primary" id="authSignInBtn" type="button">Sign In</button>
+        <button class="action" id="authCreateBtn" type="button">Create Account</button>
+        <button class="action" id="authSignOutBtn" type="button" style="display:none">Sign Out</button>
+      </div>
+      <div class="auth-status" id="authStatus">Not signed in.</div>
+    </div>
+  </div>
   <div class="site-launcher" id="siteLauncher">
     <div class="launcher-panel">
       <div class="launcher-brand">
@@ -909,6 +944,7 @@
         <button class="btn" type="button" data-lang-btn="ar">العربية</button>
         <button class="btn" type="button" data-lang-btn="ku">کوردی</button>
       </div>
+      <button class="btn admin-toggle" id="signOutTopBtn" type="button" style="display:none">Sign Out</button>
     </header>
 
     <section class="hero">
@@ -1096,6 +1132,7 @@
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
     const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
@@ -1641,6 +1678,9 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     const PAGE_MODE = document.body.dataset.page || "index";
 
     let fbApp = null;
+    let auth = null;
+    let authUser = null;
+    let firebaseListenerUnsub = null;
     let db = null;
     let menuDocRef = null;
     let firebaseReady = false;
@@ -1665,18 +1705,23 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       return snapshot;
     }
 
-async function startFirebaseSync(){
+async async function startFirebaseSync(){
   if (!hasFirebaseConfig()){
     setSyncStatus("Offline — local mode", "offline");
     return;
   }
-  if (fbApp) return;
 
-  setSyncStatus("Connecting to Firebase…", "connecting");
+  await ensureFirebaseApp();
+  if (firebaseListenerUnsub) {
+    firebaseListenerUnsub();
+    firebaseListenerUnsub = null;
+  }
+
+  const accessMode = authUser ? "read/write" : "read-only";
+  setSyncStatus(`Connecting to Firebase (${accessMode})…`, "connecting");
   try{
-    fbApp = initializeApp(FIREBASE_CONFIG);
-    db = getFirestore(fbApp);
-    menuDocRef = doc(db, FIREBASE_DOC_PATH[0], FIREBASE_DOC_PATH[1]);
+    const db = getFirestore(fbApp);
+    menuDocRef = doc(db, ...FIREBASE_DOC_PATH);
     firebaseReady = true;
     firebaseHydrated = false;
 
@@ -1701,8 +1746,8 @@ async function startFirebaseSync(){
       } finally {
         remoteApplying = false;
       }
-    } else {
-      // First-time setup: publish the current local/default menu.
+    } else if (authUser) {
+      // First-time setup: only authenticated admins publish the initial shared menu.
       remoteApplying = true;
       try{
         await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
@@ -1713,9 +1758,9 @@ async function startFirebaseSync(){
     }
 
     firebaseHydrated = true;
-    setSyncStatus("Connected to Firebase", "online");
+    setSyncStatus(authUser ? "Connected to Firebase" : "Connected to Firebase (read-only)", "online");
 
-    onSnapshot(menuDocRef, (remoteSnap) => {
+    firebaseListenerUnsub = onSnapshot(menuDocRef, (remoteSnap) => {
       if (!firebaseHydrated || !remoteSnap.exists() || remoteApplying) return;
       remoteApplying = true;
       try{
@@ -1731,7 +1776,7 @@ async function startFirebaseSync(){
         saveLocalState();
         render();
         if (PAGE_MODE === "admin") populateAdmin();
-        setSyncStatus("Synced from Firebase", "online");
+        setSyncStatus(authUser ? "Synced from Firebase" : "Live Firebase updates received", "online");
       } catch(err){
         console.error("Failed to apply Firebase state:", err);
         setSyncStatus("Firebase sync error", "error");
@@ -1750,12 +1795,119 @@ async function startFirebaseSync(){
   }
 }
 
-function setSyncStatus(message, type="online", err=null){
+function setSyncStatusfunction setSyncStatus(message, type="online", err=null){
   const el = $("syncStatus");
   if (!el) return;
   el.textContent = message;
   el.title = err ? String(err?.code || err?.message || err) : message;
   el.dataset.state = type;
+}
+
+function setAuthStatus(message, type="neutral"){
+  const el = $("authStatus");
+  if (!el) return;
+  el.textContent = message;
+  el.dataset.state = type;
+}
+
+function updateAuthUI(){
+  const gate = $("authGate");
+  const outBtn = $("authSignOutBtn");
+  const topOutBtn = $("signOutTopBtn");
+  if (!gate || !outBtn || !topOutBtn) return;
+
+  if (authUser) {
+    gate.classList.remove("open");
+    outBtn.style.display = "none";
+    topOutBtn.style.display = "inline-flex";
+    if (PAGE_MODE === "admin") {
+      $("app").style.display = "block";
+      openAdmin();
+    }
+    setAuthStatus(`Signed in as ${authUser.email || "Firebase user"}.`, "online");
+  } else {
+    topOutBtn.style.display = "none";
+    if (PAGE_MODE === "admin") {
+      gate.classList.add("open");
+      $("app").style.display = "none";
+    }
+    outBtn.style.display = "none";
+    setAuthStatus("Not signed in.", "neutral");
+  }
+}
+
+async function ensureFirebaseApp(){
+  if (!hasFirebaseConfig()){
+    throw new Error("Firebase config is missing");
+  }
+  if (!fbApp) {
+    fbApp = initializeApp(FIREBASE_CONFIG);
+  }
+  return fbApp;
+}
+
+async function initFirebaseAuth(){
+  if (!hasFirebaseConfig()){
+    setSyncStatus("Offline — local mode", "offline");
+    setAuthStatus("Firebase config is incomplete.", "error");
+    return;
+  }
+  await ensureFirebaseApp();
+  if (!auth) {
+    auth = getAuth(fbApp);
+    onAuthStateChanged(auth, async (user) => {
+      authUser = user || null;
+      updateAuthUI();
+
+      try{
+        await startFirebaseSync();
+      }catch(err){
+        console.error("Firebase sync start failed:", err);
+        setSyncStatus("Firebase sync failed", "error", err);
+      }
+
+      if (!authUser && PAGE_MODE === "admin") {
+        setSyncStatus("Signed out — viewing read-only Firebase data", "offline");
+      }
+    });
+  }
+}
+
+async function handleAuthAction(mode){
+  const email = $("authEmail")?.value.trim();
+  const password = $("authPassword")?.value || "";
+
+  if (!email || !password) {
+    setAuthStatus("Enter both email and password.", "error");
+    return;
+  }
+
+  try{
+    await ensureFirebaseApp();
+    if (!auth) auth = getAuth(fbApp);
+    setAuthStatus(mode === "create" ? "Creating account…" : "Signing in…", "connecting");
+    if (mode === "create") {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+    $("authPassword").value = "";
+  }catch(err){
+    console.error("Auth action failed:", err);
+    const msg = String(err?.code || err?.message || err);
+    setAuthStatus(msg.replace("auth/", "").replaceAll("-", " "), "error");
+  }
+}
+
+async function handleSignOut(){
+  try{
+    if (auth) {
+      await signOut(auth);
+    }
+  }catch(err){
+    console.error("Sign out failed:", err);
+    setAuthStatus(String(err?.code || err?.message || err), "error");
+  }
 }
 
 function saveLocalState(){
@@ -1786,8 +1938,8 @@ let saveInFlight = false;
     function saveState(){
       // Always keep an offline copy first.
       saveLocalState();
-      if (!firebaseReady || !firebaseHydrated || !menuDocRef || remoteApplying){
-        setSyncStatus("Offline — saved locally", "offline");
+      if (!authUser || !firebaseReady || !firebaseHydrated || !menuDocRef || remoteApplying){
+        setSyncStatus(authUser ? "Offline — saved locally" : "Sign in to sync with Firebase", "offline");
         return;
       }
       latestSaveSnapshot = persistedStateSnapshot();
@@ -2662,6 +2814,11 @@ let saveInFlight = false;
       $("saveLogoBtn").addEventListener("click", saveLogo);
       $("resetLogoBtn").addEventListener("click", resetLogo);
 
+      $("authSignInBtn").addEventListener("click", () => handleAuthAction("signin"));
+      $("authCreateBtn").addEventListener("click", () => handleAuthAction("create"));
+      $("authSignOutBtn").addEventListener("click", handleSignOut);
+      $("signOutTopBtn").addEventListener("click", handleSignOut);
+
       $("exportBtn").addEventListener("click", exportJSON);
       $("resetMenuBtn").addEventListener("click", resetDemoMenu);
 
@@ -2699,14 +2856,24 @@ let saveInFlight = false;
       ensureTopCards();
       $("searchInput").value = state.search;
       bindEvents();
+      if (PAGE_MODE === "admin") {
+        $("app").style.display = "none";
+        $("siteLauncher")?.classList.add("hidden");
+      }
+
+      await initFirebaseAuth();
       await startFirebaseSync();
       setLanguage(state.lang);
       renderLauncherState();
+      updateAuthUI();
 
       if (PAGE_MODE === "admin") {
-        $("siteLauncher")?.classList.add("hidden");
-        $("app").style.display = "block";
-        openAdmin();
+        if (authUser) {
+          $("app").style.display = "block";
+          openAdmin();
+        } else {
+          closeAdmin();
+        }
       } else {
         closeAdmin();
       }
