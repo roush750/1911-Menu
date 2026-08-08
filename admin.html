@@ -6,6 +6,8 @@
   <title>1911 Coffee Shop Menu</title>
   <meta name="theme-color" content="#120c08" />
   <style>
+#authGate.hidden{display:none!important;}
+
     :root{
       --bg:#120c08;
       --bg2:#1a120b;
@@ -860,41 +862,24 @@
       .items{grid-template-columns:1fr}
     }
       body[data-page="admin"] .site-launcher{display:none !important;}
-
-    #authGate{
-      position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
-      padding:20px;background:rgba(9,7,5,.98);backdrop-filter:blur(12px)
-    }
-    #authGate.hidden{display:none!important}
-    .auth-card{width:min(420px,100%);padding:28px;border:1px solid var(--line);border-radius:24px;background:var(--panel2);box-shadow:var(--shadow)}
-    .auth-card h2{margin:0 0 8px;color:var(--gold2)}
-    .auth-card p{margin:0 0 20px;color:var(--muted)}
-    .auth-field{margin:12px 0}.auth-field label{display:block;margin-bottom:7px;color:var(--muted);font-size:.9rem}
-    .auth-field input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:#0d0906;color:var(--text);font:inherit}
-    #authLoginBtn{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;background:var(--gold);color:#120c08;font-weight:800;cursor:pointer}
-    #authError{min-height:20px;margin-top:12px;color:#ff8d8d;font-size:.9rem}
-    #authLogoutBtn{position:fixed;right:16px;top:16px;z-index:9998;display:none;padding:9px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(18,12,8,.9);color:var(--text);cursor:pointer}
   </style>
 </head>
 
 <body data-page="admin">
-  <div id="authGate">
-    <form class="auth-card" id="authForm">
-      <h2>1911 Admin Login</h2>
-      <p>Sign in to manage the menu.</p>
-      <div class="auth-field">
-        <label for="authEmail">Email</label>
-        <input id="authEmail" type="email" autocomplete="username" required>
-      </div>
-      <div class="auth-field">
-        <label for="authPassword">Password</label>
-        <input id="authPassword" type="password" autocomplete="current-password" required>
-      </div>
-      <button id="authLoginBtn" type="submit">Sign in</button>
-      <div id="authError" role="alert"></div>
-    </form>
+  <div id="authGate" style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#0b0b0b;padding:20px;">
+    <div style="width:min(420px,100%);background:#171717;border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.45);color:#fff;">
+      <h2 style="margin:0 0 8px;">1911 Admin</h2>
+      <p style="margin:0 0 20px;opacity:.7;">Sign in to manage the menu.</p>
+      <form id="authForm">
+        <input id="authEmail" type="email" autocomplete="username" placeholder="Email" required style="width:100%;box-sizing:border-box;margin-bottom:12px;padding:13px;border-radius:12px;border:1px solid #444;background:#222;color:#fff;">
+        <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" required style="width:100%;box-sizing:border-box;margin-bottom:12px;padding:13px;border-radius:12px;border:1px solid #444;background:#222;color:#fff;">
+        <button id="authLoginBtn" type="submit" style="width:100%;padding:13px;border:0;border-radius:12px;cursor:pointer;">Sign in</button>
+        <div id="authError" style="margin-top:12px;color:#ff7777;min-height:20px;font-size:14px;"></div>
+      </form>
+      <button id="authLogoutBtn" type="button" style="display:none;">Log out</button>
+    </div>
   </div>
-  <button id="authLogoutBtn" type="button">Log out</button>
+
   <div class="site-launcher" id="siteLauncher">
     <div class="launcher-panel">
       <div class="launcher-brand">
@@ -1121,9 +1106,9 @@
 
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
     const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
@@ -1659,6 +1644,91 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       measurementId: "G-RDY676HQLB"
     };
 
+    const ADMIN_UID = "hvqtn531uDVHwwH4uXZx8tVpzKx2";
+    let auth = null;
+    let authReadyPromise = null;
+
+    function requireAdminAuth(){
+      if (!hasFirebaseConfig()) {
+        return Promise.reject(new Error("Firebase configuration is missing."));
+      }
+
+      if (!fbApp) fbApp = initializeApp(FIREBASE_CONFIG);
+      auth = getAuth(fbApp);
+
+      const gate = document.getElementById("authGate");
+      const form = document.getElementById("authForm");
+      const email = document.getElementById("authEmail");
+      const password = document.getElementById("authPassword");
+      const error = document.getElementById("authError");
+      const loginBtn = document.getElementById("authLoginBtn");
+      const logoutBtn = document.getElementById("authLogoutBtn");
+
+      if (authReadyPromise) return authReadyPromise;
+
+      authReadyPromise = new Promise((resolve, reject) => {
+        let finished = false;
+
+        onAuthStateChanged(auth, (user) => {
+          if (!user) {
+            gate.classList.remove("hidden");
+            logoutBtn.style.display = "none";
+            return;
+          }
+
+          if (user.uid !== ADMIN_UID) {
+            signOut(auth).finally(() => {
+              error.textContent = "This account is not authorized for the admin panel.";
+              gate.classList.remove("hidden");
+              logoutBtn.style.display = "none";
+            });
+            return;
+          }
+
+          gate.classList.add("hidden");
+          logoutBtn.style.display = "block";
+
+          if (!finished) {
+            finished = true;
+            resolve(true);
+          }
+        }, (err) => {
+          console.error("Firebase Auth state error:", err);
+          error.textContent = err?.message || "Authentication error.";
+          if (!finished) {
+            finished = true;
+            reject(err);
+          }
+        });
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          error.textContent = "";
+          loginBtn.disabled = true;
+          loginBtn.textContent = "Signing in...";
+
+          try {
+            await signInWithEmailAndPassword(
+              auth,
+              email.value.trim(),
+              password.value
+            );
+          } catch (err) {
+            console.error("Admin login failed:", err);
+            error.textContent = `Login failed (${err?.code || "unknown"}): ${err?.message || "Check your email and password."}`;
+          } finally {
+            loginBtn.disabled = false;
+            loginBtn.textContent = "Sign in";
+          }
+        });
+
+        logoutBtn.addEventListener("click", () => signOut(auth));
+      });
+
+      return authReadyPromise;
+    }
+
+
     const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
     const PAGE_MODE = document.body.dataset.page || "index";
@@ -1666,12 +1736,8 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     let fbApp = null;
     let db = null;
     let storage = null;
-    let auth = null;
-    const ADMIN_UID = "hvqtn531uDVHwwH4uXZx8tVpzKx2";
-    let authReadyPromise = null;
     let menuDocRef = null;
     let firebaseReady = false;
-    let firebaseHydrated = false;
     let remoteApplying = false;
     let saveTimer = null;
     let browseCategoryId = "";
@@ -1692,193 +1758,77 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       return snapshot;
     }
 
-async function requireAdminAuth(){
-  if (!hasFirebaseConfig()) throw new Error("Firebase configuration is missing.");
-
-  if (!fbApp) fbApp = initializeApp(FIREBASE_CONFIG);
-  auth = getAuth(fbApp);
-
-  const gate = $("authGate");
-  const form = $("authForm");
-  const email = $("authEmail");
-  const password = $("authPassword");
-  const error = $("authError");
-  const loginBtn = $("authLoginBtn");
-  const logoutBtn = $("authLogoutBtn");
-
-  if (authReadyPromise) return authReadyPromise;
-
-  authReadyPromise = new Promise((resolve, reject) => {
-    let resolved = false;
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        gate.classList.remove("hidden");
-        logoutBtn.style.display = "none";
+    async function startFirebaseSync(){
+      if (!hasFirebaseConfig()){
+        console.warn("Firebase config is missing. The page will run locally until you paste the Firebase config.");
         return;
       }
 
-      if (user.uid !== ADMIN_UID) {
-        signOut(auth).finally(() => {
-          error.textContent = "This account is not authorized for the admin panel.";
-          gate.classList.remove("hidden");
-          logoutBtn.style.display = "none";
-        });
-        return;
-      }
+      if (fbApp) return;
 
-      gate.classList.add("hidden");
-      logoutBtn.style.display = "block";
-      if (!resolved) {
-        resolved = true;
-        resolve(true);
-      }
-    }, (err) => {
-      error.textContent = err?.message || "Authentication error.";
-      if (!resolved) {
-        resolved = true;
-        reject(err);
-      }
-    });
+      fbApp = initializeApp(FIREBASE_CONFIG);
+      db = getFirestore(fbApp);
+      storage = getStorage(fbApp);
+      menuDocRef = doc(db, FIREBASE_DOC_PATH[0], FIREBASE_DOC_PATH[1]);
+      firebaseReady = true;
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      error.textContent = "";
-      loginBtn.disabled = true;
-      loginBtn.textContent = "Signing in...";
-      try {
-        await signInWithEmailAndPassword(auth, email.value.trim(), password.value);
-      } catch (err) {
-        console.error("Admin login failed:", err);
-        const code = err?.code || "";
-        if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
-          error.textContent = `Login failed (${code}). Check your email and password.`;
-        } else {
-          error.textContent = err?.message || `Login failed${code ? ` (${code})` : ""}.`;
+      onSnapshot(menuDocRef, async (snap) => {
+        if (remoteApplying) return;
+
+        if (!snap.exists()){
+          remoteApplying = true;
+          try{
+            await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
+          }catch(err){
+            console.error("Failed to bootstrap Firebase state:", err);
+          }finally{
+            remoteApplying = false;
+          }
+          return;
         }
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = "Sign in";
-      }
-    });
 
-    logoutBtn.addEventListener("click", () => signOut(auth));
-  });
-
-  return authReadyPromise;
-}
-
-async function startFirebaseSync(){
-  if (!hasFirebaseConfig()){
-    console.warn("Firebase config is missing.");
-    return;
-  }
-
-  if (firebaseReady) return;
-
-  if (!fbApp) fbApp = initializeApp(FIREBASE_CONFIG);
-  db = getFirestore(fbApp);
-  storage = getStorage(fbApp);
-  menuDocRef = doc(db, FIREBASE_DOC_PATH[0], FIREBASE_DOC_PATH[1]);
-  firebaseReady = true;
-  firebaseHydrated = false;
-
-  // IMPORTANT: hydrate from Firebase BEFORE starting the realtime listener.
-  // This prevents the listener's first cached/default snapshot from replacing
-  // a change the admin just made on another device.
-  try{
-    const snap = await getDoc(menuDocRef);
-
-    if (!snap.exists()){
-      remoteApplying = true;
-      try{
-        await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
-      } finally {
-        remoteApplying = false;
-      }
-    } else {
-      remoteApplying = true;
-      try{
         const previousLang = state.lang;
         const previousSearch = state.search;
         const previousSection = state.section;
         const previousBrowse = browseCategoryId || state.currentCategoryId;
-        state = normalizeState(snap.data());
-        state.lang = previousLang || state.lang;
-        state.search = previousSearch || "";
-        state.section = previousSection ?? null;
-        browseCategoryId = previousBrowse || state.currentCategoryId;
-        render();
-      } finally {
-        remoteApplying = false;
+
+        remoteApplying = true;
+        try{
+          state = normalizeState(snap.data());
+          state.lang = previousLang || state.lang;
+          state.search = previousSearch || "";
+          state.section = previousSection ?? null;
+          browseCategoryId = previousBrowse || state.currentCategoryId;
+          render();
+        }catch(err){
+          console.error("Failed to apply Firebase state:", err);
+        }finally{
+          remoteApplying = false;
+        }
+      }, (err) => {
+        console.error("Firebase listener error:", err);
+      });
+
+      try{
+        const snap = await getDoc(menuDocRef);
+        if (!snap.exists()){
+          await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
+        }
+      }catch(err){
+        console.error("Firebase init error:", err);
       }
     }
-
-    firebaseHydrated = true;
-  }catch(err){
-    console.error("Firebase initial load error:", err);
-    return;
-  }
-
-  // Only listen after the initial document has been loaded.
-  onSnapshot(menuDocRef, (snap) => {
-    if (remoteApplying || !firebaseHydrated || !snap.exists()) return;
-
-    remoteApplying = true;
-    try{
-      const previousLang = state.lang;
-      const previousSearch = state.search;
-      const previousSection = state.section;
-      const previousBrowse = browseCategoryId || state.currentCategoryId;
-      state = normalizeState(snap.data());
-      state.lang = previousLang || state.lang;
-      state.search = previousSearch || "";
-      state.section = previousSection ?? null;
-      browseCategoryId = previousBrowse || state.currentCategoryId;
-      render();
-      if (PAGE_MODE === "admin") populateAdmin();
-    }catch(err){
-      console.error("Failed to apply Firebase state:", err);
-    }finally{
-      remoteApplying = false;
-    }
-  }, (err) => {
-    console.error("Firebase listener error:", err);
-  });
-}
-
-let saveInFlight = false;
-    let saveQueued = false;
-    let latestSaveSnapshot = null;
 
     function saveState(){
-      if (!auth?.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
-      if (!firebaseReady || !firebaseHydrated || !menuDocRef || remoteApplying) return;
-
-      // Capture the newest state immediately. A single queued writer prevents
-      // Firestore's realtime listener from racing an admin edit and restoring
-      // the previous menu on the phone.
-      latestSaveSnapshot = persistedStateSnapshot();
-      saveQueued = true;
-      runFirebaseSaveQueue();
-    }
-
-    async function runFirebaseSaveQueue(){
-      if (saveInFlight || !saveQueued || !menuDocRef) return;
-      saveInFlight = true;
-      saveQueued = false;
-
-      const snapshotToWrite = latestSaveSnapshot;
-      try{
-        remoteApplying = true;
-        await setDoc(menuDocRef, snapshotToWrite, { merge: true });
-      }catch(err){
-        console.error("Failed to save state to Firebase:", err);
-      }finally{
-        remoteApplying = false;
-        saveInFlight = false;
-        if (saveQueued) runFirebaseSaveQueue();
-      }
+      if (!firebaseReady || remoteApplying || !menuDocRef) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(async () => {
+        try{
+          await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
+        }catch(err){
+          console.error("Failed to save state:", err);
+        }
+      }, 260);
     }
 
     async function uploadFileToStorage(file, kind){
@@ -2067,6 +2017,7 @@ let saveInFlight = false;
       updateLangButtons();
       renderLauncherState();
       populateAdmin();
+      saveState();
     }
 
     function updateLangButtons(){
@@ -2076,8 +2027,8 @@ let saveInFlight = false;
     function renderLauncherState(){
       const launcher = $("siteLauncher");
       const shell = $("app");
-      const ready = PAGE_MODE === "admin" ? true : state.section === "cafe";
-      if (launcher) launcher.classList.toggle("hidden", PAGE_MODE === "admin" || ready);
+      const ready = state.section === "cafe";
+      if (launcher) launcher.classList.toggle("hidden", ready);
       if (shell) shell.style.display = ready ? "block" : "none";
 
       const lang = state.lang;
@@ -2143,13 +2094,11 @@ let saveInFlight = false;
 
     function openBranchChooser(){
       state.section = null;
-      saveState();
       renderLauncherState();
     }
 
     function chooseBranch(branch){
       state.section = branch;
-      saveState();
       renderLauncherState();
       if (branch === "cafe") {
         render();
@@ -2595,12 +2544,9 @@ let saveInFlight = false;
         btn.addEventListener("click", () => chooseBranch(btn.dataset.branch));
       });
 
-      const footerAdminBtn = $("openAdminBtnFooter");
-      if (footerAdminBtn) {
-        footerAdminBtn.addEventListener("click", () => {
-          location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
-        });
-      }
+      $("openAdminBtnFooter").addEventListener("click", () => {
+        location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
+      });
       $("closeAdmin").addEventListener("click", closeAdmin);
       $("adminBackdrop").addEventListener("click", closeAdmin);
       $("adminModal").addEventListener("click", (e) => { if (e.target === adminModal) closeAdmin(); });
@@ -2687,27 +2633,30 @@ let saveInFlight = false;
       ensureTopCards();
       $("searchInput").value = state.search;
       bindEvents();
-      const authenticated = await requireAdminAuth();
-      if (!authenticated) return;
       await startFirebaseSync();
       setLanguage(state.lang);
       renderLauncherState();
-
-      if (PAGE_MODE === "admin") {
-        $("siteLauncher")?.classList.add("hidden");
-        $("app").style.display = "block";
-        openAdmin();
-      } else {
-        closeAdmin();
-      }
-
+      $("siteLauncher")?.classList.add("hidden");
+      $("app").style.display = "block";
+      openAdmin();
       clearCategoryAction();
       clearItemAction();
       populateAdmin();
-      if (PAGE_MODE !== "admin" && state.section === "cafe") render();
+      if (state.section === "cafe") render();
+      saveState();
     }
 
-    init();
+    (async () => {
+      try {
+        const ok = await requireAdminAuth();
+        if (!ok) return;
+        await init();
+      } catch (err) {
+        console.error(err);
+        const el = document.getElementById("authError");
+        if (el) el.textContent = err?.message || "Authentication initialization failed.";
+      }
+    })();
   </script>
 </body>
 </html>
