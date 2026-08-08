@@ -1622,7 +1622,7 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
     const adminModal = $("adminModal");
 
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
-      apiKey: "AIzaSyB_m-t22EZJ7fShvRHdgPEhKYTOSzMpMYM",
+      apiKey: "AIzaSyB_m-lt22FJ7fShyRHDgPEbkYTSOzMpMYM",
       authDomain: "menu-e4cef.firebaseapp.com",
       projectId: "menu-e4cef",
       storageBucket: "menu-e4cef.firebasestorage.app",
@@ -2502,10 +2502,6 @@ let saveInFlight = false;
     async function saveLogo(){
       try{
         if (pendingLogoFile){
-          if (!storage){
-            setSyncStatus("Image upload service unavailable", "error");
-            return;
-          }
           const url = await uploadFileToImageKit(pendingLogoFile, "logo");
           if (!url) throw new Error("Logo upload returned no URL");
           state.logo = url;
