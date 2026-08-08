@@ -1139,7 +1139,7 @@
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
     const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
@@ -1775,17 +1775,15 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
           authUser = user || null;
           updateAuthUI();
 
-          if (authUser) {
-            setSyncStatus("Authenticated — connecting to Firebase…", "connecting");
-            try{
-              await startFirebaseSync();
-            }catch(err){
-              console.error("Firebase sync start failed:", err);
-              setSyncStatus("Firebase sync failed", "error", err);
-            }
-          } else {
-            stopFirebaseSync();
-            setSyncStatus("Sign in to sync with Firebase", "offline");
+          try{
+            await startFirebaseSync();
+          }catch(err){
+            console.error("Firebase sync start failed:", err);
+            setSyncStatus("Firebase sync failed", "error", err);
+          }
+
+          if (!authUser && PAGE_MODE === "admin") {
+            setSyncStatus("Signed out — viewing read-only Firebase data", "offline");
           }
         });
       }
@@ -1796,10 +1794,6 @@ async function startFirebaseSync(){
     setSyncStatus("Offline — local mode", "offline");
     return;
   }
-  if (!authUser) {
-    setSyncStatus("Sign in to sync with Firebase", "offline");
-    return;
-  }
 
   await ensureFirebaseApp();
   if (firebaseListenerUnsub) {
@@ -1807,7 +1801,8 @@ async function startFirebaseSync(){
     firebaseListenerUnsub = null;
   }
 
-  setSyncStatus("Connecting to Firebase…", "connecting");
+  const accessMode = authUser ? "read/write" : "read-only";
+  setSyncStatus(`Connecting to Firebase (${accessMode})…`, "connecting");
   try{
     const db = getFirestore(fbApp);
     menuDocRef = doc(db, ...FIREBASE_DOC_PATH);
@@ -1835,8 +1830,8 @@ async function startFirebaseSync(){
       } finally {
         remoteApplying = false;
       }
-    } else {
-      // First-time setup: publish the current local/default menu.
+    } else if (authUser) {
+      // First-time setup: only authenticated admins publish the initial shared menu.
       remoteApplying = true;
       try{
         await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
@@ -1847,7 +1842,7 @@ async function startFirebaseSync(){
     }
 
     firebaseHydrated = true;
-    setSyncStatus("Connected to Firebase", "online");
+    setSyncStatus(authUser ? "Connected to Firebase" : "Connected to Firebase (read-only)", "online");
 
     firebaseListenerUnsub = onSnapshot(menuDocRef, (remoteSnap) => {
       if (!firebaseHydrated || !remoteSnap.exists() || remoteApplying) return;
@@ -1865,7 +1860,7 @@ async function startFirebaseSync(){
         saveLocalState();
         render();
         if (PAGE_MODE === "admin") populateAdmin();
-        setSyncStatus("Synced from Firebase", "online");
+        setSyncStatus(authUser ? "Synced from Firebase" : "Live Firebase updates received", "online");
       } catch(err){
         console.error("Failed to apply Firebase state:", err);
         setSyncStatus("Firebase sync error", "error");
@@ -1961,7 +1956,7 @@ let saveInFlight = false;
       const path = `${FIREBASE_ASSET_PREFIX}/${FIREBASE_OWNER_UID}/${kind}/${fileName}`;
       const fileRef = storageRef(storage, path);
 
-      await uploadBytes(fileRef, file, {
+      const uploadTask = uploadBytesResumable(fileRef, file, {
         contentType: file.type || "application/octet-stream",
         customMetadata: {
           ownerUid: FIREBASE_OWNER_UID,
@@ -1969,6 +1964,24 @@ let saveInFlight = false;
           source: "1911-admin"
         }
       });
+
+      const timeoutMs = 120000;
+      const timeout = new Promise((_, reject) => {
+        const timer = setTimeout(() => {
+          reject(new Error("Upload timed out. Check your connection or Firebase Storage rules."));
+        }, timeoutMs);
+        uploadTask.on("state_changed", () => {}, (err) => {
+          clearTimeout(timer);
+          reject(err);
+        }, () => clearTimeout(timer));
+      });
+
+      await Promise.race([
+        new Promise((resolve, reject) => {
+          uploadTask.on("state_changed", () => {}, reject, resolve);
+        }),
+        timeout
+      ]);
 
       return await getDownloadURL(fileRef);
     }
@@ -2855,6 +2868,11 @@ let saveInFlight = false;
       }
 
       await initFirebaseAuth();
+      try {
+        await startFirebaseSync();
+      } catch (err) {
+        console.error("Initial Firebase sync failed:", err);
+      }
       setLanguage(state.lang);
       renderLauncherState();
 
