@@ -859,50 +859,15 @@
       .lang-switch{flex:1}
       .items{grid-template-columns:1fr}
     }
-      body[data-page="admin"] .site-launcher{display:none !important;}
   </style>
 <style>
 #syncStatus{position:fixed;top:12px;right:12px;z-index:9999;padding:8px 12px;border-radius:999px;background:rgba(18,12,8,.92);border:1px solid rgba(213,171,83,.35);color:#f8eee0;font-size:12px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(10px)}
 #bottomSectionBtn{display:block;width:min(92%,520px);margin:18px auto 26px;padding:13px 18px;border-radius:16px;border:1px solid rgba(213,171,83,.35);background:rgba(213,171,83,.12);color:var(--text);font-weight:800;font-size:15px;cursor:pointer}
 #bottomSectionBtn:hover{background:rgba(213,171,83,.2)}
-.auth-gate{position:fixed;inset:0;z-index:175;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(4,3,2,.74);backdrop-filter:blur(14px)}
-.auth-gate.open{display:flex}
-.auth-card{width:min(460px,100%);border-radius:30px;border:1px solid rgba(213,171,83,.2);background:linear-gradient(180deg, rgba(23,17,13,.98), rgba(9,8,7,.99));box-shadow:0 28px 100px rgba(0,0,0,.56);padding:22px}
-.auth-kicker{text-transform:uppercase;letter-spacing:.16em;color:var(--gold2);font-size:.76rem;margin-bottom:6px}
-.auth-title{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:.04em;text-transform:uppercase}
-.auth-copy{margin:10px 0 18px;color:var(--muted);line-height:1.55;font-size:.96rem}
-.auth-status{margin-top:12px;color:var(--gold2);font-size:.9rem;line-height:1.45}
-.auth-card .actions{margin-top:4px}
-.auth-card .action,.auth-card .action.primary{min-height:46px}
-#signOutTopBtn{margin-left:10px}
-@media (max-width: 560px){
-  #signOutTopBtn{width:100%;margin-left:0}
-}
 </style>
 </head>
 
 <body data-page="admin"><div id="syncStatus">Starting Firebase…</div>
-  <div class="auth-gate open" id="authGate">
-    <div class="auth-card">
-      <div class="auth-kicker">Firebase login</div>
-      <h2 class="auth-title" id="authTitle">Sign in to edit and sync</h2>
-      <p class="auth-copy" id="authCopy">Use your email and password. Once signed in, your edits save to Firebase in real time.</p>
-      <div class="field">
-        <label for="authEmail">Email</label>
-        <input id="authEmail" type="email" autocomplete="email" placeholder="admin@example.com" />
-      </div>
-      <div class="field">
-        <label for="authPassword">Password</label>
-        <input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••••" />
-      </div>
-      <div class="actions">
-        <button class="action primary" id="authSignInBtn" type="button">Sign In</button>
-        <button class="action" id="authCreateBtn" type="button">Create Account</button>
-        <button class="action" id="authSignOutBtn" type="button" style="display:none">Sign Out</button>
-      </div>
-      <div class="auth-status" id="authStatus">Not signed in.</div>
-    </div>
-  </div>
   <div class="site-launcher" id="siteLauncher">
     <div class="launcher-panel">
       <div class="launcher-brand">
@@ -944,7 +909,6 @@
         <button class="btn" type="button" data-lang-btn="ar">العربية</button>
         <button class="btn" type="button" data-lang-btn="ku">کوردی</button>
       </div>
-      <button class="btn admin-toggle" id="signOutTopBtn" type="button" style="display:none">Sign Out</button>
     </header>
 
     <section class="hero">
@@ -1020,14 +984,7 @@
             <button class="action primary" id="saveLogoBtn" type="button">Save Logo</button>
             <button class="action" id="resetLogoBtn" type="button">Reset Logo</button>
           </div>
-          <div class="confirm-row hidden" id="logoConfirmRow">
-            <div class="confirm-msg" id="logoConfirmMsg">Confirm logo save?</div>
-            <div class="actions">
-              <button class="action primary" id="confirmLogoBtn" type="button">Confirm Save</button>
-              <button class="action" id="cancelLogoBtn" type="button">Cancel</button>
-            </div>
-          </div>
-          <div class="admin-note" id="logoNote">Select a logo, press Save Logo, then confirm. The image is uploaded to Firebase Storage before the menu is saved.</div>
+          <div class="admin-note" id="logoNote">Change the top logo and the hero logo together.</div>
           <div class="preview-mini" style="margin-top:12px;"><img id="logoPreview" alt="" /></div>
         </section>
 
@@ -1093,7 +1050,7 @@
               <button class="action" id="cancelItemBtn" type="button">Cancel</button>
             </div>
           </div>
-          <div class="admin-note" id="itemNote">Select a picture, press Save Item, then confirm. Pictures are uploaded to Firebase Storage and their permanent URL is saved with the item.</div>
+          <div class="admin-note" id="itemNote">You can add items to any category, including ones you create later.</div>
           <div class="preview-mini" style="margin-top:12px;"><img id="itemPreview" alt="" /></div>
         </section>
 
@@ -1139,8 +1096,6 @@
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
     const DEFAULT_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
@@ -1428,8 +1383,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
           ku: $("topCardValueKu").value.trim()
         }
       };
-      saveState();
       renderTopCards();
+      scheduleSaveState();
     }
 
     function syncItemTranslationsFromEnglish(){
@@ -1667,7 +1622,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
     const adminModal = $("adminModal");
 
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
-      apiKey: "AIzaSyB_m-lt22FJ7fShyRHDgPEbkYTSOzMpMYM",
+      apiKey: "AIzaSyB_m-t22EZJ7fShvRHdgPEhKYTOSzMpMYM",
       authDomain: "menu-e4cef.firebaseapp.com",
       projectId: "menu-e4cef",
       storageBucket: "menu-e4cef.firebasestorage.app",
@@ -1676,20 +1631,21 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       measurementId: "G-RDY676HQLB"
     };
 
-    const FIREBASE_OWNER_UID = "hvqtn531uDVHwwH4uXZx8tVpzKx2";
-    const FIREBASE_DOC_PATH = ["users", FIREBASE_OWNER_UID, "menuSites", "1911CoffeeShop"];
+    const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
+    // ImageKit stores the actual menu images. The private key never appears in this file.
+    const IMAGEKIT_PUBLIC_KEY = "public_PuL65ZSX9Mbdofd/9uXDomIzKH0=";
+    const IMAGEKIT_AUTH_URL = "https://roushworker.zamoahmad490.workers.dev/auth";
+    const IMAGEKIT_UPLOAD_URL = "https://upload.imagekit.io/api/v1/files/upload";
     const PAGE_MODE = document.body.dataset.page || "index";
 
     let fbApp = null;
-    let auth = null;
-    let authUser = null;
+    let db = null;
     let menuDocRef = null;
     let firebaseReady = false;
     let firebaseHydrated = false;
     let remoteApplying = false;
-    let firebaseListenerUnsub = null;
     let saveTimer = null;
     let browseCategoryId = "";
     let pendingLogoFile = null;
@@ -1709,103 +1665,18 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       return snapshot;
     }
 
-    function stopFirebaseSync(){
-      if (firebaseListenerUnsub) {
-        firebaseListenerUnsub();
-        firebaseListenerUnsub = null;
-      }
-      firebaseReady = false;
-      firebaseHydrated = false;
-      menuDocRef = null;
-    }
-
-    function setAuthStatus(message, type="neutral"){
-      const el = $("authStatus");
-      if (!el) return;
-      el.textContent = message;
-      el.dataset.state = type;
-    }
-
-    function updateAuthUI(){
-      const gate = $("authGate");
-      const outBtn = $("authSignOutBtn");
-      const topOutBtn = $("signOutTopBtn");
-      if (!gate || !outBtn || !topOutBtn) return;
-
-      if (authUser) {
-        gate.classList.remove("open");
-        outBtn.style.display = "none";
-        topOutBtn.style.display = "inline-flex";
-        if (PAGE_MODE === "admin") {
-          $("app").style.display = "block";
-          openAdmin();
-        }
-        setAuthStatus(`Signed in as ${authUser.email || "Firebase user"}.`, "online");
-      } else {
-        topOutBtn.style.display = "none";
-        if (PAGE_MODE === "admin") {
-          gate.classList.add("open");
-          $("app").style.display = "none";
-        }
-        outBtn.style.display = "none";
-        setAuthStatus("Not signed in.", "neutral");
-      }
-    }
-
-    async function ensureFirebaseApp(){
-      if (!hasFirebaseConfig()){
-        throw new Error("Firebase config is missing");
-      }
-      if (!fbApp) {
-        fbApp = initializeApp(FIREBASE_CONFIG);
-      }
-      return fbApp;
-    }
-
-    async function initFirebaseAuth(){
-      if (!hasFirebaseConfig()){
-        setSyncStatus("Offline — local mode", "offline");
-        setAuthStatus("Firebase config is incomplete.", "error");
-        return;
-      }
-      await ensureFirebaseApp();
-      if (!auth) {
-        auth = getAuth(fbApp);
-        onAuthStateChanged(auth, async (user) => {
-          authUser = user || null;
-          updateAuthUI();
-
-          try{
-            await startFirebaseSync();
-          }catch(err){
-            console.error("Firebase sync start failed:", err);
-            setSyncStatus("Firebase sync failed", "error", err);
-          }
-
-          if (!authUser && PAGE_MODE === "admin") {
-            setSyncStatus("Signed out — viewing read-only Firebase data", "offline");
-          }
-        });
-      }
-    }
-
 async function startFirebaseSync(){
   if (!hasFirebaseConfig()){
     setSyncStatus("Offline — local mode", "offline");
     return;
   }
+  if (fbApp) return;
 
-  await ensureFirebaseApp();
-  if (firebaseListenerUnsub) {
-    firebaseListenerUnsub();
-    firebaseListenerUnsub = null;
-  }
-
-  const accessMode = authUser ? "read/write" : "read-only";
-  setSyncStatus(`Connecting to Firebase (${accessMode})…`, "connecting");
+  setSyncStatus("Connecting to Firebase…", "connecting");
   try{
-    const db = getFirestore(fbApp);
-    menuDocRef = doc(db, ...FIREBASE_DOC_PATH);
+    fbApp = initializeApp(FIREBASE_CONFIG);
+    db = getFirestore(fbApp);
+    menuDocRef = doc(db, FIREBASE_DOC_PATH[0], FIREBASE_DOC_PATH[1]);
     firebaseReady = true;
     firebaseHydrated = false;
 
@@ -1830,8 +1701,8 @@ async function startFirebaseSync(){
       } finally {
         remoteApplying = false;
       }
-    } else if (authUser) {
-      // First-time setup: only authenticated admins publish the initial shared menu.
+    } else {
+      // First-time setup: publish the current local/default menu.
       remoteApplying = true;
       try{
         await setDoc(menuDocRef, persistedStateSnapshot(), { merge: true });
@@ -1842,9 +1713,9 @@ async function startFirebaseSync(){
     }
 
     firebaseHydrated = true;
-    setSyncStatus(authUser ? "Connected to Firebase" : "Connected to Firebase (read-only)", "online");
+    setSyncStatus("Connected to Firebase", "online");
 
-    firebaseListenerUnsub = onSnapshot(menuDocRef, (remoteSnap) => {
+    onSnapshot(menuDocRef, (remoteSnap) => {
       if (!firebaseHydrated || !remoteSnap.exists() || remoteApplying) return;
       remoteApplying = true;
       try{
@@ -1860,7 +1731,7 @@ async function startFirebaseSync(){
         saveLocalState();
         render();
         if (PAGE_MODE === "admin") populateAdmin();
-        setSyncStatus(authUser ? "Synced from Firebase" : "Live Firebase updates received", "online");
+        setSyncStatus("Synced from Firebase", "online");
       } catch(err){
         console.error("Failed to apply Firebase state:", err);
         setSyncStatus("Firebase sync error", "error");
@@ -1915,13 +1786,21 @@ let saveInFlight = false;
     function saveState(){
       // Always keep an offline copy first.
       saveLocalState();
-      if (!authUser || !firebaseReady || !firebaseHydrated || !menuDocRef || remoteApplying){
-        setSyncStatus(authUser ? "Offline — saved locally" : "Sign in to sync with Firebase", "offline");
+      if (!firebaseReady || !firebaseHydrated || !menuDocRef || remoteApplying){
+        setSyncStatus("Offline — saved locally", "offline");
         return;
       }
       latestSaveSnapshot = persistedStateSnapshot();
       saveQueued = true;
       runFirebaseSaveQueue();
+    }
+
+    function scheduleSaveState(delay = 450){
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        saveTimer = null;
+        saveState();
+      }, delay);
     }
 
     async function runFirebaseSaveQueue(){
@@ -1942,48 +1821,59 @@ let saveInFlight = false;
       }
     }
 
-    async function uploadFileToFirebaseStorage(file, kind){
+    async function uploadFileToImageKit(file, kind){
       if (!file) throw new Error("No image file selected");
       if (!String(file.type || "").startsWith("image/")) throw new Error("Please select an image file");
       if (file.size > 25 * 1024 * 1024) throw new Error("Image is too large. Maximum size is 25 MB");
-      if (!authUser) throw new Error("Please sign in before uploading files");
-      if (!fbApp) await ensureFirebaseApp();
 
-      const storage = getStorage(fbApp);
+      // Ask the secure Cloudflare Worker for one-time ImageKit upload credentials.
+      const authResponse = await fetch(IMAGEKIT_AUTH_URL, {
+        method: "GET",
+        cache: "no-store",
+        headers: { "Accept": "application/json" }
+      });
+      if (!authResponse.ok) {
+        const detail = await authResponse.text().catch(() => "");
+        throw new Error(`Image upload authentication failed (${authResponse.status}) ${detail}`.trim());
+      }
+      const auth = await authResponse.json();
+      if (!auth?.token || !auth?.expire || !auth?.signature) {
+        throw new Error("ImageKit authentication response is incomplete");
+      }
+
       const original = String(file.name || "image.jpg");
       const cleaned = original.replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^[-_.]+/, "") || "image.jpg";
       const fileName = `1911_${kind}_${Date.now()}_${cleaned}`;
-      const path = `${FIREBASE_ASSET_PREFIX}/${FIREBASE_OWNER_UID}/${kind}/${fileName}`;
-      const fileRef = storageRef(storage, path);
 
-      const uploadTask = uploadBytesResumable(fileRef, file, {
-        contentType: file.type || "application/octet-stream",
-        customMetadata: {
-          ownerUid: FIREBASE_OWNER_UID,
-          kind,
-          source: "1911-admin"
-        }
+      const form = new FormData();
+      form.append("file", file);
+      form.append("fileName", fileName);
+      form.append("publicKey", IMAGEKIT_PUBLIC_KEY);
+      form.append("signature", auth.signature);
+      form.append("expire", String(auth.expire));
+      form.append("token", auth.token);
+      form.append("useUniqueFileName", "true");
+      form.append("folder", `/1911-menu/${kind}`);
+
+      const uploadResponse = await fetch(IMAGEKIT_UPLOAD_URL, {
+        method: "POST",
+        body: form,
+        headers: { "Accept": "application/json" }
       });
+      const result = await uploadResponse.json().catch(() => ({}));
+      if (!uploadResponse.ok || !result?.url) {
+        throw new Error(result?.message || result?.error || `ImageKit upload failed (${uploadResponse.status})`);
+      }
+      return result.url;
+    }
 
-      const timeoutMs = 120000;
-      const timeout = new Promise((_, reject) => {
-        const timer = setTimeout(() => {
-          reject(new Error("Upload timed out. Check your connection or Firebase Storage rules."));
-        }, timeoutMs);
-        uploadTask.on("state_changed", () => {}, (err) => {
-          clearTimeout(timer);
-          reject(err);
-        }, () => clearTimeout(timer));
+    async function fileToDataUrl(file){
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(reader.error || new Error("Unable to read image file"));
+        reader.readAsDataURL(file);
       });
-
-      await Promise.race([
-        new Promise((resolve, reject) => {
-          uploadTask.on("state_changed", () => {}, reject, resolve);
-        }),
-        timeout
-      ]);
-
-      return await getDownloadURL(fileRef);
     }
 
     function t(){ return UI[state.lang] || UI.en; }
@@ -2087,10 +1977,10 @@ let saveInFlight = false;
       clearCategoryAction();
     }
 
-    async function confirmItemAction(){
+    function confirmItemAction(){
       const action = pendingItemAction;
       if (!action) return;
-      if (action === "save") await saveItem();
+      if (action === "save") saveItem();
       if (action === "new") newItem();
       if (action === "delete") deleteItem();
       clearItemAction();
@@ -2550,56 +2440,52 @@ let saveInFlight = false;
       const cat = state.categories.find(c => c.id === catId);
       if (!cat) return;
 
-      const existing = (cat.items || []).find(i => i.id === adminItemId);
-      // Never save a temporary blob/object URL to Firebase. It only exists on this phone.
-      let imageUrl = existing?.image || "";
-
-      try {
-        if (pendingItemFile) {
-          setSyncStatus("Uploading item picture…", "connecting");
-          imageUrl = await uploadFileToFirebaseStorage(pendingItemFile, "item");
-        } else if (previewItemImage && !previewItemImage.startsWith("blob:")) {
-          imageUrl = previewItemImage;
+      let imageUrl = previewItemImage || "";
+      if (pendingItemFile){
+        try{
+          const uploaded = await uploadFileToImageKit(pendingItemFile, "item");
+          if (uploaded) {
+            imageUrl = uploaded;
+          }
+        }catch(uploadErr){
+          console.warn("Item upload failed, using embedded image fallback:", uploadErr);
+          imageUrl = await fileToDataUrl(pendingItemFile);
         }
-
-        const item = {
-          id: adminItemId || uid(),
-          names: {
-            en: $("itemNameEn").value.trim() || "New Item",
-            ar: $("itemNameAr").value.trim() || $("itemNameEn").value.trim() || "عنصر جديد",
-            ku: $("itemNameKu").value.trim() || $("itemNameEn").value.trim() || "تکەی نوێ"
-          },
-          desc: {
-            en: $("itemDesc").value.trim(),
-            ar: $("itemDesc").value.trim(),
-            ku: $("itemDesc").value.trim()
-          },
-          prices: {
-            small: $("priceSmall").value.trim(),
-            large: $("priceLarge").value.trim()
-          },
-          kind: existing?.kind || "coffee",
-          colors: Array.isArray(existing?.colors) && existing.colors.length >= 3 ? existing.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
-          image: imageUrl
-        };
-
-        if (item.prices.small && !item.prices.large) item.prices.large = item.prices.small;
-        const idx = (cat.items || []).findIndex(i => i.id === item.id);
-        if (idx >= 0) cat.items[idx] = item;
-        else cat.items.push(item);
-
-        adminItemId = item.id;
-        state.currentCategoryId = cat.id;
-        pendingItemFile = null;
-        previewItemImage = item.image || "";
-        saveState();
-        render();
-        populateAdmin();
-      } catch (err) {
-        console.error("Item save failed:", err);
-        setSyncStatus(`Picture upload failed — ${err?.code || err?.message || "check Firebase Storage / permissions"}`, "error", err);
-        // Keep the selected file pending so the user can retry instead of losing it.
       }
+
+      const item = {
+        id: adminItemId || uid(),
+        names: {
+          en: $("itemNameEn").value.trim() || "New Item",
+          ar: $("itemNameAr").value.trim() || $("itemNameEn").value.trim() || "عنصر جديد",
+          ku: $("itemNameKu").value.trim() || $("itemNameEn").value.trim() || "تکەی نوێ"
+        },
+        desc: {
+          en: $("itemDesc").value.trim(),
+          ar: $("itemDesc").value.trim(),
+          ku: $("itemDesc").value.trim()
+        },
+        prices: {
+          small: $("priceSmall").value.trim(),
+          large: $("priceLarge").value.trim()
+        },
+        kind: "coffee",
+        colors: ["#2b160c","#7a4a25","#d7a55c"],
+        image: imageUrl
+      };
+
+      if (item.prices.small && !item.prices.large) item.prices.large = item.prices.small;
+      const idx = (cat.items || []).findIndex(i => i.id === item.id);
+      if (idx >= 0) cat.items[idx] = item;
+      else cat.items.push(item);
+
+      adminItemId = item.id;
+      state.currentCategoryId = cat.id;
+      pendingItemFile = null;
+      previewItemImage = "";
+      saveState();
+      render();
+      populateAdmin();
     }
 
     function newItem(){
@@ -2638,34 +2524,30 @@ let saveInFlight = false;
     }
 
     async function saveLogo(){
-      if (!pendingLogoFile && !previewLogoImage) return;
-      $("logoConfirmRow")?.classList.remove("hidden");
-    }
-
-    function clearLogoAction(){
-      $("logoConfirmRow")?.classList.add("hidden");
-    }
-
-    async function confirmLogoSave(){
       try{
         if (pendingLogoFile){
-          setSyncStatus("Uploading logo…", "connecting");
-          const url = await uploadFileToFirebaseStorage(pendingLogoFile, "logo");
-          state.logo = url;
+          try{
+            const url = await uploadFileToImageKit(pendingLogoFile, "logo");
+            if (url) {
+              state.logo = url;
+            } else {
+              state.logo = await fileToDataUrl(pendingLogoFile);
+            }
+          }catch(uploadErr){
+            console.warn("Logo upload failed, using embedded image fallback:", uploadErr);
+            state.logo = await fileToDataUrl(pendingLogoFile);
+          }
           pendingLogoFile = null;
-        } else if (previewLogoImage && !previewLogoImage.startsWith("blob:")) {
-          state.logo = previewLogoImage;
         } else if (previewLogoImage) {
-          throw new Error("The selected logo has not been uploaded yet");
+          state.logo = previewLogoImage;
         }
         previewLogoImage = "";
-        clearLogoAction();
         saveState();
         render();
         populateAdmin();
       }catch(err){
         console.error("Logo save failed:", err);
-        setSyncStatus(`Logo upload failed — ${err?.code || err?.message || "check Firebase Storage / permissions"}`, "error", err);
+        setSyncStatus("Logo save failed", "error", err);
       }
     }
 
@@ -2673,7 +2555,6 @@ let saveInFlight = false;
       state.logo = DEFAULT_LOGO;
       previewLogoImage = "";
       pendingLogoFile = null;
-      clearLogoAction();
       saveState();
       render();
       populateAdmin();
@@ -2779,14 +2660,7 @@ let saveInFlight = false;
       $("cancelItemBtn").addEventListener("click", clearItemAction);
 
       $("saveLogoBtn").addEventListener("click", saveLogo);
-      $("confirmLogoBtn").addEventListener("click", confirmLogoSave);
-      $("cancelLogoBtn").addEventListener("click", clearLogoAction);
       $("resetLogoBtn").addEventListener("click", resetLogo);
-
-      $("authSignInBtn").addEventListener("click", () => handleAuthAction("signin"));
-      $("authCreateBtn").addEventListener("click", () => handleAuthAction("create"));
-      $("authSignOutBtn").addEventListener("click", handleSignOut);
-      $("signOutTopBtn").addEventListener("click", handleSignOut);
 
       $("exportBtn").addEventListener("click", exportJSON);
       $("resetMenuBtn").addEventListener("click", resetDemoMenu);
@@ -2815,43 +2689,6 @@ let saveInFlight = false;
       });
     }
 
-    async function handleAuthAction(mode){
-      const email = $("authEmail")?.value.trim();
-      const password = $("authPassword")?.value || "";
-
-      if (!email || !password) {
-        setAuthStatus("Enter both email and password.", "error");
-        return;
-      }
-
-      try{
-        await ensureFirebaseApp();
-        if (!auth) auth = getAuth(fbApp);
-        setAuthStatus(mode === "create" ? "Creating account…" : "Signing in…", "connecting");
-        if (mode === "create") {
-          await createUserWithEmailAndPassword(auth, email, password);
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
-        }
-        $("authPassword").value = "";
-      }catch(err){
-        console.error("Auth action failed:", err);
-        const msg = String(err?.code || err?.message || err);
-        setAuthStatus(msg.replace("auth/", "").replaceAll("-", " "), "error");
-      }
-    }
-
-    async function handleSignOut(){
-      try{
-        if (auth) {
-          await signOut(auth);
-        }
-      }catch(err){
-        console.error("Sign out failed:", err);
-        setAuthStatus(String(err?.code || err?.message || err), "error");
-      }
-    }
-
     async function init(){
       loadState();
       state.search = state.search || "";
@@ -2862,27 +2699,14 @@ let saveInFlight = false;
       ensureTopCards();
       $("searchInput").value = state.search;
       bindEvents();
-      if (PAGE_MODE === "admin") {
-        $("siteLauncher")?.classList.add("hidden");
-        $("app").style.display = "none";
-      }
-
-      await initFirebaseAuth();
-      try {
-        await startFirebaseSync();
-      } catch (err) {
-        console.error("Initial Firebase sync failed:", err);
-      }
+      await startFirebaseSync();
       setLanguage(state.lang);
       renderLauncherState();
 
       if (PAGE_MODE === "admin") {
-        if (authUser) {
-          $("app").style.display = "block";
-          openAdmin();
-        } else {
-          closeAdmin();
-        }
+        $("siteLauncher")?.classList.add("hidden");
+        $("app").style.display = "block";
+        openAdmin();
       } else {
         closeAdmin();
       }
