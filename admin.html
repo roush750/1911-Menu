@@ -18,6 +18,7 @@
       --line:rgba(213,171,83,.18);
       --shadow:0 18px 54px rgba(0,0,0,.38);
       --radius:28px;
+
       --max:1200px;
     }
     *{box-sizing:border-box}
@@ -1795,7 +1796,7 @@ async function startFirebaseSync(){
   }
 }
 
-function setSyncStatusfunction setSyncStatus(message, type="online", err=null){
+function setSyncStatus(message, type="online", err=null){
   const el = $("syncStatus");
   if (!el) return;
   el.textContent = message;
