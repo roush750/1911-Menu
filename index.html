@@ -861,38 +861,103 @@
     }
   </style>
 <style>
-#syncStatus{position:fixed;top:12px;right:12px;z-index:9999;padding:8px 12px;border-radius:999px;background:rgba(18,12,8,.92);border:1px solid rgba(213,171,83,.35);color:#f8eee0;font-size:12px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(10px)}
 #bottomSectionBtn{display:block;width:min(92%,520px);margin:18px auto 26px;padding:13px 18px;border-radius:16px;border:1px solid rgba(213,171,83,.35);background:rgba(213,171,83,.12);color:var(--text);font-weight:800;font-size:15px;cursor:pointer}
 #bottomSectionBtn:hover{background:rgba(213,171,83,.2)}
+.menu-panel{padding-top:20px}
+.menu-divider{height:1px;background:linear-gradient(90deg, transparent, rgba(213,171,83,.55), transparent)}
+.category-bar{position:sticky;top:78px;z-index:24;background:linear-gradient(180deg, rgba(12,9,7,.98), rgba(12,9,7,.90));backdrop-filter:blur(14px);border-radius:18px;padding:8px 4px 10px}
+.category-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px}
+.category-chip .category-icon{font-size:1.05rem;line-height:1}
+.category-sections{display:flex;flex-direction:column;gap:26px;padding-top:22px}
+.category-section{scroll-margin-top:145px;padding-top:2px}
+.category-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}
+.category-section-title{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.5rem,3.4vw,2.25rem);letter-spacing:.03em}
+.category-section-desc{margin:5px 0 0;color:var(--muted);line-height:1.55;font-size:.94rem;max-width:62ch}
+.category-section-divider{height:1px;background:linear-gradient(90deg, rgba(213,171,83,.55), rgba(213,171,83,.10), transparent);margin-bottom:14px}
+.category-section.is-active .category-section-title{text-shadow:0 0 22px rgba(241,213,141,.18)}
+.preview-prices{display:flex;gap:10px;flex-wrap:wrap;align-items:center;direction:ltr;margin-top:12px}
+.preview-price{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:10px 14px;border-radius:14px;border:1px solid rgba(213,171,83,.18);background:linear-gradient(180deg, rgba(38,35,32,.96), rgba(20,18,16,.96));color:var(--text);font-weight:850}
+.preview-price strong{color:var(--gold2)}
+.launcher-step-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.16em;color:var(--gold2);margin:4px 0 10px}
+.launcher-language-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.launcher-language-card{min-height:108px;justify-content:center;text-align:center;flex-direction:column}
+.launcher-language-card .launcher-card-name{font-size:1.28rem}
+.launcher-back{display:block;margin:14px auto 0;border:none;background:transparent;color:var(--gold2);font:inherit;font-weight:800;cursor:pointer;padding:10px 12px;border-radius:999px}
+.launcher-back:hover{background:rgba(213,171,83,.08)}
+.admin-data-card{display:block}
+@media (max-width: 900px){
+  .category-bar{top:74px}
+  .launcher-language-options{grid-template-columns:1fr}
+  .launcher-language-card{min-height:76px;flex-direction:row;justify-content:space-between;text-align:left}
+  [data-lang="ar"] .launcher-language-card,[data-lang="ku"] .launcher-language-card{flex-direction:row-reverse;text-align:right}
+}
+@media (max-width: 700px){
+  .category-bar{top:69px}
+  .category-section-head{align-items:flex-start;flex-direction:column}
+  .category-sections{gap:22px}
+  .category-section{scroll-margin-top:135px}
+}
+@media (min-width: 961px){
+  .category-section .items{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (min-width: 1200px){
+  :root{--max:1260px}
+  .category-section .items{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .card{padding:12px}
+  .thumb{width:132px;min-width:132px;height:132px}
+}
 </style>
 </head>
 
-<body data-page="index"><div id="syncStatus">Starting Firebase…</div>
+<body data-page="index">
   <div class="site-launcher" id="siteLauncher">
     <div class="launcher-panel">
       <div class="launcher-brand">
         <img class="launcher-logo" src="" alt="1911 logo" id="launcherLogo" />
         <div>
           <div class="launcher-kicker">1911 Group</div>
-          <h1 class="launcher-title" id="launcherTitle">Choose your section</h1>
-          <p class="launcher-sub" id="launcherSub">One owner, three stands. The café menu is ready now.</p>
+          <h1 class="launcher-title" id="launcherTitle">Choose your language</h1>
+          <p class="launcher-sub" id="launcherSub">Start by choosing the language for the menu.</p>
         </div>
       </div>
-      <div class="launcher-options">
-        <button class="launcher-card active" type="button" data-branch="cafe">
-          <span class="launcher-card-name" id="launcherCafeTitle">1911 Cafe</span>
-          <span class="launcher-card-desc" id="launcherCafeDesc">Open now</span>
-        </button>
-        <button class="launcher-card soon" type="button" data-branch="fastfood">
-          <span class="launcher-card-name" id="launcherFastFoodTitle">1911 Fast Food</span>
-          <span class="launcher-card-desc" id="launcherFastFoodDesc">Coming soon</span>
-        </button>
-        <button class="launcher-card soon" type="button" data-branch="desserts">
-          <span class="launcher-card-name" id="launcherDessertsTitle">1911 Deserts</span>
-          <span class="launcher-card-desc" id="launcherDessertsDesc">Coming soon</span>
-        </button>
+
+      <div class="launcher-step" id="languageStep">
+        <div class="launcher-step-label" id="languageStepLabel">Language</div>
+        <div class="launcher-language-options">
+          <button class="launcher-card launcher-language-card" type="button" data-launcher-lang="ku">
+            <span class="launcher-card-name">کوردی</span>
+            <span class="launcher-card-desc">کوردی</span>
+          </button>
+          <button class="launcher-card launcher-language-card" type="button" data-launcher-lang="ar">
+            <span class="launcher-card-name">العربية</span>
+            <span class="launcher-card-desc">العربية</span>
+          </button>
+          <button class="launcher-card launcher-language-card" type="button" data-launcher-lang="en">
+            <span class="launcher-card-name">English</span>
+            <span class="launcher-card-desc">English</span>
+          </button>
+        </div>
       </div>
-      <div class="launcher-foot" id="launcherFoot">Tap Café to enter the menu.</div>
+
+      <div class="launcher-step hidden" id="branchStep">
+        <div class="launcher-step-label" id="branchStepLabel">Restaurant section</div>
+        <div class="launcher-options">
+          <button class="launcher-card active" type="button" data-branch="cafe">
+            <span class="launcher-card-name" id="launcherCafeTitle">1911 Cafe</span>
+            <span class="launcher-card-desc" id="launcherCafeDesc">Open now</span>
+          </button>
+          <button class="launcher-card soon" type="button" data-branch="fastfood">
+            <span class="launcher-card-name" id="launcherFastFoodTitle">1911 Fast Food</span>
+            <span class="launcher-card-desc" id="launcherFastFoodDesc">Coming soon</span>
+          </button>
+          <button class="launcher-card soon" type="button" data-branch="desserts">
+            <span class="launcher-card-name" id="launcherDessertsTitle">1911 Desserts</span>
+            <span class="launcher-card-desc" id="launcherDessertsDesc">Coming soon</span>
+          </button>
+        </div>
+        <button class="launcher-back" id="launcherBackLanguage" type="button">← Change language</button>
+      </div>
+      <div class="launcher-foot" id="launcherFoot">Choose a language to continue.</div>
     </div>
   </div>
   <div class="shell" id="app" data-lang="en">
@@ -921,28 +986,22 @@
       <div class="divider"></div>
     </section>
 
-    <section class="meta-row" aria-label="highlights">
-      <div class="meta"><span id="pill1Label">Fresh Brew</span><strong id="pill1Value">Handcrafted drinks</strong></div>
-      <div class="meta"><span id="pill2Label">House Picks</span><strong id="pill2Value">Popular menu items</strong></div>
-      <div class="meta"><span id="pill3Label">Open Daily</span><strong id="pill3Value">Service information</strong></div>
-    </section>
-
     <div class="toolbar">
       <input class="search" id="searchInput" type="search" placeholder="Search items..." />
     </div>
 
     <section class="category-bar" id="categoryBar" aria-label="categories"></section>
 
-    <main class="panel">
+    <main class="panel menu-panel">
       <div class="panel-head">
         <div>
-          <h3 id="sectionTitle">Cold Coffee</h3>
-          <p id="sectionDesc">A clean, premium café menu built for phones and tablets.</p>
+          <h3 id="menuHeading">1911 Menu</h3>
+          <p id="menuIntro">Browse the full menu by scrolling through every category.</p>
         </div>
         <div class="hint" id="sectionHint">Tap any item to preview a bigger image.</div>
       </div>
-      <div style="height:1px;background:linear-gradient(90deg, transparent, rgba(213,171,83,.55), transparent);"></div>
-      <div class="items" id="items"></div>
+      <div class="menu-divider"></div>
+      <div class="category-sections" id="items"></div>
     </main>
 
     <footer class="footer">
@@ -963,6 +1022,7 @@
         <img id="previewImg" alt="" />
       </div>
       <div class="dialog-copy" id="previewCopy"></div>
+      <div class="preview-prices hidden" id="previewPrices" aria-label="Available sizes"></div>
     </div>
   </div>
 
@@ -1055,7 +1115,7 @@
         </section>
 
 
-        <section class="admin-card">
+        <section class="admin-card admin-data-card">
           <h4 id="topCardsCardTitle">Top Information Cards</h4>
           <div class="field">
             <label id="topCardSelectLabel">Select card</label>
@@ -1566,6 +1626,7 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
           ar: String(c.desc?.ar || ""),
           ku: String(c.desc?.ku || "")
         },
+        icon: String(c.icon || ""),
         items: Array.isArray(c.items) ? c.items.map((i) => ({
           id: String(i.id || uid()),
           names: {
@@ -1751,11 +1812,11 @@ async function startFirebaseSync(){
 }
 
 function setSyncStatus(message, type="online", err=null){
-  const el = $("syncStatus");
-  if (!el) return;
-  el.textContent = message;
-  el.title = err ? String(err?.code || err?.message || err) : message;
-  el.dataset.state = type;
+  // Customer-facing sync status is intentionally hidden in Phase 5A.
+  // Firebase synchronization itself remains unchanged.
+  void message;
+  void type;
+  void err;
 }
 
 function saveLocalState(){
@@ -2012,6 +2073,8 @@ let saveInFlight = false;
       $("pill3Label").textContent = UI[lang].menuType;
       $("pill3Value").textContent = UI[lang].menuTypeValue;
       $("sectionHint").textContent = UI[lang].sectionHint;
+      $("menuHeading").textContent = lang === "ar" ? "قائمة 1911" : lang === "ku" ? "مێنوی 1911" : "1911 Menu";
+      $("menuIntro").textContent = lang === "ar" ? "تصفح القائمة كاملة بالتمرير بين جميع الفئات." : lang === "ku" ? "بە هەموو مێنۆکەدا بە بەردەوامی بگەڕێ لە هەموو پۆلەکان." : "Browse the full menu by scrolling through every category.";
       $("footerLeft").innerHTML = `<strong>1911</strong> • ${UI[lang].footerLeft}`;
       $("footerRight").innerHTML = `${UI[lang].footerRight}`;
       const footerBtn = $("openAdminBtnFooter");
@@ -2068,76 +2131,120 @@ let saveInFlight = false;
       if (launcher) launcher.classList.toggle("hidden", PAGE_MODE === "admin" || ready);
       if (shell) shell.style.display = ready ? "block" : "none";
 
-      const lang = state.lang;
+      const lang = ["en","ar","ku"].includes(state.lang) ? state.lang : "en";
       const texts = {
         en: {
-          title: "Choose your section",
-          sub: "One owner, three stands. The café menu is ready now.",
-          foot: state.section === "fastfood" ? "1911 Fast Food is coming soon." : state.section === "desserts" ? "1911 Deserts is coming soon." : "Tap Café to enter the menu.",
-          cafeTitle: "1911 Cafe",
+          languageTitle: "Choose your language",
+          languageSub: "Start by choosing the language for the menu.",
+          languageLabel: "Language",
+          branchTitle: "Choose your section",
+          branchSub: "Now choose the 1911 restaurant section.",
+          branchLabel: "Restaurant section",
+          footLanguage: "Choose a language to continue.",
+          footBranch: "Tap Café to enter the menu.",
+          back: "← Change language",
+          cafeTitle: "1911 Café",
           fastFoodTitle: "1911 Fast Food",
-          dessertsTitle: "1911 Deserts",
+          dessertsTitle: "1911 Desserts",
           cafeDesc: "Open now",
-          soon: "Coming soon",
-          switchSection: "Change section"
+          soon: "Coming soon"
         },
         ar: {
-          title: "اختر القسم",
-          sub: "مالك واحد، وثلاثة أكشاك. قائمة المقهى جاهزة الآن.",
-          foot: state.section === "fastfood" ? "1911 فاست فود قريبًا." : state.section === "desserts" ? "1911 حلويات قريبًا." : "اضغط على الكافيه للدخول إلى القائمة.",
+          languageTitle: "اختر لغتك",
+          languageSub: "ابدأ باختيار لغة القائمة.",
+          languageLabel: "اللغة",
+          branchTitle: "اختر القسم",
+          branchSub: "الآن اختر قسم 1911 الذي تريد تصفحه.",
+          branchLabel: "قسم المطعم",
+          footLanguage: "اختر اللغة للمتابعة.",
+          footBranch: "اضغط على الكافيه للدخول إلى القائمة.",
+          back: "← تغيير اللغة",
           cafeTitle: "1911 كافيه",
           fastFoodTitle: "1911 فاست فود",
           dessertsTitle: "1911 حلويات",
           cafeDesc: "مفتوح الآن",
-          soon: "قريبًا",
-          switchSection: "تغيير القسم"
+          soon: "قريبًا"
         },
         ku: {
-          title: "بەشەکەت هەڵبژێرە",
-          sub: "یەک خاوەن، سێ ستاند. مێنوی کافێ ئێستا ئامادەیە.",
-          foot: state.section === "fastfood" ? "1911 فاست فود بەم زووانە." : state.section === "desserts" ? "1911 دێزەرت بەم زووانە." : "کافێ لێبدە بۆ چوونە ناو مێنۆکە.",
+          languageTitle: "زمانەکەت هەڵبژێرە",
+          languageSub: "سەرەتا زمانی مێنۆکە هەڵبژێرە.",
+          languageLabel: "زمان",
+          branchTitle: "بەشەکەت هەڵبژێرە",
+          branchSub: "ئێستا بەشی 1911 ـەکەی دەتەوێت هەڵبژێرە.",
+          branchLabel: "بەشی خواردنگە",
+          footLanguage: "زمانێک هەڵبژێرە بۆ بەردەوامبوون.",
+          footBranch: "کافێ لێبدە بۆ چوونە ناو مێنۆکە.",
+          back: "← گۆڕینی زمان",
           cafeTitle: "1911 کافێ",
           fastFoodTitle: "1911 فاست فود",
           dessertsTitle: "1911 دێزەرت",
           cafeDesc: "ئێستا کراوە",
-          soon: "بەم زووانە",
-          switchSection: "گۆڕینی بەش"
+          soon: "بەم زووانە"
         }
-      }[lang] || null;
+      }[lang];
 
-      document.title = state.section === "cafe" ? "1911 Coffee Shop Menu" : state.section === "fastfood" ? "1911 Fast Food" : state.section === "desserts" ? "1911 Deserts" : "1911 Group";
-      const active = state.section || "cafe";
+      document.title = state.section === "cafe" ? "1911 Coffee Shop Menu" : state.section === "fastfood" ? "1911 Fast Food" : state.section === "desserts" ? "1911 Desserts" : "1911 Group";
       if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
-      document.querySelectorAll(".launcher-card").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.branch === active);
+
+      const languageStep = $("languageStep");
+      const branchStep = $("branchStep");
+      const showingBranch = !!(languageStep && branchStep && languageStep.classList.contains("hidden") && !branchStep.classList.contains("hidden"));
+
+      if (languageStep && branchStep){
+        languageStep.classList.toggle("hidden", showingBranch);
+        branchStep.classList.toggle("hidden", !showingBranch);
+      }
+
+      if ($("launcherTitle")) $("launcherTitle").textContent = showingBranch ? texts.branchTitle : texts.languageTitle;
+      if ($("launcherSub")) $("launcherSub").textContent = showingBranch ? texts.branchSub : texts.languageSub;
+      if ($("languageStepLabel")) $("languageStepLabel").textContent = texts.languageLabel;
+      if ($("branchStepLabel")) $("branchStepLabel").textContent = texts.branchLabel;
+      if ($("launcherBackLanguage")) $("launcherBackLanguage").textContent = texts.back;
+      if ($("launcherFoot")) $("launcherFoot").textContent = showingBranch ? texts.footBranch : texts.footLanguage;
+      if ($("launcherCafeTitle")) $("launcherCafeTitle").textContent = texts.cafeTitle;
+      if ($("launcherFastFoodTitle")) $("launcherFastFoodTitle").textContent = texts.fastFoodTitle;
+      if ($("launcherDessertsTitle")) $("launcherDessertsTitle").textContent = texts.dessertsTitle;
+      if ($("launcherCafeDesc")) $("launcherCafeDesc").textContent = texts.cafeDesc;
+      if ($("launcherFastFoodDesc")) $("launcherFastFoodDesc").textContent = texts.soon;
+      if ($("launcherDessertsDesc")) $("launcherDessertsDesc").textContent = texts.soon;
+
+      document.querySelectorAll("[data-launcher-lang]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.launcherLang === state.lang);
+      });
+      document.querySelectorAll(".launcher-card[data-branch]").forEach(btn => {
+        const active = btn.dataset.branch === (state.section || "cafe");
+        btn.classList.toggle("active", active);
         btn.classList.toggle("soon", btn.dataset.branch !== "cafe");
       });
-      if ($("launcherTitle") && texts) $("launcherTitle").textContent = texts.title;
-      if ($("launcherSub") && texts) $("launcherSub").textContent = texts.sub;
-      if ($("launcherFoot") && texts) $("launcherFoot").textContent = texts.foot;
-      if ($("launcherCafeTitle") && texts) $("launcherCafeTitle").textContent = texts.cafeTitle;
-      if ($("launcherFastFoodTitle") && texts) $("launcherFastFoodTitle").textContent = texts.fastFoodTitle;
-      if ($("launcherDessertsTitle") && texts) $("launcherDessertsTitle").textContent = texts.dessertsTitle;
-      if ($("launcherCafeDesc") && texts) $("launcherCafeDesc").textContent = texts.cafeDesc;
-      if ($("launcherFastFoodDesc") && texts) $("launcherFastFoodDesc").textContent = texts.soon;
-      if ($("launcherDessertsDesc") && texts) $("launcherDessertsDesc").textContent = texts.soon;
-      if ($("switchSectionBtn") && texts) $("switchSectionBtn").textContent = texts.switchSection;
-      if (state.section === "cafe") {
-        document.documentElement.style.overflowY = "auto";
-      } else {
-        document.documentElement.style.overflowY = "auto";
-      }
+    }
+
+    function beginBranchSelection(lang){
+      if (!["en","ar","ku"].includes(lang)) return;
+      state.lang = lang;
+      state.section = null;
+      saveLocalState();
+      const languageStep = $("languageStep");
+      const branchStep = $("branchStep");
+      if (languageStep) languageStep.classList.add("hidden");
+      if (branchStep) branchStep.classList.remove("hidden");
+      renderLauncherState();
+      updateLangButtons();
+      render();
     }
 
     function openBranchChooser(){
       state.section = null;
-      saveState();
+      const languageStep = $("languageStep");
+      const branchStep = $("branchStep");
+      if (languageStep) languageStep.classList.remove("hidden");
+      if (branchStep) branchStep.classList.add("hidden");
+      saveLocalState();
       renderLauncherState();
     }
 
     function chooseBranch(branch){
       state.section = branch;
-      saveState();
+      saveLocalState();
       renderLauncherState();
       if (branch === "cafe") {
         render();
@@ -2149,13 +2256,96 @@ let saveInFlight = false;
       return state.categories.find(c => c.id === preferred) || state.categories[0] || null;
     }
 
+    function categoryIcon(cat){
+      return String(cat?.icon || "✦").trim() || "✦";
+    }
+
+    function filteredItemsForCategory(cat){
+      const query = state.search.trim().toLowerCase();
+      return (cat?.items || []).filter(item => {
+        if (!query) return true;
+        const hay = [
+          defaultText(item.names, "en"),
+          defaultText(item.names, "ar"),
+          defaultText(item.names, "ku"),
+          defaultText(item.desc, "en"),
+          defaultText(item.desc, "ar"),
+          defaultText(item.desc, "ku")
+        ].join(" ").toLowerCase();
+        return hay.includes(query);
+      });
+    }
+
+    function scrollCategoryIntoView(categoryId){
+      const section = document.querySelector(`[data-category-section="${CSS.escape(categoryId)}"]`);
+      if (!section) return;
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      browseCategoryId = categoryId;
+      updateActiveCategory(categoryId);
+    }
+
+    function updateActiveCategory(categoryId){
+      browseCategoryId = categoryId || browseCategoryId || state.currentCategoryId;
+      categoryBar.querySelectorAll("[data-cat-id]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.catId === browseCategoryId);
+      });
+      document.querySelectorAll("[data-category-section]").forEach(section => {
+        section.classList.toggle("is-active", section.dataset.categorySection === browseCategoryId);
+      });
+    }
+
+    function setupCategoryObserver(){
+      if (window.__1911CategoryObserver){
+        window.__1911CategoryObserver.disconnect();
+      }
+      const sections = [...document.querySelectorAll("[data-category-section]")];
+      if (!sections.length) return;
+
+      let ticking = false;
+      const updateFromScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const probeY = Math.min(window.innerHeight * 0.28, 260);
+          let current = sections[0];
+          let bestDistance = Infinity;
+          for (const section of sections){
+            const rect = section.getBoundingClientRect();
+            const distance = Math.abs(rect.top - probeY);
+            if (rect.top <= probeY + 120 && distance < bestDistance){
+              bestDistance = distance;
+              current = section;
+            }
+          }
+          if (current) updateActiveCategory(current.dataset.categorySection);
+          ticking = false;
+        });
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter(entry => entry.isIntersecting)
+          .sort((a,b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
+        if (visible[0]) updateActiveCategory(visible[0].target.dataset.categorySection);
+      }, {
+        root: null,
+        rootMargin: "-18% 0px -62% 0px",
+        threshold: [0, .15, .35, .6]
+      });
+      sections.forEach(section => observer.observe(section));
+      window.__1911CategoryObserver = observer;
+      if (window.__1911CategoryScrollHandler){
+        window.removeEventListener("scroll", window.__1911CategoryScrollHandler);
+      }
+      window.__1911CategoryScrollHandler = updateFromScroll;
+      window.addEventListener("scroll", window.__1911CategoryScrollHandler, { passive: true });
+      updateFromScroll();
+    }
+
     function renderCategories(){
-      const current = getCurrentCategory();
-      const activeId = browseCategoryId || state.currentCategoryId;
-      if (current && PAGE_MODE === "admin") state.currentCategoryId = current.id;
       categoryBar.innerHTML = state.categories.map(cat => `
-        <button class="category-chip ${cat.id === activeId ? "active" : ""}" type="button" data-cat-id="${escapeAttr(cat.id)}">
-          ${escapeHtml(defaultText(cat.names, state.lang))}
+        <button class="category-chip" type="button" data-cat-id="${escapeAttr(cat.id)}" aria-label="${escapeAttr(defaultText(cat.names, state.lang))}">
+          <span class="category-icon" aria-hidden="true">${escapeHtml(categoryIcon(cat))}</span>
+          <span>${escapeHtml(defaultText(cat.names, state.lang))}</span>
         </button>
       `).join("");
 
@@ -2168,81 +2358,103 @@ let saveInFlight = false;
             render();
             populateAdmin();
           } else {
-            browseCategoryId = btn.dataset.catId;
-            renderCategories();
-            renderItems();
+            scrollCategoryIntoView(btn.dataset.catId);
           }
         });
       });
+      updateActiveCategory(browseCategoryId || state.currentCategoryId);
     }
 
     function renderItems(){
-      const cat = getCurrentCategory();
       const tr = t();
-      const query = state.search.trim().toLowerCase();
-      $("sectionTitle").textContent = cat ? defaultText(cat.names, state.lang) : tr.categoryEmpty;
-      $("sectionDesc").textContent = cat ? (defaultText(cat.desc, state.lang) || tr.noDesc) : tr.categoryEmpty;
+      const matchingSections = [];
 
-      if (!cat){
+      if (!state.categories.length){
         itemsEl.innerHTML = `<div class="empty">${escapeHtml(tr.categoryEmpty)}</div>`;
         return;
       }
 
-      const items = (cat.items || []).filter(item => {
-        if (!query) return true;
-        const hay = [
-          defaultText(item.names, "en"),
-          defaultText(item.names, "ar"),
-          defaultText(item.names, "ku"),
-          defaultText(item.desc, "en"),
-          defaultText(item.desc, "ar"),
-          defaultText(item.desc, "ku"),
-        ].join(" ").toLowerCase();
-        return hay.includes(query);
-      });
+      itemsEl.innerHTML = state.categories.map((cat, catIndex) => {
+        const items = filteredItemsForCategory(cat);
+        if (!items.length && state.search.trim()) return "";
+        matchingSections.push(cat.id);
 
-      if (!items.length){
+        const title = defaultText(cat.names, state.lang);
+        const desc = defaultText(cat.desc, state.lang);
+        const cards = items.length ? items.map((item, idx) => {
+          const itemTitle = defaultText(item.names, state.lang);
+          const altTitle = state.lang === "en" ? defaultText(item.names, "ar") : defaultText(item.names, "en");
+          const itemDesc = defaultText(item.desc, state.lang);
+          const img = item.image || placeholderImage(item, `${catIndex}-${idx}`);
+          const sizes = [
+            item.prices?.small ? { label: "Small", price: money(item.prices.small) } : null,
+            item.prices?.large ? { label: "Large", price: money(item.prices.large) } : null
+          ].filter(Boolean);
+
+          const priceHtml = sizes.map((entry, priceIndex) => `
+            <span class="price ${priceIndex ? "secondary" : ""}">${escapeHtml(entry.price)}</span>
+          `).join("");
+
+          return `
+            <button class="card" type="button"
+              data-item-id="${escapeAttr(item.id)}"
+              aria-label="${escapeAttr(itemTitle || tr.itemPreviewFallback)}">
+              <div class="thumb">
+                <img src="${escapeAttr(img)}" alt="${escapeAttr(itemTitle)}" loading="lazy" decoding="async" />
+              </div>
+              <div class="body">
+                <div>
+                  <div class="name">
+                    <span class="main">${escapeHtml(itemTitle)}</span>
+                    ${altTitle && altTitle !== itemTitle ? `<span class="small">${escapeHtml(altTitle)}</span>` : ""}
+                  </div>
+                  ${itemDesc ? `<div class="desc">${escapeHtml(itemDesc)}</div>` : ""}
+                </div>
+                <div class="prices">${priceHtml}</div>
+              </div>
+            </button>
+          `;
+        }).join("") : `<div class="empty">${escapeHtml(tr.itemEmpty)}</div>`;
+
+        return `
+          <section class="category-section" data-category-section="${escapeAttr(cat.id)}" data-category-section-index="${catIndex}">
+            <div class="category-section-head">
+              <div>
+                <h3 class="category-section-title">
+                  <span class="category-icon" aria-hidden="true">${escapeHtml(categoryIcon(cat))}</span>
+                  ${escapeHtml(title)}
+                </h3>
+                ${desc ? `<p class="category-section-desc">${escapeHtml(desc)}</p>` : ""}
+              </div>
+            </div>
+            <div class="category-section-divider"></div>
+            <div class="items">${cards}</div>
+          </section>
+        `;
+      }).join("");
+
+      if (!matchingSections.length){
         itemsEl.innerHTML = `<div class="empty">${escapeHtml(tr.itemEmpty)}</div>`;
         return;
       }
 
-      itemsEl.innerHTML = items.map((item, idx) => {
-        const title = defaultText(item.names, state.lang);
-        const altTitle = state.lang === "en" ? defaultText(item.names, "ar") : defaultText(item.names, "en");
-        const desc = defaultText(item.desc, state.lang);
-        const prices = [
-          item.prices?.small ? `<span class="price">${escapeHtml(money(item.prices.small))}</span>` : "",
-          item.prices?.large ? `<span class="price secondary">${escapeHtml(money(item.prices.large))}</span>` : ""
-        ].filter(Boolean).join("");
-        const img = item.image || placeholderImage(item, idx);
-        return `
-          <button class="card" type="button"
-            data-title="${escapeAttr(title)}"
-            data-alt-title="${escapeAttr(altTitle)}"
-            data-desc="${escapeAttr(desc)}"
-            data-img="${escapeAttr(img)}">
-            <div class="thumb"><img src="${escapeAttr(img)}" alt="${escapeAttr(title)}" loading="lazy" /></div>
-            <div class="body">
-              <div>
-                <div class="name">
-                  <span class="main">${escapeHtml(title)}</span>
-                  ${altTitle && altTitle !== title ? `<span class="small">${escapeHtml(altTitle)}</span>` : ""}
-                </div>
-                ${desc ? `<div class="desc">${escapeHtml(desc)}</div>` : ""}
-              </div>
-              <div class="prices">${prices}</div>
-            </div>
-          </button>
-        `;
-      }).join("");
-
       itemsEl.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("click", () => openPreview({
-          title: card.dataset.title,
-          desc: card.dataset.desc,
-          img: card.dataset.img
-        }));
+        card.addEventListener("click", () => {
+          const section = card.closest("[data-category-section]");
+          const cat = state.categories.find(c => c.id === section?.dataset.categorySection);
+          const item = cat?.items?.find(i => i.id === card.dataset.itemId);
+          if (!item) return;
+          openPreview({
+            title: defaultText(item.names, state.lang),
+            desc: defaultText(item.desc, state.lang),
+            img: item.image || "",
+            prices: item.prices || {}
+          });
+        });
       });
+
+      setupCategoryObserver();
+      updateActiveCategory(matchingSections.includes(browseCategoryId) ? browseCategoryId : matchingSections[0]);
     }
 
     function render(){
@@ -2250,7 +2462,7 @@ let saveInFlight = false;
       $("heroLogo").src = state.logo || DEFAULT_LOGO;
       if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
       updateLangButtons();
-      renderTopCards();
+      // Customer-facing information cards were removed from the menu; their admin data remains intact.
       renderCategories();
       renderItems();
       if (adminModal.classList.contains("open")) populateAdmin();
@@ -2260,7 +2472,24 @@ let saveInFlight = false;
       $("previewTitle").textContent = data.title || t().itemPreviewFallback;
       $("previewImg").src = data.img || DEFAULT_LOGO;
       $("previewImg").alt = data.title || t().itemPreviewFallback;
-      $("previewCopy").textContent = data.desc || t().previewCopy;
+      const descEl = $("previewCopy");
+      descEl.textContent = data.desc || "";
+      descEl.classList.toggle("hidden", !data.desc);
+
+      const pricesEl = $("previewPrices");
+      const sizes = [
+        data.prices?.small ? { label: "Small", price: money(data.prices.small) } : null,
+        data.prices?.large ? { label: "Large", price: money(data.prices.large) } : null
+      ].filter(Boolean);
+
+      pricesEl.innerHTML = sizes.map(entry => `
+        <div class="preview-price">
+          <span>${escapeHtml(entry.label)}</span>
+          <strong>${escapeHtml(entry.price)} IQD</strong>
+        </div>
+      `).join("");
+      pricesEl.classList.toggle("hidden", sizes.length === 0);
+
       previewModal.classList.add("open");
       previewModal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
@@ -2389,6 +2618,7 @@ let saveInFlight = false;
       const existing = state.categories.findIndex(c => c.id === id);
       if (existing >= 0) {
         category.items = state.categories[existing].items || [];
+        category.icon = state.categories[existing].icon || "";
         state.categories[existing] = category;
       } else {
         state.categories.push(category);
@@ -2474,7 +2704,6 @@ let saveInFlight = false;
         image: imageUrl
       };
 
-      if (item.prices.small && !item.prices.large) item.prices.large = item.prices.small;
       const idx = (cat.items || []).findIndex(i => i.id === item.id);
       if (idx >= 0) cat.items[idx] = item;
       else cat.items.push(item);
@@ -2600,9 +2829,16 @@ let saveInFlight = false;
         btn.addEventListener("click", () => setLanguage(btn.dataset.langBtn));
       });
 
-      document.querySelectorAll(".launcher-card").forEach(btn => {
+      document.querySelectorAll("[data-launcher-lang]").forEach(btn => {
+        btn.addEventListener("click", () => beginBranchSelection(btn.dataset.launcherLang));
+      });
+
+      document.querySelectorAll(".launcher-card[data-branch]").forEach(btn => {
         btn.addEventListener("click", () => chooseBranch(btn.dataset.branch));
       });
+
+      const launcherBackLanguage = $("launcherBackLanguage");
+      if (launcherBackLanguage) launcherBackLanguage.addEventListener("click", openBranchChooser);
 
       const bottomSectionBtn = $("bottomSectionBtn");
       if (bottomSectionBtn) bottomSectionBtn.addEventListener("click", openBranchChooser);
