@@ -863,13 +863,18 @@
 <style>
 #bottomSectionBtn{display:block;width:min(92%,520px);margin:18px auto 26px;padding:13px 18px;border-radius:16px;border:1px solid rgba(213,171,83,.35);background:rgba(213,171,83,.12);color:var(--text);font-weight:800;font-size:15px;cursor:pointer}
 #bottomSectionBtn:hover{background:rgba(213,171,83,.2)}
-.menu-panel{padding-top:20px}
+/* Phase 5A polish: the header and language switcher stay in normal flow.
+   This prevents them from ever covering menu content while scrolling. */
+.topbar{position:relative;top:auto;margin-bottom:12px;padding:8px 10px}
+.lang-switch{gap:6px}
+.lang-switch .btn{padding:7px 9px;font-size:.78rem;min-height:34px;box-shadow:none}
+.menu-panel{padding-top:18px}
 .menu-divider{height:1px;background:linear-gradient(90deg, transparent, rgba(213,171,83,.55), transparent)}
-.category-bar{position:sticky;top:78px;z-index:24;background:linear-gradient(180deg, rgba(12,9,7,.98), rgba(12,9,7,.90));backdrop-filter:blur(14px);border-radius:18px;padding:8px 4px 10px}
-.category-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px}
-.category-chip .category-icon{font-size:1.05rem;line-height:1}
-.category-sections{display:flex;flex-direction:column;gap:26px;padding-top:22px}
-.category-section{scroll-margin-top:145px;padding-top:2px}
+.category-bar{position:relative;top:auto;z-index:2;background:linear-gradient(180deg, rgba(19,14,10,.98), rgba(11,9,7,.96));backdrop-filter:blur(10px);border:1px solid rgba(213,171,83,.14);border-radius:18px;padding:8px 6px 10px;margin:0 0 12px;box-shadow:0 12px 30px rgba(0,0,0,.24)}
+.category-chip{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:9px 13px;border-color:rgba(213,171,83,.14);box-shadow:0 7px 18px rgba(0,0,0,.20)}
+.category-chip .category-icon{font-size:1rem;line-height:1}
+.category-sections{display:flex;flex-direction:column;gap:28px;padding-top:8px}
+.category-section{scroll-margin-top:20px;padding-top:2px}
 .category-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}
 .category-section-title{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.5rem,3.4vw,2.25rem);letter-spacing:.03em}
 .category-section-desc{margin:5px 0 0;color:var(--muted);line-height:1.55;font-size:.94rem;max-width:62ch}
@@ -882,20 +887,25 @@
 .launcher-language-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .launcher-language-card{min-height:108px;justify-content:center;text-align:center;flex-direction:column}
 .launcher-language-card .launcher-card-name{font-size:1.28rem}
+.launcher-language-card .launcher-card-desc{display:none!important}
 .launcher-back{display:block;margin:14px auto 0;border:none;background:transparent;color:var(--gold2);font:inherit;font-weight:800;cursor:pointer;padding:10px 12px;border-radius:999px}
 .launcher-back:hover{background:rgba(213,171,83,.08)}
 .admin-data-card{display:block}
 @media (max-width: 900px){
-  .category-bar{top:74px}
   .launcher-language-options{grid-template-columns:1fr}
-  .launcher-language-card{min-height:76px;flex-direction:row;justify-content:space-between;text-align:left}
-  [data-lang="ar"] .launcher-language-card,[data-lang="ku"] .launcher-language-card{flex-direction:row-reverse;text-align:right}
+  .launcher-language-card{min-height:68px;flex-direction:row;justify-content:center;text-align:center}
+  [data-lang="ar"] .launcher-language-card,[data-lang="ku"] .launcher-language-card{flex-direction:row;justify-content:center;text-align:center}
 }
 @media (max-width: 700px){
-  .category-bar{top:69px}
+  .topbar{padding:7px 8px;border-radius:18px}
+  .brand-logo{width:36px;height:36px}
+  .brand-text strong{font-size:.88rem}
+  .lang-switch .btn{padding:7px 8px;font-size:.75rem;min-height:32px}
+  .category-bar{margin-bottom:10px;padding:7px 5px 9px}
+  .category-chip{min-height:40px;padding:8px 12px}
   .category-section-head{align-items:flex-start;flex-direction:column}
-  .category-sections{gap:22px}
-  .category-section{scroll-margin-top:135px}
+  .category-sections{gap:24px}
+  .category-section{scroll-margin-top:16px}
 }
 @media (min-width: 961px){
   .category-section .items{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -926,15 +936,12 @@
         <div class="launcher-language-options">
           <button class="launcher-card launcher-language-card" type="button" data-launcher-lang="ku">
             <span class="launcher-card-name">کوردی</span>
-            <span class="launcher-card-desc">کوردی</span>
           </button>
           <button class="launcher-card launcher-language-card" type="button" data-launcher-lang="ar">
             <span class="launcher-card-name">العربية</span>
-            <span class="launcher-card-desc">العربية</span>
           </button>
           <button class="launcher-card launcher-language-card" type="button" data-launcher-lang="en">
             <span class="launcher-card-name">English</span>
-            <span class="launcher-card-desc">English</span>
           </button>
         </div>
       </div>
