@@ -525,6 +525,10 @@
       z-index:1;
     }
     .footer strong{color:var(--text)}
+    .footer-block{display:inline-flex;align-items:center;gap:6px}
+    .footer-link{color:inherit;text-decoration:none}
+    .footer-link:hover{text-decoration:underline;text-decoration-color:rgba(241,213,141,.7)}
+    .footer-icon{display:inline-flex;align-items:center;justify-content:center;min-width:1.2em}
     .hidden{display:none!important}
 
     .site-launcher{
@@ -895,6 +899,14 @@ body[data-page="admin"] .site-launcher{display:none !important}
     .admin-icon-preview span{font-size:1.4rem;min-width:28px;text-align:center}
     .admin-inline{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .admin-footer-list{display:flex;flex-direction:column;gap:8px}
+    .footer-control-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+    .footer-enabled-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(213,171,83,.14);border-radius:14px;background:rgba(255,255,255,.02)}
+    .footer-enabled-row input{width:20px;height:20px;accent-color:#d5ab53}
+    .footer-link-hint{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:4px}
+    .admin-footer-row .status{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+    .admin-footer-row .status.off{color:#ffd3d3}
+    .admin-footer-row .status.on{color:#d8f6c8}
+    .admin-footer-row .footer-icon{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;border:1px solid rgba(213,171,83,.14);background:rgba(255,255,255,.03);font-size:1rem;flex:0 0 auto}
     .admin-footer-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid rgba(213,171,83,.13);border-radius:14px;background:rgba(255,255,255,.02)}
     .admin-footer-row .row-main{flex:1;min-width:0}
     .admin-footer-row .row-main strong,.admin-footer-row .row-main span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1125,6 +1137,24 @@ body[data-page="admin"] .site-launcher{display:none !important}
               <option value="address">Address</option>
               <option value="contact">Contact</option>
             </select>
+            <div class="footer-link-hint" id="footerBlockTypeHint">Type is optional metadata; custom blocks are always allowed.</div>
+          </div>
+          <div class="footer-control-row">
+            <div class="field">
+              <label id="footerBlockIconLabel">Icon (optional)</label>
+              <input id="footerBlockIconEdit" type="text" maxlength="8" placeholder="📍" />
+            </div>
+            <div class="field">
+              <label id="footerBlockLinkLabel">Link / action (optional)</label>
+              <input id="footerBlockLinkEdit" type="url" inputmode="url" placeholder="https://..." />
+            </div>
+          </div>
+          <div class="footer-enabled-row">
+            <input id="footerBlockEnabledEdit" type="checkbox" checked />
+            <div>
+              <strong id="footerBlockEnabledLabel">Show this block</strong>
+              <div class="footer-link-hint" id="footerBlockEnabledHint">Disabled blocks are kept in Firebase but hidden from customers.</div>
+            </div>
           </div>
           <div class="actions">
             <button class="action primary" id="saveFooterBlockBtn" type="button">Save Block</button>
@@ -1540,18 +1570,11 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
     function syncTopCardFromForm(){
       ensureTopCards();
       const safeIndex = Math.max(0, Math.min(2, Number($("topCardSelect").value) || 0));
-      state.topCards[safeIndex] = {
-        labels: {
-          en: $("topCardLabelEn").value.trim(),
-          ar: $("topCardLabelAr").value.trim(),
-          ku: $("topCardLabelKu").value.trim()
-        },
-        values: {
-          en: $("topCardValueEn").value.trim(),
-          ar: $("topCardValueAr").value.trim(),
-          ku: $("topCardValueKu").value.trim()
-        }
-      };
+      const card = state.topCards[safeIndex];
+      const labelInput = adminEditLang === "ar" ? $("topCardLabelAr") : adminEditLang === "ku" ? $("topCardLabelKu") : $("topCardLabelEn");
+      const valueInput = adminEditLang === "ar" ? $("topCardValueAr") : adminEditLang === "ku" ? $("topCardValueKu") : $("topCardValueEn");
+      card.labels[adminEditLang] = labelInput.value.trim();
+      card.values[adminEditLang] = valueInput.value.trim();
       renderTopCards();
       scheduleSaveState();
     }
@@ -1629,8 +1652,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
         },
         footer: {
           blocks: [
-            { id: uid(), type: "location", labels: { en: "Location", ar: "الموقع", ku: "شوێن" }, values: { en: "Temporary location near Titanic Hotel", ar: "موقع مؤقت قرب فندق تيتانيك", ku: "شوێنی کاتی لە نزیک هوتێلی تایتانیک" }, order: 0 },
-            { id: uid(), type: "phone", labels: { en: "Phone", ar: "الهاتف", ku: "تەلەفۆن" }, values: { en: "07734468886", ar: "07734468886", ku: "07734468886" }, order: 1 }
+            { id: uid(), type: "location", icon: "📍", url: "", enabled: true, labels: { en: "Location", ar: "الموقع", ku: "شوێن" }, values: { en: "Temporary location near Titanic Hotel", ar: "موقع مؤقت قرب فندق تيتانيك", ku: "شوێنی کاتی لە نزیک هوتێلی تایتانیک" }, order: 0 },
+            { id: uid(), type: "phone", icon: "☎", url: "tel:07734468886", enabled: true, labels: { en: "Phone", ar: "الهاتف", ku: "تەلەفۆن" }, values: { en: "07734468886", ar: "07734468886", ku: "07734468886" }, order: 1 }
           ]
         },
         topCards: [
@@ -1797,6 +1820,9 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
           blocks: Array.isArray(raw.footer?.blocks) ? raw.footer.blocks.map((b, idx) => ({
             id: String(b?.id || uid()),
             type: String(b?.type || "custom"),
+            icon: String(b?.icon || ""),
+            url: String(b?.url || b?.link || ""),
+            enabled: b?.enabled !== false,
             labels: { en: String(b?.labels?.en || ""), ar: String(b?.labels?.ar || ""), ku: String(b?.labels?.ku || "") },
             values: { en: String(b?.values?.en || ""), ar: String(b?.values?.ar || ""), ku: String(b?.values?.ku || "") },
             order: Number.isFinite(Number(b?.order)) ? Number(b.order) : idx
@@ -2230,6 +2256,9 @@ let saveInFlight = false;
       if (!Array.isArray(state.footer.blocks)) state.footer.blocks = [];
       state.footer.blocks = state.footer.blocks.map((b, idx) => ({
         id: String(b?.id || uid()), type: String(b?.type || "custom"),
+        icon: String(b?.icon || ""),
+        url: String(b?.url || b?.link || ""),
+        enabled: b?.enabled !== false,
         labels: { en: String(b?.labels?.en || ""), ar: String(b?.labels?.ar || ""), ku: String(b?.labels?.ku || "") },
         values: { en: String(b?.values?.en || ""), ar: String(b?.values?.ar || ""), ku: String(b?.values?.ku || "") },
         order: Number.isFinite(Number(b?.order)) ? Number(b.order) : idx
@@ -2329,13 +2358,25 @@ let saveInFlight = false;
         $("footerBlockLabelEdit").value = "";
         $("footerBlockValueEdit").value = "";
         $("footerBlockTypeEdit").value = "custom";
+        $("footerBlockIconEdit").value = "";
+        $("footerBlockLinkEdit").value = "";
+        $("footerBlockEnabledEdit").checked = true;
       } else {
         $("footerBlockLabelEdit").value = getLocalized(block.labels);
         $("footerBlockValueEdit").value = getLocalized(block.values);
         $("footerBlockTypeEdit").value = block.type || "custom";
+        $("footerBlockIconEdit").value = block.icon || "";
+        $("footerBlockLinkEdit").value = block.url || "";
+        $("footerBlockEnabledEdit").checked = block.enabled !== false;
       }
       const list = $("footerBlockList");
-      if (list) list.innerHTML = blocks.map((b,i) => `<div class="admin-footer-row"><div class="row-main"><strong>${escapeHtml(getLocalized(b.labels) || `Block ${i+1}`)}</strong><span>${escapeHtml(getLocalized(b.values))}</span></div><div class="row-actions"><button class="action" type="button" data-footer-pick="${escapeAttr(b.id)}">Edit</button></div></div>`).join("");
+      if (list) list.innerHTML = blocks.map((b,i) => {
+        const label = getLocalized(b.labels) || `Block ${i+1}`;
+        const value = getLocalized(b.values);
+        const status = b.enabled === false ? `<span class="status off">Hidden</span>` : `<span class="status on">Visible</span>`;
+        const icon = b.icon ? `<span class="footer-icon">${escapeHtml(b.icon)}</span>` : `<span class="footer-icon">•</span>`;
+        return `<div class="admin-footer-row">${icon}<div class="row-main"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span>${status}</div><div class="row-actions"><button class="action" type="button" data-footer-pick="${escapeAttr(b.id)}">Edit</button></div></div>`;
+      }).join("");
       list?.querySelectorAll("[data-footer-pick]").forEach(btn => btn.addEventListener("click", () => { adminFooterBlockId = btn.dataset.footerPick; populateFooterBuilder(); }));
     }
 
@@ -2346,12 +2387,15 @@ let saveInFlight = false;
       setLocalized(block.labels, adminEditLang, $("footerBlockLabelEdit").value.trim());
       setLocalized(block.values, adminEditLang, $("footerBlockValueEdit").value.trim());
       block.type = $("footerBlockTypeEdit").value || "custom";
+      block.icon = $("footerBlockIconEdit").value.trim();
+      block.url = $("footerBlockLinkEdit").value.trim();
+      block.enabled = $("footerBlockEnabledEdit").checked;
       saveState(); render(); populateAdmin();
     }
 
     function newFooterBlock(){
       ensureSiteState();
-      const block = { id: uid(), type: "custom", labels: {en:"New block",ar:"كتلة جديدة",ku:"بلۆکی نوێ"}, values: {en:"",ar:"",ku:""}, order: state.footer.blocks.length };
+      const block = { id: uid(), type: "custom", icon: "", url: "", enabled: true, labels: {en:"New block",ar:"كتلة جديدة",ku:"بلۆکی نوێ"}, values: {en:"",ar:"",ku:""}, order: state.footer.blocks.length };
       state.footer.blocks.push(block);
       adminFooterBlockId = block.id;
       populateFooterBuilder();
@@ -2384,10 +2428,17 @@ let saveInFlight = false;
       const blocks = state.footer.blocks.slice().sort((a,b) => a.order - b.order);
       const footer = document.querySelector("#app footer.footer");
       if (!footer) return;
-      footer.innerHTML = blocks.length ? blocks.map(block => {
+      const visibleBlocks = blocks.filter(block => block.enabled !== false);
+      footer.innerHTML = visibleBlocks.length ? visibleBlocks.map(block => {
         const label = defaultText(block.labels, lang);
         const value = defaultText(block.values, lang);
-        return `<div class="footer-block"><strong>${escapeHtml(label)}</strong>${value ? ` • ${escapeHtml(value)}` : ""}</div>`;
+        const icon = block.icon ? `<span class="footer-icon">${escapeHtml(block.icon)}</span>` : "";
+        const content = `${icon}<strong>${escapeHtml(label)}</strong>${value ? ` • ${escapeHtml(value)}` : ""}`;
+        const safeUrl = String(block.url || "").trim();
+        if (safeUrl && /^(https?:\/\/|tel:|mailto:)/i.test(safeUrl)) {
+          return `<a class="footer-block footer-link" href="${escapeAttr(safeUrl)}" target="${/^https?:\/\//i.test(safeUrl) ? "_blank" : "_self"}" rel="noopener noreferrer">${content}</a>`;
+        }
+        return `<div class="footer-block">${content}</div>`;
       }).join("") : `<div class="footer-block"><strong>1911</strong></div>`;
     }
 
@@ -2556,7 +2607,7 @@ let saveInFlight = false;
       $("toolsNote").textContent = UI[lang].toolsNote;
       $("siteContentCardTitle").textContent = lang === "ar" ? "محتوى الموقع والواجهة" : lang === "ku" ? "ناوەڕۆکی ماڵپەڕ و سەرپەڕ" : "Site & Hero Content";
       $("footerBuilderCardTitle").textContent = lang === "ar" ? "منشئ التذييل" : lang === "ku" ? "دروستکەری فۆتەری سایت" : "Footer Builder";
-      $("adminLanguageTitle").textContent = lang === "ar" ? "لغة واجهة الإدارة" : lang === "ku" ? "زمانی پانێڵی بەڕێوەبردن" : "Admin language";
+      $("adminLanguageTitle").textContent = lang === "ar" ? "لغة التعديل في لوحة الإدارة" : lang === "ku" ? "زمانی دەستکاری لە پانێڵی بەڕێوەبردن" : "Admin editing language";
       $("siteBrandLabel").textContent = lang === "ar" ? "اسم العلامة" : lang === "ku" ? "ناوی براند" : "Brand name";
       $("siteBrandTagLabel").textContent = lang === "ar" ? "النص الفرعي للعلامة" : lang === "ku" ? "دەقی لاوەکی براند" : "Brand subline";
       $("siteHeroSubLabel").textContent = lang === "ar" ? "النص الثانوي للواجهة" : lang === "ku" ? "ژێرنووسی سەرپەڕ" : "Hero subtitle";
@@ -2568,6 +2619,11 @@ let saveInFlight = false;
       $("footerBlockLabelLabel").textContent = lang === "ar" ? "عنوان البلوك" : lang === "ku" ? "ناونیشانی بلۆک" : "Block label";
       $("footerBlockValueLabel").textContent = lang === "ar" ? "معلومات البلوك" : lang === "ku" ? "زانیاری بلۆک" : "Block information";
       $("footerBlockTypeLabel").textContent = lang === "ar" ? "نوع البلوك" : lang === "ku" ? "جۆری بلۆک" : "Block type";
+      $("footerBlockTypeHint").textContent = lang === "ar" ? "النوع معلومات اختيارية؛ يمكنك استخدام أي بلوك مخصص." : lang === "ku" ? "جۆرەکە زانیارییەکی هەڵبژاردەییە؛ هەر بلۆکێکی تایبەت دەتوانیت بەکاربهێنیت." : "Type is optional metadata; custom blocks are always allowed.";
+      $("footerBlockIconLabel").textContent = lang === "ar" ? "أيقونة (اختياري)" : lang === "ku" ? "ئایکۆن (ئارەزوومەندانە)" : "Icon (optional)";
+      $("footerBlockLinkLabel").textContent = lang === "ar" ? "رابط / إجراء (اختياري)" : lang === "ku" ? "بەستەر / کردار (ئارەزوومەندانە)" : "Link / action (optional)";
+      $("footerBlockEnabledLabel").textContent = lang === "ar" ? "إظهار هذا البلوك" : lang === "ku" ? "پیشاندانی ئەم بلۆکە" : "Show this block";
+      $("footerBlockEnabledHint").textContent = lang === "ar" ? "البلوك المعطّل يبقى محفوظًا في Firebase لكنه يختفي عن العملاء." : lang === "ku" ? "بلۆکی ناچالاک لە Firebase هەڵدەگیرێت بەڵام بۆ میوانان پیشان نادرێت." : "Disabled blocks are kept in Firebase but hidden from customers.";
       $("categoryIconLabel").textContent = lang === "ar" ? "أيقونة الفئة" : lang === "ku" ? "ئایکۆنی پۆل" : "Category icon";
       $("categoryIconPreviewText").textContent = lang === "ar" ? "تظهر في زر الفئة داخل القائمة." : lang === "ku" ? "لە دوگمەی پۆل لە مێنۆدا پیشان دەدرێت." : "Shown on the public category button.";
       $("itemAvailabilityLabel").textContent = lang === "ar" ? "التوفر" : lang === "ku" ? "بەردەستبوون" : "Availability";
@@ -2586,8 +2642,8 @@ let saveInFlight = false;
       $("saveItemBtn").textContent = UI[lang].saveItem;
       $("newItemBtn").textContent = UI[lang].newItem;
       $("deleteItemBtn").textContent = UI[lang].deleteItem;
-      $("exportBtn").textContent = UI[lang].exportJson;
-      $("resetMenuBtn").textContent = UI[lang].resetMenu;
+      if ($("exportBtn")) $("exportBtn").textContent = UI[lang].exportJson;
+      if ($("resetMenuBtn")) $("resetMenuBtn").textContent = UI[lang].resetMenu;
       render();
       updateLangButtons();
       renderLauncherState();
@@ -2914,10 +2970,8 @@ let saveInFlight = false;
       category.id = id;
       if (!category.names) category.names = { en: "", ar: "", ku: "" };
       if (!category.desc) category.desc = { en: "", ar: "", ku: "" };
-      category.names[adminEditLang] = $("categoryNameEn").value.trim();
-      if (adminEditLang === "ar") category.names.ar = $("categoryNameAr").value.trim();
-      if (adminEditLang === "ku") category.names.ku = $("categoryNameKu").value.trim();
-      if (adminEditLang === "en") category.names.en = $("categoryNameEn").value.trim();
+      const categoryNameInput = adminEditLang === "ar" ? $("categoryNameAr") : adminEditLang === "ku" ? $("categoryNameKu") : $("categoryNameEn");
+      category.names[adminEditLang] = categoryNameInput.value.trim();
       category.desc[adminEditLang] = $("categoryDesc").value.trim();
       category.icon = $("categoryIcon").value.trim();
       if (!category.names.en) category.names.en = "New Category";
@@ -2996,10 +3050,8 @@ let saveInFlight = false;
       item.names = item.names || { en: "", ar: "", ku: "" };
       item.desc = item.desc || { en: "", ar: "", ku: "" };
       item.prices = item.prices || { single: "", small: "", large: "" };
-      item.names[adminEditLang] = $("itemNameEn").value.trim() || (adminEditLang === "en" ? "New Item" : item.names[adminEditLang]);
-      if (adminEditLang === "ar") item.names.ar = $("itemNameAr").value.trim();
-      if (adminEditLang === "ku") item.names.ku = $("itemNameKu").value.trim();
-      if (adminEditLang === "en") item.names.en = $("itemNameEn").value.trim() || "New Item";
+      const itemNameInput = adminEditLang === "ar" ? $("itemNameAr") : adminEditLang === "ku" ? $("itemNameKu") : $("itemNameEn");
+      item.names[adminEditLang] = itemNameInput.value.trim() || (adminEditLang === "en" ? "New Item" : item.names[adminEditLang]);
       item.desc[adminEditLang] = $("itemDesc").value.trim();
       item.prices.single = $("priceSingle").value.trim();
       item.prices.small = $("priceSmall").value.trim();
@@ -3097,8 +3149,8 @@ let saveInFlight = false;
 
     function exportJSON(){
       $("exportBox").value = JSON.stringify(state, null, 2);
-      $("exportBox").focus();
-      $("exportBox").select();
+      const search = $("searchInput");
+      if (search) search.focus();
     }
 
     function resetDemoMenu(){
