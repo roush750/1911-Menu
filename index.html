@@ -861,27 +861,201 @@
     }
   </style>
 <style>
-#bottomSectionBtn{display:block;width:min(92%,520px);margin:18px auto 26px;padding:13px 18px;border-radius:16px;border:1px solid rgba(213,171,83,.35);background:rgba(213,171,83,.12);color:var(--text);font-weight:800;font-size:15px;cursor:pointer}
-#bottomSectionBtn:hover{background:rgba(213,171,83,.2)}
-/* Phase 5A polish: the header and language switcher stay in normal flow.
-   This prevents them from ever covering menu content while scrolling. */
-.topbar{position:relative;top:auto;margin-bottom:12px;padding:8px 10px}
-.lang-switch{gap:6px}
-.lang-switch .btn{padding:7px 9px;font-size:.78rem;min-height:34px;box-shadow:none}
-.menu-panel{padding-top:18px}
-.menu-divider{height:1px;background:linear-gradient(90deg, transparent, rgba(213,171,83,.55), transparent)}
-.category-bar{position:relative;top:auto;z-index:2;background:linear-gradient(180deg, rgba(19,14,10,.98), rgba(11,9,7,.96));backdrop-filter:blur(10px);border:1px solid rgba(213,171,83,.14);border-radius:18px;padding:8px 6px 10px;margin:0 0 12px;box-shadow:0 12px 30px rgba(0,0,0,.24)}
-.category-chip{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:9px 13px;border-color:rgba(213,171,83,.14);box-shadow:0 7px 18px rgba(0,0,0,.20)}
+/* Phase 5A navigation polish */
+.topbar{
+  position:relative;
+  top:auto;
+  margin-bottom:12px;
+  padding:8px 10px;
+  z-index:20;
+}
+.top-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  flex:0 0 auto;
+}
+.lang-switch,.section-switch{
+  position:relative;
+}
+.compact-control{
+  appearance:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:40px;
+  padding:8px 12px;
+  border:1px solid rgba(213,171,83,.24);
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(34,26,19,.96), rgba(13,10,8,.98));
+  color:var(--text);
+  font:inherit;
+  font-size:.82rem;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+  transition:border-color .16s ease, background .16s ease, transform .16s ease, box-shadow .16s ease;
+  white-space:nowrap;
+}
+.compact-control:hover{
+  transform:translateY(-1px);
+  border-color:rgba(213,171,83,.5);
+  box-shadow:0 10px 26px rgba(0,0,0,.28);
+}
+.compact-control[aria-expanded="true"]{
+  border-color:rgba(241,213,141,.65);
+  background:linear-gradient(180deg, rgba(55,40,23,.98), rgba(20,14,9,.98));
+}
+.control-chevron{
+  color:var(--gold2);
+  font-size:1rem;
+  line-height:1;
+  transform:translateY(-1px);
+}
+.control-popover{
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  min-width:190px;
+  padding:7px;
+  border:1px solid rgba(213,171,83,.24);
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(28,21,15,.99), rgba(10,8,7,.99));
+  box-shadow:0 18px 48px rgba(0,0,0,.48);
+  backdrop-filter:blur(16px);
+  z-index:80;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-5px);
+  pointer-events:none;
+  transition:opacity .14s ease, transform .14s ease, visibility .14s ease;
+}
+.control-popover.open{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+.popover-option{
+  appearance:none;
+  display:block;
+  width:100%;
+  min-height:42px;
+  padding:9px 12px;
+  border:0;
+  border-radius:11px;
+  background:transparent;
+  color:var(--text);
+  text-align:start;
+  font:inherit;
+  font-weight:750;
+  cursor:pointer;
+}
+.popover-option:hover,
+.popover-option:focus-visible{
+  outline:none;
+  background:rgba(213,171,83,.11);
+  color:var(--gold2);
+}
+.popover-option.active{
+  background:linear-gradient(180deg, rgba(241,213,141,.96), rgba(167,118,27,.96));
+  color:#170f08;
+}
+.category-bar{
+  position:sticky;
+  top:0;
+  z-index:30;
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:8px 6px 10px;
+  margin:0 0 16px;
+  scrollbar-width:none;
+  background:linear-gradient(180deg, rgba(12,9,7,.985), rgba(12,9,7,.94));
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(213,171,83,.16);
+  border-radius:0 0 18px 18px;
+  box-shadow:0 12px 28px rgba(0,0,0,.34);
+}
+.category-bar::-webkit-scrollbar{display:none}
+.category-chip{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:42px;
+  padding:9px 14px;
+  border-radius:999px;
+  border:1px solid rgba(213,171,83,.16);
+  background:linear-gradient(180deg, rgba(24,18,13,.96), rgba(10,8,7,.98));
+  color:var(--text);
+  font-weight:750;
+  cursor:pointer;
+  min-width:max-content;
+  box-shadow:0 7px 18px rgba(0,0,0,.2);
+  transition:transform .14s ease, border-color .14s ease, background .14s ease, color .14s ease;
+}
+.category-chip:hover{transform:translateY(-1px)}
+.category-chip.active{
+  background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
+  color:#170f08;
+  border-color:rgba(255,240,193,.58);
+  box-shadow:0 7px 20px rgba(213,171,83,.18);
+}
 .category-chip .category-icon{font-size:1rem;line-height:1}
 .category-sections{display:flex;flex-direction:column;gap:28px;padding-top:8px}
-.category-section{scroll-margin-top:20px;padding-top:2px}
-.category-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}
-.category-section-title{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.5rem,3.4vw,2.25rem);letter-spacing:.03em}
-.category-section-desc{margin:5px 0 0;color:var(--muted);line-height:1.55;font-size:.94rem;max-width:62ch}
-.category-section-divider{height:1px;background:linear-gradient(90deg, rgba(213,171,83,.55), rgba(213,171,83,.10), transparent);margin-bottom:14px}
-.category-section.is-active .category-section-title{text-shadow:0 0 22px rgba(241,213,141,.18)}
-.preview-prices{display:flex;gap:10px;flex-wrap:wrap;align-items:center;direction:ltr;margin-top:12px}
-.preview-price{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:10px 14px;border-radius:14px;border:1px solid rgba(213,171,83,.18);background:linear-gradient(180deg, rgba(38,35,32,.96), rgba(20,18,16,.96));color:var(--text);font-weight:850}
+.category-section{
+  scroll-margin-top:76px;
+  padding-top:2px;
+}
+.category-section-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.category-section-title{
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.5rem,3.4vw,2.25rem);
+  letter-spacing:.03em;
+}
+.category-section-desc{
+  margin:5px 0 0;
+  color:var(--muted);
+  line-height:1.55;
+  font-size:.94rem;
+  max-width:62ch;
+}
+.category-section-divider{
+  height:1px;
+  background:linear-gradient(90deg, rgba(213,171,83,.55), rgba(213,171,83,.10), transparent);
+  margin-bottom:14px;
+}
+.preview-prices{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  direction:ltr;
+  margin-top:12px;
+}
+.preview-price{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid rgba(213,171,83,.18);
+  background:linear-gradient(180deg, rgba(38,35,32,.96), rgba(20,18,16,.96));
+  color:var(--text);
+  font-weight:850;
+}
 .preview-price strong{color:var(--gold2)}
 .launcher-step-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.16em;color:var(--gold2);margin:4px 0 10px}
 .launcher-language-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -891,6 +1065,7 @@
 .launcher-back{display:block;margin:14px auto 0;border:none;background:transparent;color:var(--gold2);font:inherit;font-weight:800;cursor:pointer;padding:10px 12px;border-radius:999px}
 .launcher-back:hover{background:rgba(213,171,83,.08)}
 .admin-data-card{display:block}
+
 @media (max-width: 900px){
   .launcher-language-options{grid-template-columns:1fr}
   .launcher-language-card{min-height:68px;flex-direction:row;justify-content:center;text-align:center}
@@ -900,12 +1075,25 @@
   .topbar{padding:7px 8px;border-radius:18px}
   .brand-logo{width:36px;height:36px}
   .brand-text strong{font-size:.88rem}
-  .lang-switch .btn{padding:7px 8px;font-size:.75rem;min-height:32px}
-  .category-bar{margin-bottom:10px;padding:7px 5px 9px}
+  .brand-text span{display:none}
+  .top-actions{gap:5px}
+  .compact-control{
+    min-height:36px;
+    padding:7px 9px;
+    font-size:.74rem;
+    gap:5px;
+  }
+  .section-switch .compact-control span:first-child{display:none}
+  .control-popover{min-width:170px}
+  .category-bar{
+    margin-bottom:12px;
+    padding:7px 5px 9px;
+    border-radius:0 0 15px 15px;
+  }
   .category-chip{min-height:40px;padding:8px 12px}
+  .category-section{scroll-margin-top:68px}
   .category-section-head{align-items:flex-start;flex-direction:column}
   .category-sections{gap:24px}
-  .category-section{scroll-margin-top:16px}
 }
 @media (min-width: 961px){
   .category-section .items{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -913,10 +1101,10 @@
 @media (min-width: 1200px){
   :root{--max:1260px}
   .category-section .items{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-  .card{padding:12px}
-  .thumb{width:132px;min-width:132px;height:132px}
+  .category-section{scroll-margin-top:82px}
 }
 </style>
+
 </head>
 
 <body data-page="index">
@@ -976,10 +1164,32 @@
           <span id="brandTag">Vintage • Modern • Premium</span>
         </div>
       </div>
-      <div class="lang-switch">
-        <button class="btn active" type="button" data-lang-btn="en">English</button>
-        <button class="btn" type="button" data-lang-btn="ar">العربية</button>
-        <button class="btn" type="button" data-lang-btn="ku">کوردی</button>
+      <div class="top-actions">
+        <div class="section-switch" id="sectionSwitch">
+          <button class="compact-control" id="sectionSwitchBtn" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span aria-hidden="true">⌂</span>
+            <span id="sectionSwitchLabel">Change Section</span>
+            <span class="control-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div class="control-popover section-popover" id="sectionPopover" role="menu" aria-hidden="true">
+            <button type="button" class="popover-option" data-section-choice="cafe">1911 Café</button>
+            <button type="button" class="popover-option" data-section-choice="fastfood">1911 Fast Food</button>
+            <button type="button" class="popover-option" data-section-choice="desserts">1911 Desserts</button>
+          </div>
+        </div>
+
+        <div class="lang-switch" id="langSwitch">
+          <button class="compact-control" id="langSwitchBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <span aria-hidden="true">🌐</span>
+            <span id="currentLanguageLabel">English</span>
+            <span class="control-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div class="control-popover language-popover" id="languagePopover" role="listbox" aria-hidden="true">
+            <button type="button" class="popover-option" data-lang-btn="ku">کوردی</button>
+            <button type="button" class="popover-option" data-lang-btn="ar">العربية</button>
+            <button type="button" class="popover-option" data-lang-btn="en">English</button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -1015,7 +1225,6 @@
       <div id="footerLeft"><strong>1911</strong> • Temporary location near Titanic Hotel</div>
       <div id="footerRight">07734468886</div>
     </footer>
-    <button id="bottomSectionBtn" type="button">Change section</button>
   </div>
 
   <div class="modal" id="previewModal" aria-hidden="true">
@@ -1946,6 +2155,65 @@ let saveInFlight = false;
 
     function t(){ return UI[state.lang] || UI.en; }
 
+    const LANGUAGE_LABELS = {
+      en: "English",
+      ar: "العربية",
+      ku: "کوردی"
+    };
+
+    function closeControlPopovers(){
+      ["languagePopover","sectionPopover"].forEach(id => {
+        const pop = $(id);
+        if (pop) {
+          pop.classList.remove("open");
+          pop.setAttribute("aria-hidden","true");
+        }
+      });
+      ["langSwitchBtn","sectionSwitchBtn"].forEach(id => {
+        const btn = $(id);
+        if (btn) btn.setAttribute("aria-expanded","false");
+      });
+    }
+
+    function toggleControlPopover(popoverId, buttonId){
+      const pop = $(popoverId);
+      const btn = $(buttonId);
+      if (!pop || !btn) return;
+      const shouldOpen = !pop.classList.contains("open");
+      closeControlPopovers();
+      if (shouldOpen){
+        pop.classList.add("open");
+        pop.setAttribute("aria-hidden","false");
+        btn.setAttribute("aria-expanded","true");
+      }
+    }
+
+    function updateTopControls(){
+      const currentLanguage = $("currentLanguageLabel");
+      if (currentLanguage) currentLanguage.textContent = LANGUAGE_LABELS[state.lang] || LANGUAGE_LABELS.en;
+
+      const sectionLabel = $("sectionSwitchLabel");
+      const sectionNames = {
+        en: { cafe:"1911 Café", fastfood:"1911 Fast Food", desserts:"1911 Desserts" },
+        ar: { cafe:"1911 كافيه", fastfood:"1911 فاست فود", desserts:"1911 حلويات" },
+        ku: { cafe:"1911 کافێ", fastfood:"1911 فاست فود", desserts:"1911 دێزەرت" }
+      };
+      if (sectionLabel){
+        sectionLabel.textContent = sectionNames[state.lang]?.[state.section] || (
+          state.lang === "ar" ? "تغيير القسم" :
+          state.lang === "ku" ? "گۆڕینی بەش" : "Change Section"
+        );
+      }
+
+      document.querySelectorAll("[data-section-choice]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.sectionChoice === state.section);
+      });
+      document.querySelectorAll("[data-lang-btn]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.langBtn === state.lang);
+      });
+    }
+
+
     function renderTopCards(){
       const cards = Array.isArray(state.topCards) ? state.topCards : [];
       const defaults = [
@@ -2123,12 +2391,13 @@ let saveInFlight = false;
       $("resetMenuBtn").textContent = UI[lang].resetMenu;
       render();
       updateLangButtons();
+      updateTopControls();
       renderLauncherState();
       populateAdmin();
     }
 
     function updateLangButtons(){
-      document.querySelectorAll("[data-lang-btn]").forEach(btn => btn.classList.toggle("active", btn.dataset.langBtn === state.lang));
+      updateTopControls();
     }
 
     function renderLauncherState(){
@@ -2240,18 +2509,28 @@ let saveInFlight = false;
     }
 
     function openBranchChooser(){
-      state.section = null;
       const languageStep = $("languageStep");
       const branchStep = $("branchStep");
-      if (languageStep) languageStep.classList.remove("hidden");
-      if (branchStep) branchStep.classList.add("hidden");
-      saveLocalState();
+      if (languageStep) languageStep.classList.add("hidden");
+      if (branchStep) branchStep.classList.remove("hidden");
       renderLauncherState();
     }
 
     function chooseBranch(branch){
       state.section = branch;
       saveLocalState();
+      renderLauncherState();
+      if (branch === "cafe") {
+        render();
+      }
+    }
+
+    function chooseTopSection(branch){
+      if (!["cafe","fastfood","desserts"].includes(branch)) return;
+      closeControlPopovers();
+      state.section = branch;
+      saveLocalState();
+      updateTopControls();
       renderLauncherState();
       if (branch === "cafe") {
         render();
@@ -2286,7 +2565,12 @@ let saveInFlight = false;
     function scrollCategoryIntoView(categoryId){
       const section = document.querySelector(`[data-category-section="${CSS.escape(categoryId)}"]`);
       if (!section) return;
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      const topOffset = Math.max(
+        64,
+        Math.round((categoryBar?.getBoundingClientRect().height || 54) + 18)
+      );
+      const targetTop = window.scrollY + section.getBoundingClientRect().top - topOffset;
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
       browseCategoryId = categoryId;
       updateActiveCategory(categoryId);
     }
@@ -2469,6 +2753,7 @@ let saveInFlight = false;
       $("heroLogo").src = state.logo || DEFAULT_LOGO;
       if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
       updateLangButtons();
+      updateTopControls();
       // Customer-facing information cards were removed from the menu; their admin data remains intact.
       renderCategories();
       renderItems();
@@ -2832,8 +3117,31 @@ let saveInFlight = false;
     }
 
     function bindEvents(){
-      document.querySelectorAll("[data-lang-btn]").forEach(btn => {
-        btn.addEventListener("click", () => setLanguage(btn.dataset.langBtn));
+      const langSwitchBtn = $("langSwitchBtn");
+      if (langSwitchBtn) {
+        langSwitchBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleControlPopover("languagePopover","langSwitchBtn");
+        });
+      }
+
+      document.querySelectorAll("#languagePopover [data-lang-btn]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          setLanguage(btn.dataset.langBtn);
+          closeControlPopovers();
+        });
+      });
+
+      const sectionSwitchBtn = $("sectionSwitchBtn");
+      if (sectionSwitchBtn) {
+        sectionSwitchBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleControlPopover("sectionPopover","sectionSwitchBtn");
+        });
+      }
+
+      document.querySelectorAll("[data-section-choice]").forEach(btn => {
+        btn.addEventListener("click", () => chooseTopSection(btn.dataset.sectionChoice));
       });
 
       document.querySelectorAll("[data-launcher-lang]").forEach(btn => {
@@ -2846,9 +3154,6 @@ let saveInFlight = false;
 
       const launcherBackLanguage = $("launcherBackLanguage");
       if (launcherBackLanguage) launcherBackLanguage.addEventListener("click", openBranchChooser);
-
-      const bottomSectionBtn = $("bottomSectionBtn");
-      if (bottomSectionBtn) bottomSectionBtn.addEventListener("click", openBranchChooser);
 
       const footerAdminBtn = $("openAdminBtnFooter");
       if (footerAdminBtn) {
@@ -2922,6 +3227,12 @@ let saveInFlight = false;
         pendingItemFile = file;
         previewItemImage = URL.createObjectURL(file);
         $("itemPreview").src = previewItemImage;
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest("#langSwitch") && !e.target.closest("#sectionSwitch")) {
+          closeControlPopovers();
+        }
       });
 
       document.addEventListener("keydown", (e) => {
