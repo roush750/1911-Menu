@@ -863,18 +863,122 @@
 <style>
 #bottomSectionBtn{display:block;width:min(92%,520px);margin:18px auto 26px;padding:13px 18px;border-radius:16px;border:1px solid rgba(213,171,83,.35);background:rgba(213,171,83,.12);color:var(--text);font-weight:800;font-size:15px;cursor:pointer}
 #bottomSectionBtn:hover{background:rgba(213,171,83,.2)}
-/* Phase 5A polish: the header and language switcher stay in normal flow.
-   This prevents them from ever covering menu content while scrolling. */
-.topbar{position:relative;top:auto;margin-bottom:12px;padding:8px 10px}
-.lang-switch{gap:6px}
-.lang-switch .btn{padding:7px 9px;font-size:.78rem;min-height:34px;box-shadow:none}
+/* Phase 5A final polish: compact sticky top navigation.
+   The header remains visible while scrolling, but it occupies real document space
+   and the category sections reserve matching scroll space so nothing is hidden. */
+:root{--sticky-nav-height:96px}
+html{scroll-padding-top:var(--sticky-nav-height)}
+.topbar{direction:ltr;}
+.topbar .brand{direction:ltr;}
+.top-category-bar{direction:ltr;}
+.lang-select{direction:ltr;}
+#app[data-lang="ar"] .top-category-bar,#app[data-lang="ku"] .top-category-bar{direction:rtl;}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:80;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  margin:0 0 14px;
+  padding:8px 10px;
+  border-radius:0 0 20px 20px;
+  background:rgba(9,7,5,.94);
+  border:1px solid rgba(213,171,83,.20);
+  border-top:none;
+  box-shadow:0 12px 34px rgba(0,0,0,.42);
+  backdrop-filter:blur(18px);
+}
+.topbar .brand{min-width:150px;max-width:260px}
+.topbar .brand-text strong{font-size:.92rem}
+.top-category-bar{
+  grid-column:2;
+  grid-row:1;
+  min-width:0;
+  margin:0;
+  padding:4px;
+  border:1px solid rgba(213,171,83,.15);
+  border-radius:16px;
+  background:linear-gradient(180deg,rgba(21,16,12,.90),rgba(10,8,7,.92));
+  box-shadow:inset 0 1px rgba(255,255,255,.03);
+}
+.top-category-bar .category-chip{
+  min-height:38px;
+  padding:8px 12px;
+  gap:7px;
+  border-radius:12px;
+  box-shadow:none;
+  font-size:.88rem;
+  border-color:transparent;
+}
+.top-category-bar .category-chip:hover{transform:none;border-color:rgba(213,171,83,.22)}
+.top-category-bar .category-chip.active{
+  color:#170f08;
+  border-color:rgba(241,213,141,.58);
+  background:linear-gradient(180deg,rgba(241,213,141,.99),rgba(179,130,34,.99));
+  box-shadow:0 5px 16px rgba(213,171,83,.15);
+}
+.top-category-bar .category-icon{font-size:1rem;line-height:1}
+.lang-select{position:relative;z-index:90;justify-self:end}
+.lang-toggle{
+  appearance:none;
+  min-width:112px;
+  min-height:40px;
+  padding:8px 11px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-radius:12px;
+  border:1px solid rgba(213,171,83,.28);
+  background:linear-gradient(180deg,rgba(25,19,14,.98),rgba(10,8,7,.98));
+  color:var(--text);
+  font:inherit;
+  font-size:.84rem;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.22);
+}
+.lang-toggle:hover,.lang-toggle:focus-visible{border-color:rgba(241,213,141,.66);outline:none}
+.lang-chevron{color:var(--gold2);font-size:1rem;line-height:1;transform:translateY(-1px)}
+.lang-menu{
+  position:absolute;
+  top:calc(100% + 8px);
+  inset-inline-end:0;
+  width:150px;
+  display:none;
+  flex-direction:column;
+  padding:6px;
+  gap:4px;
+  border-radius:14px;
+  border:1px solid rgba(213,171,83,.28);
+  background:linear-gradient(180deg,rgba(22,16,12,.99),rgba(8,7,6,.99));
+  box-shadow:0 18px 42px rgba(0,0,0,.45);
+  backdrop-filter:blur(16px);
+}
+.lang-select.open .lang-menu{display:flex}
+.lang-option{
+  appearance:none;
+  border:0;
+  width:100%;
+  min-height:40px;
+  padding:8px 11px;
+  border-radius:9px;
+  background:transparent;
+  color:var(--text);
+  font:inherit;
+  font-size:.85rem;
+  font-weight:700;
+  text-align:center;
+  cursor:pointer;
+}
+.lang-option:hover,.lang-option:focus-visible{background:rgba(213,171,83,.12);color:var(--gold2);outline:none}
+.lang-option.active{background:rgba(213,171,83,.15);color:var(--gold2)}
 .menu-panel{padding-top:18px}
-.menu-divider{height:1px;background:linear-gradient(90deg, transparent, rgba(213,171,83,.55), transparent)}
-.category-bar{position:relative;top:auto;z-index:2;background:linear-gradient(180deg, rgba(19,14,10,.98), rgba(11,9,7,.96));backdrop-filter:blur(10px);border:1px solid rgba(213,171,83,.14);border-radius:18px;padding:8px 6px 10px;margin:0 0 12px;box-shadow:0 12px 30px rgba(0,0,0,.24)}
-.category-chip{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:9px 13px;border-color:rgba(213,171,83,.14);box-shadow:0 7px 18px rgba(0,0,0,.20)}
-.category-chip .category-icon{font-size:1rem;line-height:1}
+.menu-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(213,171,83,.55),transparent)}
 .category-sections{display:flex;flex-direction:column;gap:28px;padding-top:8px}
-.category-section{scroll-margin-top:20px;padding-top:2px}
+.category-section{scroll-margin-top:var(--sticky-nav-height);padding-top:2px}
 .category-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}
 .category-section-title{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.5rem,3.4vw,2.25rem);letter-spacing:.03em}
 .category-section-desc{margin:5px 0 0;color:var(--muted);line-height:1.55;font-size:.94rem;max-width:62ch}
@@ -896,16 +1000,33 @@
   .launcher-language-card{min-height:68px;flex-direction:row;justify-content:center;text-align:center}
   [data-lang="ar"] .launcher-language-card,[data-lang="ku"] .launcher-language-card{flex-direction:row;justify-content:center;text-align:center}
 }
+@media (max-width: 900px){
+  .topbar{grid-template-columns:auto minmax(0,1fr) auto;gap:8px}
+  .topbar .brand{min-width:0;max-width:155px}
+  .topbar .brand-text strong{font-size:.86rem}
+  .top-category-bar .category-chip{font-size:.82rem;padding:8px 10px}
+  .lang-toggle{min-width:98px;padding-inline:9px;font-size:.80rem}
+}
 @media (max-width: 700px){
-  .topbar{padding:7px 8px;border-radius:18px}
+  .topbar{padding:7px 7px;border-radius:0 0 16px 16px}
   .brand-logo{width:36px;height:36px}
-  .brand-text strong{font-size:.88rem}
-  .lang-switch .btn{padding:7px 8px;font-size:.75rem;min-height:32px}
-  .category-bar{margin-bottom:10px;padding:7px 5px 9px}
-  .category-chip{min-height:40px;padding:8px 12px}
+  .brand-text span{display:none}
+  .topbar .brand-text strong{font-size:.80rem}
+  .top-category-bar{padding:3px}
+  .top-category-bar .category-chip{min-height:38px;padding:8px 10px;font-size:.76rem}
+  .lang-toggle{min-width:90px;min-height:38px;padding:7px 8px;font-size:.75rem}
+  .lang-menu{width:138px}
   .category-section-head{align-items:flex-start;flex-direction:column}
   .category-sections{gap:24px}
-  .category-section{scroll-margin-top:16px}
+}
+@media (max-width: 460px){
+  .topbar{grid-template-columns:auto minmax(0,1fr) auto}
+  .topbar .brand{max-width:92px}
+  .topbar .brand-text strong{font-size:.72rem;letter-spacing:.03em}
+  .brand-logo{width:32px;height:32px}
+  .top-category-bar .category-chip{min-height:36px;padding:7px 9px;font-size:.72rem;gap:5px}
+  .top-category-bar .category-icon{font-size:.9rem}
+  .lang-toggle{min-width:82px;font-size:.70rem}
 }
 @media (min-width: 961px){
   .category-section .items{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -968,7 +1089,7 @@
     </div>
   </div>
   <div class="shell" id="app" data-lang="en">
-    <header class="topbar">
+    <header class="topbar" id="topNavigation">
       <div class="brand">
         <img class="brand-logo" id="brandLogo" src="" alt="1911 logo" />
         <div class="brand-text">
@@ -976,10 +1097,19 @@
           <span id="brandTag">Vintage • Modern • Premium</span>
         </div>
       </div>
-      <div class="lang-switch">
-        <button class="btn active" type="button" data-lang-btn="en">English</button>
-        <button class="btn" type="button" data-lang-btn="ar">العربية</button>
-        <button class="btn" type="button" data-lang-btn="ku">کوردی</button>
+
+      <section class="category-bar top-category-bar" id="categoryBar" aria-label="categories"></section>
+
+      <div class="lang-select" id="languageSelector">
+        <button class="lang-toggle" id="langMenuToggle" type="button" aria-haspopup="menu" aria-expanded="false">
+          <span id="langCurrentLabel">English</span>
+          <span class="lang-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu" aria-label="Language selection">
+          <button type="button" class="lang-option" role="menuitem" data-lang-btn="ku">کوردی</button>
+          <button type="button" class="lang-option" role="menuitem" data-lang-btn="ar">العربية</button>
+          <button type="button" class="lang-option" role="menuitem" data-lang-btn="en">English</button>
+        </div>
       </div>
     </header>
 
@@ -996,8 +1126,6 @@
     <div class="toolbar">
       <input class="search" id="searchInput" type="search" placeholder="Search items..." />
     </div>
-
-    <section class="category-bar" id="categoryBar" aria-label="categories"></section>
 
     <main class="panel menu-panel">
       <div class="panel-head">
@@ -2127,8 +2255,14 @@ let saveInFlight = false;
       populateAdmin();
     }
 
+    const LANGUAGE_LABELS = { en: "English", ar: "العربية", ku: "کوردی" };
+
     function updateLangButtons(){
-      document.querySelectorAll("[data-lang-btn]").forEach(btn => btn.classList.toggle("active", btn.dataset.langBtn === state.lang));
+      document.querySelectorAll("[data-lang-btn]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.langBtn === state.lang);
+      });
+      const currentLabel = $("langCurrentLabel");
+      if (currentLabel) currentLabel.textContent = LANGUAGE_LABELS[state.lang] || LANGUAGE_LABELS.en;
     }
 
     function renderLauncherState(){
@@ -2283,10 +2417,21 @@ let saveInFlight = false;
       });
     }
 
+    function syncStickyNavHeight(){
+      const nav = $("topNavigation");
+      if (!nav) return 0;
+      const height = Math.ceil(nav.getBoundingClientRect().height);
+      document.documentElement.style.setProperty("--sticky-nav-height", `${height + 8}px`);
+      return height;
+    }
+
     function scrollCategoryIntoView(categoryId){
       const section = document.querySelector(`[data-category-section="${CSS.escape(categoryId)}"]`);
       if (!section) return;
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      syncStickyNavHeight();
+      const navHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sticky-nav-height")) || 96;
+      const targetY = window.scrollY + section.getBoundingClientRect().top - navHeight;
+      window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
       browseCategoryId = categoryId;
       updateActiveCategory(categoryId);
     }
@@ -2308,18 +2453,20 @@ let saveInFlight = false;
       const sections = [...document.querySelectorAll("[data-category-section]")];
       if (!sections.length) return;
 
+      const navHeight = syncStickyNavHeight();
       let ticking = false;
       const updateFromScroll = () => {
         if (ticking) return;
         ticking = true;
         requestAnimationFrame(() => {
-          const probeY = Math.min(window.innerHeight * 0.28, 260);
+          const currentNavHeight = syncStickyNavHeight() || navHeight;
+          const probeY = currentNavHeight + Math.min(window.innerHeight * 0.22, 180);
           let current = sections[0];
           let bestDistance = Infinity;
           for (const section of sections){
             const rect = section.getBoundingClientRect();
             const distance = Math.abs(rect.top - probeY);
-            if (rect.top <= probeY + 120 && distance < bestDistance){
+            if (rect.top <= probeY + 140 && distance < bestDistance){
               bestDistance = distance;
               current = section;
             }
@@ -2331,11 +2478,11 @@ let saveInFlight = false;
 
       const observer = new IntersectionObserver((entries) => {
         const visible = entries.filter(entry => entry.isIntersecting)
-          .sort((a,b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
+          .sort((a,b) => Math.abs(a.boundingClientRect.top - navHeight) - Math.abs(b.boundingClientRect.top - navHeight));
         if (visible[0]) updateActiveCategory(visible[0].target.dataset.categorySection);
       }, {
         root: null,
-        rootMargin: "-18% 0px -62% 0px",
+        rootMargin: `${-(navHeight + 8)}px 0px -58% 0px`,
         threshold: [0, .15, .35, .6]
       });
       sections.forEach(section => observer.observe(section));
@@ -2833,8 +2980,43 @@ let saveInFlight = false;
 
     function bindEvents(){
       document.querySelectorAll("[data-lang-btn]").forEach(btn => {
-        btn.addEventListener("click", () => setLanguage(btn.dataset.langBtn));
+        btn.addEventListener("click", () => {
+          setLanguage(btn.dataset.langBtn);
+          const selector = $("languageSelector");
+          const toggle = $("langMenuToggle");
+          if (selector) selector.classList.remove("open");
+          if (toggle) toggle.setAttribute("aria-expanded", "false");
+        });
       });
+
+      const langToggle = $("langMenuToggle");
+      const languageSelector = $("languageSelector");
+      if (langToggle && languageSelector){
+        langToggle.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const open = !languageSelector.classList.contains("open");
+          languageSelector.classList.toggle("open", open);
+          langToggle.setAttribute("aria-expanded", String(open));
+        });
+        document.addEventListener("click", (event) => {
+          if (!languageSelector.contains(event.target)) {
+            languageSelector.classList.remove("open");
+            langToggle.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+      let stickyResizeTimer = null;
+      const handleStickyResize = () => {
+        if (stickyResizeTimer) cancelAnimationFrame(stickyResizeTimer);
+        stickyResizeTimer = requestAnimationFrame(() => {
+          stickyResizeTimer = null;
+          syncStickyNavHeight();
+          setupCategoryObserver();
+        });
+      };
+      window.addEventListener("resize", handleStickyResize, { passive: true });
+      window.addEventListener("orientationchange", handleStickyResize, { passive: true });
 
       document.querySelectorAll("[data-launcher-lang]").forEach(btn => {
         btn.addEventListener("click", () => beginBranchSelection(btn.dataset.launcherLang));
@@ -2926,7 +3108,12 @@ let saveInFlight = false;
 
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          if (adminModal.classList.contains("open")) closeAdmin();
+          const languageSelector = $("languageSelector");
+          const languageToggle = $("langMenuToggle");
+          if (languageSelector?.classList.contains("open")) {
+            languageSelector.classList.remove("open");
+            languageToggle?.setAttribute("aria-expanded", "false");
+          } else if (adminModal.classList.contains("open")) closeAdmin();
           else if (previewModal.classList.contains("open")) closePreview();
         }
       });
@@ -2945,6 +3132,7 @@ let saveInFlight = false;
       await startFirebaseSync();
       setLanguage(state.lang);
       renderLauncherState();
+      syncStickyNavHeight();
 
       if (PAGE_MODE === "admin") {
         $("siteLauncher")?.classList.add("hidden");
