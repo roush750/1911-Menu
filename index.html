@@ -833,29 +833,16 @@
       background:#0c0907;
     }
 
-    #app[dir="rtl"],
-    #siteLauncher[dir="rtl"]{
+    [data-lang="ar"], [data-lang="ku"]{direction:rtl}
+    [data-lang="ar"] .topbar,
+    [data-lang="ar"] .hero,
+    [data-lang="ar"] .panel-head,
+    [data-lang="ar"] .footer,
+    [data-lang="ku"] .topbar,
+    [data-lang="ku"] .hero,
+    [data-lang="ku"] .panel-head,
+    [data-lang="ku"] .footer{
       direction:rtl;
-    }
-    #app[dir="rtl"] .topbar,
-    #app[dir="rtl"] .hero,
-    #app[dir="rtl"] .panel-head,
-    #app[dir="rtl"] .footer,
-    #siteLauncher[dir="rtl"] .launcher-panel{
-      direction:rtl;
-    }
-    #app[dir="ltr"],
-    #siteLauncher[dir="ltr"]{
-      direction:ltr;
-    }
-    .category-bar{
-      direction:ltr;
-    }
-    #app[dir="rtl"] .category-chip{
-      direction:rtl;
-    }
-    #app[dir="ltr"] .category-chip{
-      direction:ltr;
     }
 
     @media (max-width: 960px){
@@ -868,6 +855,8 @@
       .card{padding:9px}
       .thumb{width:100px;min-width:100px;height:100px}
       .brand-text span{display:none}
+      .btn,.admin-toggle{flex:1 1 auto}
+      .lang-switch{flex:1}
       .items{grid-template-columns:1fr}
     }
   </style>
@@ -910,17 +899,26 @@
   transition:border-color .16s ease, background .16s ease, transform .16s ease, box-shadow .16s ease;
   white-space:nowrap;
 }
+.globe-only-control{
+  width:40px;
+  min-width:40px;
+  height:40px;
+  min-height:40px;
+  padding:0;
+  border-radius:50%;
+  font-size:1.05rem;
+  line-height:1;
+  flex:0 0 auto;
+}
+.globe-only-control span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
 .compact-control:hover{
   transform:translateY(-1px);
   border-color:rgba(213,171,83,.5);
   box-shadow:0 10px 26px rgba(0,0,0,.28);
-}
-.top-actions{min-width:0;max-width:100%;}
-.lang-switch,.section-switch{min-width:0;}
-.compact-control{max-width:min(42vw,230px);overflow:hidden;text-overflow:ellipsis;}
-@media (max-width:700px){
-  .top-actions{overflow:visible;}
-  .compact-control{max-width:46vw;}
 }
 .compact-control[aria-expanded="true"]{
   border-color:rgba(241,213,141,.65);
@@ -1101,7 +1099,14 @@
     font-size:.74rem;
     gap:5px;
   }
-  .section-switch .compact-control span:first-child{display:none}
+  .globe-only-control{
+    width:36px;
+    min-width:36px;
+    height:36px;
+    min-height:36px;
+    padding:0;
+    font-size:.98rem;
+  }
   .control-popover{min-width:170px}
   .category-bar{
     margin-bottom:12px;
@@ -1185,8 +1190,7 @@
       <div class="top-actions">
         <div class="section-switch" id="sectionSwitch">
           <button class="compact-control" id="sectionSwitchBtn" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span aria-hidden="true">⌂</span>
-            <span id="sectionSwitchLabel">Change Section</span>
+            <span id="sectionSwitchLabel">1911 Café</span>
             <span class="control-chevron" aria-hidden="true">⌄</span>
           </button>
           <div class="control-popover section-popover" id="sectionPopover" role="menu" aria-hidden="true">
@@ -1195,19 +1199,9 @@
             <button type="button" class="popover-option" data-section-choice="desserts">1911 Desserts</button>
           </div>
         </div>
-
-        <div class="lang-switch" id="langSwitch">
-          <button class="compact-control" id="langSwitchBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-            <span aria-hidden="true">🌐</span>
-            <span id="currentLanguageLabel">English</span>
-            <span class="control-chevron" aria-hidden="true">⌄</span>
-          </button>
-          <div class="control-popover language-popover" id="languagePopover" role="listbox" aria-hidden="true">
-            <button type="button" class="popover-option" data-lang-btn="ku">کوردی</button>
-            <button type="button" class="popover-option" data-lang-btn="ar">العربية</button>
-            <button type="button" class="popover-option" data-lang-btn="en">English</button>
-          </div>
-        </div>
+        <button class="compact-control globe-only-control" id="backToLanguageBtn" type="button" aria-label="Language selection" title="Language selection">
+          <span aria-hidden="true">🌐</span>
+        </button>
       </div>
     </header>
 
@@ -2180,14 +2174,14 @@ let saveInFlight = false;
     };
 
     function closeControlPopovers(){
-      ["languagePopover","sectionPopover"].forEach(id => {
+      ["sectionPopover"].forEach(id => {
         const pop = $(id);
         if (pop) {
           pop.classList.remove("open");
           pop.setAttribute("aria-hidden","true");
         }
       });
-      ["langSwitchBtn","sectionSwitchBtn"].forEach(id => {
+      ["sectionSwitchBtn"].forEach(id => {
         const btn = $(id);
         if (btn) btn.setAttribute("aria-expanded","false");
       });
@@ -2225,9 +2219,6 @@ let saveInFlight = false;
 
       document.querySelectorAll("[data-section-choice]").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.sectionChoice === state.section);
-      });
-      document.querySelectorAll("[data-lang-btn]").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.langBtn === state.lang);
       });
     }
 
@@ -2349,89 +2340,90 @@ let saveInFlight = false;
     }
 
     function setLanguage(lang){
-      const nextLang = ["en","ar","ku"].includes(lang) ? lang : "en";
-      const scrollY = window.scrollY;
-      const direction = nextLang === "en" ? "ltr" : "rtl";
+      state.lang = lang;
+      app.setAttribute("data-lang", lang);
+      document.documentElement.lang = lang === "en" ? "en" : "ar";
+      document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
 
-      state.lang = nextLang;
-      saveLocalState();
-      app.setAttribute("data-lang", nextLang);
-      app.setAttribute("dir", direction);
-      const launcher = $("siteLauncher");
-      if (launcher) launcher.setAttribute("dir", direction);
-
-      // Keep the document itself LTR so global page geometry/scrolling never
-      // flips. The visible application and launcher receive the active UI direction.
-      document.documentElement.lang = nextLang;
-      document.documentElement.dir = "ltr";
-
-      closeControlPopovers();
-
-      const langUI = UI[nextLang] || UI.en;
-      $("brandTitle").textContent = langUI.brand;
-      $("brandTag").textContent = nextLang === "en" ? "Vintage • Modern • Premium" : nextLang === "ar" ? "عتيق • عصري • فاخر" : "کۆن • نوێ • شیک";
-      $("heroTitle").textContent = langUI.brand;
-      $("heroSub").textContent = langUI.since;
-      $("heroTag").textContent = langUI.tagline;
-      $("pill1Label").textContent = langUI.design;
-      $("pill1Value").textContent = langUI.designValue;
-      $("pill2Label").textContent = langUI.languages;
-      $("pill2Value").textContent = langUI.languagesValue;
-      $("pill3Label").textContent = langUI.menuType;
-      $("pill3Value").textContent = langUI.menuTypeValue;
-      $("sectionHint").textContent = langUI.sectionHint;
-      $("menuHeading").textContent = nextLang === "ar" ? "قائمة 1911" : nextLang === "ku" ? "مێنوی 1911" : "1911 Menu";
-      $("menuIntro").textContent = nextLang === "ar" ? "تصفح القائمة كاملة بالتمرير بين جميع الفئات." : nextLang === "ku" ? "بە هەموو مێنۆکەدا بە بەردەوامی بگەڕێ لە هەموو پۆلەکان." : "Browse the full menu by scrolling through every category.";
-      $("footerLeft").innerHTML = `<strong>1911</strong> • ${langUI.footerLeft}`;
-      $("footerRight").textContent = langUI.footerRight;
-      $("searchInput").placeholder = langUI.searchPlaceholder;
-      $("previewCopy").textContent = langUI.previewCopy;
-      $("adminTitle").textContent = langUI.adminTitle;
-      $("logoCardTitle").textContent = langUI.logoCardTitle;
-      $("logoInputLabel").textContent = langUI.logoInputLabel;
-      $("logoNote").textContent = langUI.logoNote;
-      $("categoryCardTitle").textContent = langUI.categoryCardTitle;
-      $("categorySelectLabel").textContent = langUI.categorySelectLabel;
-      $("categoryDescLabel").textContent = langUI.categoryDescLabel;
-      $("categoryNote").textContent = langUI.categoryNote;
-      $("itemCardTitle").textContent = langUI.itemCardTitle;
-      $("itemCategoryLabel").textContent = langUI.itemCategoryLabel;
-      $("itemSelectLabel").textContent = langUI.itemSelectLabel;
-      $("itemDescLabel").textContent = langUI.itemDescLabel;
-      $("priceLabel").textContent = langUI.priceLabel;
-      $("itemImageLabel").textContent = langUI.itemImageLabel;
-      $("itemNote").textContent = langUI.itemNote;
-      $("topCardsCardTitle").textContent = nextLang === "ar" ? "بطاقات المعلومات العلوية" : nextLang === "ku" ? "کارتی زانیاری سەرەوە" : "Top Information Cards";
-      $("topCardSelectLabel").textContent = nextLang === "ar" ? "اختر البطاقة" : nextLang === "ku" ? "هەڵبژاردنی کارت" : "Select card";
-      $("toolsCardTitle").textContent = langUI.toolsCardTitle;
-      $("toolsNote").textContent = langUI.toolsNote;
-      $("saveLogoBtn").textContent = langUI.saveLogo;
-      $("resetLogoBtn").textContent = langUI.resetLogo;
-      $("saveCategoryBtn").textContent = langUI.saveCategory;
-      $("newCategoryBtn").textContent = langUI.newCategory;
-      $("deleteCategoryBtn").textContent = langUI.deleteCategory;
-      $("saveItemBtn").textContent = langUI.saveItem;
-      $("newItemBtn").textContent = langUI.newItem;
-      $("deleteItemBtn").textContent = langUI.deleteItem;
-      $("exportBtn").textContent = langUI.exportJson;
-      $("resetMenuBtn").textContent = langUI.resetMenu;
-
-      // The existing render functions replace the translated customer-facing DOM in one pass.
+      $("brandTitle").textContent = UI[lang].brand;
+      $("brandTag").textContent = lang === "en" ? "Vintage • Modern • Premium" : lang === "ar" ? "عتيق • عصري • فاخر" : "کۆن • نوێ • شیک";
+      $("heroTitle").textContent = UI[lang].brand;
+      $("heroSub").textContent = UI[lang].since;
+      $("heroTag").textContent = UI[lang].tagline;
+      $("pill1Label").textContent = UI[lang].design;
+      $("pill1Value").textContent = UI[lang].designValue;
+      $("pill2Label").textContent = UI[lang].languages;
+      $("pill2Value").textContent = UI[lang].languagesValue;
+      $("pill3Label").textContent = UI[lang].menuType;
+      $("pill3Value").textContent = UI[lang].menuTypeValue;
+      $("sectionHint").textContent = UI[lang].sectionHint;
+      $("menuHeading").textContent = lang === "ar" ? "قائمة 1911" : lang === "ku" ? "مێنوی 1911" : "1911 Menu";
+      $("menuIntro").textContent = lang === "ar" ? "تصفح القائمة كاملة بالتمرير بين جميع الفئات." : lang === "ku" ? "بە هەموو مێنۆکەدا بە بەردەوامی بگەڕێ لە هەموو پۆلەکان." : "Browse the full menu by scrolling through every category.";
+      $("footerLeft").innerHTML = `<strong>1911</strong> • ${UI[lang].footerLeft}`;
+      $("footerRight").innerHTML = `${UI[lang].footerRight}`;
+      const footerBtn = $("openAdminBtnFooter");
+      if (footerBtn) footerBtn.addEventListener("click", () => {
+        location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
+      });
+      const switchBtn = $("switchSectionBtn");
+      if (switchBtn) switchBtn.addEventListener("click", openBranchChooser);
+      $("searchInput").placeholder = UI[lang].searchPlaceholder;
+      $("previewCopy").textContent = UI[lang].previewCopy;
+      $("adminTitle").textContent = UI[lang].adminTitle;
+      $("logoCardTitle").textContent = UI[lang].logoCardTitle;
+      $("logoInputLabel").textContent = UI[lang].logoInputLabel;
+      $("logoNote").textContent = UI[lang].logoNote;
+      $("categoryCardTitle").textContent = UI[lang].categoryCardTitle;
+      $("categorySelectLabel").textContent = UI[lang].categorySelectLabel;
+      $("categoryDescLabel").textContent = UI[lang].categoryDescLabel;
+      $("categoryNote").textContent = UI[lang].categoryNote;
+      $("itemCardTitle").textContent = UI[lang].itemCardTitle;
+      $("itemCategoryLabel").textContent = UI[lang].itemCategoryLabel;
+      $("itemSelectLabel").textContent = UI[lang].itemSelectLabel;
+      $("itemDescLabel").textContent = UI[lang].itemDescLabel;
+      $("priceLabel").textContent = UI[lang].priceLabel;
+      $("itemImageLabel").textContent = UI[lang].itemImageLabel;
+      $("itemNote").textContent = UI[lang].itemNote;
+      $("topCardsCardTitle").textContent = lang === "ar" ? "بطاقات المعلومات العلوية" : lang === "ku" ? "کارتی زانیاری سەرەوە" : "Top Information Cards";
+      $("topCardSelectLabel").textContent = lang === "ar" ? "اختر البطاقة" : lang === "ku" ? "هەڵبژاردنی کارت" : "Select card";
+      $("toolsCardTitle").textContent = UI[lang].toolsCardTitle;
+      $("toolsNote").textContent = UI[lang].toolsNote;
+      $("saveLogoBtn").textContent = UI[lang].saveLogo;
+      $("resetLogoBtn").textContent = UI[lang].resetLogo;
+      $("saveCategoryBtn").textContent = UI[lang].saveCategory;
+      $("newCategoryBtn").textContent = UI[lang].newCategory;
+      $("deleteCategoryBtn").textContent = UI[lang].deleteCategory;
+      $("saveItemBtn").textContent = UI[lang].saveItem;
+      $("newItemBtn").textContent = UI[lang].newItem;
+      $("deleteItemBtn").textContent = UI[lang].deleteItem;
+      $("exportBtn").textContent = UI[lang].exportJson;
+      $("resetMenuBtn").textContent = UI[lang].resetMenu;
       render();
       updateLangButtons();
       updateTopControls();
       renderLauncherState();
       populateAdmin();
-
-      // Preserve the user's browsing position across a language-only redraw.
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: scrollY, behavior: "auto" });
-        updateActiveCategory(browseCategoryId || state.currentCategoryId);
-      });
     }
 
     function updateLangButtons(){
       updateTopControls();
+    }
+
+    function returnToLanguageSelection(){
+      // Navigation-only action: return to the existing initial language screen.
+      // Preserve menu data, authentication, Firebase state, and current language
+      // until the customer explicitly chooses a language again.
+      state.section = null;
+      saveLocalState();
+
+      const languageStep = $("languageStep");
+      const branchStep = $("branchStep");
+      if (languageStep) languageStep.classList.remove("hidden");
+      if (branchStep) branchStep.classList.add("hidden");
+
+      closeControlPopovers();
+      renderLauncherState();
+      window.scrollTo({ top: 0, behavior: "auto" });
     }
 
     function renderLauncherState(){
@@ -2708,6 +2700,7 @@ let saveInFlight = false;
         const desc = defaultText(cat.desc, state.lang);
         const cards = items.length ? items.map((item, idx) => {
           const itemTitle = defaultText(item.names, state.lang);
+          const altTitle = state.lang === "en" ? defaultText(item.names, "ar") : defaultText(item.names, "en");
           const itemDesc = defaultText(item.desc, state.lang);
           const img = item.image || placeholderImage(item, `${catIndex}-${idx}`);
           const sizes = [
@@ -2730,6 +2723,7 @@ let saveInFlight = false;
                 <div>
                   <div class="name">
                     <span class="main">${escapeHtml(itemTitle)}</span>
+                    ${altTitle && altTitle !== itemTitle ? `<span class="small">${escapeHtml(altTitle)}</span>` : ""}
                   </div>
                   ${itemDesc ? `<div class="desc">${escapeHtml(itemDesc)}</div>` : ""}
                 </div>
@@ -3149,20 +3143,10 @@ let saveInFlight = false;
     }
 
     function bindEvents(){
-      const langSwitchBtn = $("langSwitchBtn");
-      if (langSwitchBtn) {
-        langSwitchBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          toggleControlPopover("languagePopover","langSwitchBtn");
-        });
+      const backToLanguageBtn = $("backToLanguageBtn");
+      if (backToLanguageBtn) {
+        backToLanguageBtn.addEventListener("click", returnToLanguageSelection);
       }
-
-      document.querySelectorAll("#languagePopover [data-lang-btn]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          setLanguage(btn.dataset.langBtn);
-          closeControlPopovers();
-        });
-      });
 
       const sectionSwitchBtn = $("sectionSwitchBtn");
       if (sectionSwitchBtn) {
@@ -3262,7 +3246,7 @@ let saveInFlight = false;
       });
 
       document.addEventListener("click", (e) => {
-        if (!e.target.closest("#langSwitch") && !e.target.closest("#sectionSwitch")) {
+        if (!e.target.closest("#sectionSwitch")) {
           closeControlPopovers();
         }
       });
