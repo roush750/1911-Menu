@@ -525,10 +525,6 @@
       z-index:1;
     }
     .footer strong{color:var(--text)}
-    .footer-block{display:inline-flex;align-items:center;gap:6px}
-    .footer-link{color:inherit;text-decoration:none}
-    .footer-link:hover{text-decoration:underline;text-decoration-color:rgba(241,213,141,.7)}
-    .footer-icon{display:inline-flex;align-items:center;justify-content:center;min-width:1.2em}
     .hidden{display:none!important}
 
     .site-launcher{
@@ -820,6 +816,92 @@
       font-size:.86rem;
       line-height:1.5;
     }
+    .admin-section-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .admin-section-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .admin-subsection{
+      padding:14px 0 4px;
+      border-top:1px solid rgba(213,171,83,.12);
+      margin-top:14px;
+    }
+    .admin-subtitle{
+      font-family:Georgia,serif;
+      font-size:1.05rem;
+      font-weight:800;
+      margin-bottom:9px;
+      letter-spacing:.03em;
+    }
+    .admin-lang-tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .admin-lang-tab{
+      appearance:none;
+      border:1px solid rgba(213,171,83,.18);
+      border-radius:999px;
+      padding:9px 13px;
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      font:inherit;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .admin-lang-tab.active{
+      background:linear-gradient(180deg, rgba(241,213,141,.98), rgba(167,118,27,.98));
+      color:#170f08;
+      border-color:rgba(255,240,193,.58);
+    }
+    .footer-editor-list{
+      display:grid;
+      gap:10px;
+    }
+    .footer-editor-row{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:8px;
+      align-items:start;
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(213,171,83,.12);
+      background:rgba(255,255,255,.025);
+    }
+    .footer-editor-row textarea{
+      width:100%;
+      min-height:62px;
+      resize:vertical;
+      border-radius:12px;
+      border:1px solid rgba(213,171,83,.16);
+      background:rgba(0,0,0,.24);
+      color:var(--text);
+      padding:10px 11px;
+      font:inherit;
+      outline:none;
+    }
+    .footer-remove{
+      min-width:82px;
+      height:42px;
+    }
+    .site-content-card{
+      grid-column:1 / -1;
+    }
+    @media (max-width: 560px){
+      .footer-editor-row{grid-template-columns:1fr}
+      .footer-remove{width:100%}
+    }
     .preview-mini{
       width:100%;
       border-radius:18px;
@@ -878,57 +960,14 @@
 .auth-status{margin-top:12px;color:var(--gold2);font-size:.9rem;line-height:1.45}
 .auth-card .actions{margin-top:4px}
 .auth-card .action,.auth-card .action.primary{min-height:46px}
-#signOutTopBtn{margin-left:10px}
+#topbarActions{display:flex;align-items:center;gap:10px;margin-left:10px}
+#viewMenuTopBtn{white-space:nowrap}
+#signOutTopBtn{margin-left:0}
 @media (max-width: 560px){
-  #signOutTopBtn{width:100%;margin-left:0}
+  #topbarActions{width:100%;margin-left:0;flex-wrap:wrap}
+  #viewMenuTopBtn,#signOutTopBtn{flex:1 1 140px;width:auto;margin-left:0}
 }
 body[data-page="admin"] .site-launcher{display:none !important}
-
-    .admin-langbar{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
-      padding:12px 14px;margin-bottom:14px;border:1px solid rgba(213,171,83,.16);border-radius:18px;
-      background:linear-gradient(180deg, rgba(32,24,17,.92), rgba(13,10,8,.96));
-    }
-    .admin-langbar strong{font-family:Georgia,serif;letter-spacing:.03em}
-    .admin-lang-switch{display:flex;gap:8px;flex-wrap:wrap}
-    .admin-lang-switch button{min-width:92px}
-    .admin-lang-hint{color:var(--muted);font-size:.84rem;line-height:1.4}
-    .admin-language-field{display:none}
-    .admin-language-field.active{display:flex}
-    .admin-icon-preview{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(213,171,83,.14);background:rgba(255,255,255,.02)}
-    .admin-icon-preview span{font-size:1.4rem;min-width:28px;text-align:center}
-    .admin-inline{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .admin-footer-list{display:flex;flex-direction:column;gap:8px}
-    .footer-control-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
-    .footer-enabled-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(213,171,83,.14);border-radius:14px;background:rgba(255,255,255,.02)}
-    .footer-enabled-row input{width:20px;height:20px;accent-color:#d5ab53}
-    .footer-link-hint{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:4px}
-    .admin-footer-row .status{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
-    .admin-footer-row .status.off{color:#ffd3d3}
-    .admin-footer-row .status.on{color:#d8f6c8}
-    .admin-footer-row .footer-icon{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;border:1px solid rgba(213,171,83,.14);background:rgba(255,255,255,.03);font-size:1rem;flex:0 0 auto}
-    .admin-footer-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid rgba(213,171,83,.13);border-radius:14px;background:rgba(255,255,255,.02)}
-    .admin-footer-row .row-main{flex:1;min-width:0}
-    .admin-footer-row .row-main strong,.admin-footer-row .row-main span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .admin-footer-row .row-main span{color:var(--muted);font-size:.82rem;margin-top:2px}
-    .admin-footer-row .row-actions{display:flex;gap:6px;flex:0 0 auto}
-    .admin-section-switch{display:flex;gap:8px;flex-wrap:wrap}
-    .admin-section-switch .btn{flex:1 1 120px}
-    .availability-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(213,171,83,.14);border-radius:14px;background:rgba(255,255,255,.02)}
-    .availability-row input{width:20px;height:20px;accent-color:#d5ab53}
-    .admin-danger{border-color:rgba(255,105,105,.26)!important;color:#ffd3d3!important}
-    .unavailable-card{opacity:.58;filter:saturate(.6)}
-    .availability-badge{display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,120,120,.22);color:#ffd3d3;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
-    .category-chip .chip-icon{margin-inline-end:6px}
-    .price.single{min-width:94px}
-    @media (max-width: 700px){
-      .admin-inline{grid-template-columns:1fr}
-      .admin-footer-row{align-items:flex-start;flex-wrap:wrap}
-      .admin-footer-row .row-actions{width:100%;justify-content:flex-end}
-      .admin-langbar{align-items:flex-start}
-      .admin-lang-switch{width:100%}
-      .admin-lang-switch button{flex:1 1 0}
-    }
 </style>
 </head>
 
@@ -995,7 +1034,10 @@ body[data-page="admin"] .site-launcher{display:none !important}
         <button class="btn" type="button" data-lang-btn="ar">العربية</button>
         <button class="btn" type="button" data-lang-btn="ku">کوردی</button>
       </div>
-      <button class="btn admin-toggle" id="signOutTopBtn" type="button" style="display:none">Sign Out</button>
+      <div class="topbar-actions" id="topbarActions">
+        <button class="btn admin-toggle" id="viewMenuTopBtn" type="button">View Live Menu</button>
+        <button class="btn admin-toggle" id="signOutTopBtn" type="button" style="display:none">Sign Out</button>
+      </div>
     </header>
 
     <section class="hero">
@@ -1006,12 +1048,6 @@ body[data-page="admin"] .site-launcher{display:none !important}
       <div class="sub" id="heroSub">Since 2021</div>
       <div class="tagline" id="heroTag">Take Rest and Be Happy</div>
       <div class="divider"></div>
-    </section>
-
-    <section class="meta-row" aria-label="highlights">
-      <div class="meta"><span id="pill1Label">Fresh Brew</span><strong id="pill1Value">Handcrafted drinks</strong></div>
-      <div class="meta"><span id="pill2Label">House Picks</span><strong id="pill2Value">Popular menu items</strong></div>
-      <div class="meta"><span id="pill3Label">Open Daily</span><strong id="pill3Value">Service information</strong></div>
     </section>
 
     <div class="toolbar">
@@ -1032,11 +1068,9 @@ body[data-page="admin"] .site-launcher{display:none !important}
       <div class="items" id="items"></div>
     </main>
 
-    <footer class="footer">
-      <div id="footerLeft"><strong>1911</strong> • Temporary location near Titanic Hotel</div>
-      <div id="footerRight">07734468886</div>
+    <footer class="footer" id="siteFooter">
+      <div id="footerInfoList"></div>
     </footer>
-    <button id="bottomSectionBtn" type="button">Change section</button>
   </div>
 
   <div class="modal" id="previewModal" aria-hidden="true">
@@ -1060,111 +1094,7 @@ body[data-page="admin"] .site-launcher{display:none !important}
         <strong id="adminTitle">Admin Panel</strong>
         <button class="close" id="closeAdmin" type="button" aria-label="Close">×</button>
       </div>
-      <div class="admin-langbar">
-        <div>
-          <strong id="adminLanguageTitle">Editing language</strong>
-          <div class="admin-lang-hint" id="adminLanguageHint">Choose the language whose menu text you are editing. Other translations remain untouched.</div>
-        </div>
-        <div class="admin-lang-switch" role="group" aria-label="Admin editing language">
-          <button class="btn active" id="adminLangEnBtn" type="button" data-admin-edit-lang="en">English</button>
-          <button class="btn" id="adminLangArBtn" type="button" data-admin-edit-lang="ar">العربية</button>
-          <button class="btn" id="adminLangKuBtn" type="button" data-admin-edit-lang="ku">کوردی</button>
-        </div>
-      </div>
       <div class="admin-grid">
-        <section class="admin-card">
-          <h4 id="siteContentCardTitle">Site & Hero Content</h4>
-          <div class="field">
-            <label id="siteBrandLabel">Brand name</label>
-            <input id="siteBrandEdit" type="text" />
-          </div>
-          <div class="field">
-            <label id="siteBrandTagLabel">Brand subline</label>
-            <input id="siteBrandTagEdit" type="text" />
-          </div>
-          <div class="field">
-            <label id="siteHeroSubLabel">Hero subtitle</label>
-            <input id="siteHeroSubEdit" type="text" />
-          </div>
-          <div class="field">
-            <label id="siteHeroTagLabel">Hero tagline</label>
-            <input id="siteHeroTagEdit" type="text" />
-          </div>
-          <div class="field">
-            <label id="siteSectionLabel">Section</label>
-            <div class="admin-section-switch">
-              <button class="btn active" type="button" data-admin-section="cafe">1911 Cafe</button>
-              <button class="btn" type="button" data-admin-section="fastfood">1911 Fast Food</button>
-              <button class="btn" type="button" data-admin-section="desserts">1911 Desserts</button>
-            </div>
-          </div>
-          <div class="field">
-            <label id="siteSectionNameLabel">Section name</label>
-            <input id="siteSectionNameEdit" type="text" />
-          </div>
-          <div class="field">
-            <label id="siteSectionDescLabel">Section description</label>
-            <textarea id="siteSectionDescEdit"></textarea>
-          </div>
-          <div class="actions">
-            <button class="action primary" id="saveSiteContentBtn" type="button">Save Site Content</button>
-          </div>
-        </section>
-
-        <section class="admin-card">
-          <h4 id="footerBuilderCardTitle">Footer Builder</h4>
-          <div class="field">
-            <label id="footerBlockSelectLabel">Information block</label>
-            <select id="footerBlockSelect"></select>
-          </div>
-          <div class="field">
-            <label id="footerBlockLabelLabel">Block label</label>
-            <input id="footerBlockLabelEdit" type="text" />
-          </div>
-          <div class="field">
-            <label id="footerBlockValueLabel">Block information</label>
-            <textarea id="footerBlockValueEdit"></textarea>
-          </div>
-          <div class="field">
-            <label id="footerBlockTypeLabel">Block type</label>
-            <select id="footerBlockTypeEdit">
-              <option value="custom">Custom</option>
-              <option value="phone">Phone</option>
-              <option value="location">Location</option>
-              <option value="instagram">Instagram</option>
-              <option value="facebook">Facebook</option>
-              <option value="hours">Opening hours</option>
-              <option value="address">Address</option>
-              <option value="contact">Contact</option>
-            </select>
-            <div class="footer-link-hint" id="footerBlockTypeHint">Type is optional metadata; custom blocks are always allowed.</div>
-          </div>
-          <div class="footer-control-row">
-            <div class="field">
-              <label id="footerBlockIconLabel">Icon (optional)</label>
-              <input id="footerBlockIconEdit" type="text" maxlength="8" placeholder="📍" />
-            </div>
-            <div class="field">
-              <label id="footerBlockLinkLabel">Link / action (optional)</label>
-              <input id="footerBlockLinkEdit" type="url" inputmode="url" placeholder="https://..." />
-            </div>
-          </div>
-          <div class="footer-enabled-row">
-            <input id="footerBlockEnabledEdit" type="checkbox" checked />
-            <div>
-              <strong id="footerBlockEnabledLabel">Show this block</strong>
-              <div class="footer-link-hint" id="footerBlockEnabledHint">Disabled blocks are kept in Firebase but hidden from customers.</div>
-            </div>
-          </div>
-          <div class="actions">
-            <button class="action primary" id="saveFooterBlockBtn" type="button">Save Block</button>
-            <button class="action" id="newFooterBlockBtn" type="button">Add Block</button>
-            <button class="action admin-danger" id="deleteFooterBlockBtn" type="button">Remove Block</button>
-            <button class="action" id="moveFooterUpBtn" type="button">Move Up</button>
-            <button class="action" id="moveFooterDownBtn" type="button">Move Down</button>
-          </div>
-          <div class="admin-footer-list" id="footerBlockList"></div>
-        </section>
         <section class="admin-card">
           <h4 id="logoCardTitle">Logo</h4>
           <div class="field">
@@ -1185,12 +1115,11 @@ body[data-page="admin"] .site-launcher{display:none !important}
             <label id="categorySelectLabel">Edit category</label>
             <select id="categorySelect"></select>
           </div>
-          <div class="field"><label>English</label><input id="categoryNameEn" type="text" /></div>
-          <div class="field"><label>Arabic</label><input id="categoryNameAr" type="text" /></div>
-          <div class="field"><label>Kurdish</label><input id="categoryNameKu" type="text" /></div>
-          <div class="field"><label id="categoryIconLabel">Category icon</label><input id="categoryIcon" type="text" maxlength="8" placeholder="☕" /></div>
-          <div class="admin-icon-preview"><span id="categoryIconPreview">☕</span><div id="categoryIconPreviewText">Shown on the public category button.</div></div>
-          <div class="field"><label id="categoryDescLabel">Description</label><textarea id="categoryDesc"></textarea></div>
+          <div class="field">
+            <label id="categoryNameLabel">Category name (selected language)</label>
+            <input id="categoryName" type="text" />
+          </div>
+          <div class="field"><label id="categoryDescLabel">Description (selected language)</label><textarea id="categoryDesc"></textarea></div>
           <div class="actions">
             <button class="action primary" id="saveCategoryBtn" type="button">Save Category</button>
             <button class="action" id="newCategoryBtn" type="button">New Category</button>
@@ -1216,21 +1145,17 @@ body[data-page="admin"] .site-launcher{display:none !important}
             <label id="itemSelectLabel">Edit item</label>
             <select id="itemSelect"></select>
           </div>
-          <div class="field"><label>English</label><input id="itemNameEn" type="text" /></div>
-          <div class="field"><label>Arabic</label><input id="itemNameAr" type="text" /></div>
-          <div class="field"><label>Kurdish</label><input id="itemNameKu" type="text" /></div>
-          <div class="field"><label id="itemDescLabel">Description</label><textarea id="itemDesc"></textarea></div>
+          <div class="field">
+            <label id="itemNameLabel">Item name (selected language)</label>
+            <input id="itemName" type="text" />
+          </div>
+          <div class="field"><label id="itemDescLabel">Description (selected language)</label><textarea id="itemDesc"></textarea></div>
           <div class="field">
             <label id="priceLabel">Prices</label>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input id="priceSingle" type="text" inputmode="numeric" placeholder="Single" style="flex:1;min-width:120px" />
               <input id="priceSmall" type="text" inputmode="numeric" placeholder="Small" style="flex:1;min-width:120px" />
               <input id="priceLarge" type="text" inputmode="numeric" placeholder="Large" style="flex:1;min-width:120px" />
             </div>
-          </div>
-          <div class="field">
-            <label id="itemAvailabilityLabel">Availability</label>
-            <div class="availability-row"><input id="itemAvailable" type="checkbox" checked /><span id="itemAvailableText">Available on the menu</span></div>
           </div>
           <div class="field">
             <label id="itemImageLabel">Upload item picture</label>
@@ -1253,39 +1178,59 @@ body[data-page="admin"] .site-launcher{display:none !important}
         </section>
 
 
-        <section class="admin-card">
-          <h4 id="topCardsCardTitle">Top Information Cards</h4>
-          <div class="field">
-            <label id="topCardSelectLabel">Select card</label>
-            <select id="topCardSelect">
-              <option value="0">Card 1</option>
-              <option value="1">Card 2</option>
-              <option value="2">Card 3</option>
-            </select>
+        <section class="admin-card site-content-card">
+          <div class="admin-section-head">
+            <div>
+              <h4 id="siteContentCardTitle">Site Content</h4>
+              <div class="admin-note" id="siteContentNote">Edit the selected language only. Changes are synced to Firebase with the same menu data.</div>
+            </div>
+            <div class="admin-lang-tabs" id="adminLangTabs" role="tablist" aria-label="Edit language">
+              <button type="button" class="admin-lang-tab active" data-admin-lang="en">English</button>
+              <button type="button" class="admin-lang-tab" data-admin-lang="ar">العربية</button>
+              <button type="button" class="admin-lang-tab" data-admin-lang="ku">کوردی</button>
+            </div>
           </div>
-          <div class="field"><label>Label (English)</label><input id="topCardLabelEn" type="text" /></div>
-          <div class="field"><label>Label (Arabic)</label><input id="topCardLabelAr" type="text" /></div>
-          <div class="field"><label>Label (Kurdish)</label><input id="topCardLabelKu" type="text" /></div>
-          <div class="field"><label>Value (English)</label><input id="topCardValueEn" type="text" /></div>
-          <div class="field"><label>Value (Arabic)</label><input id="topCardValueAr" type="text" /></div>
-          <div class="field"><label>Value (Kurdish)</label><input id="topCardValueKu" type="text" /></div>
-          <div class="actions">
-            <button class="action primary" id="saveTopCardBtn" type="button">Save Card</button>
-            <button class="action" id="resetTopCardsBtn" type="button">Reset Cards</button>
+
+          <div class="admin-subsection">
+            <div class="admin-subtitle" id="headerContentTitle">Menu header</div>
+            <div class="field">
+              <label id="siteBrandLabel">Restaurant / café name</label>
+              <input id="siteBrand" type="text" />
+            </div>
+            <div class="field">
+              <label id="siteSubtitleLabel">Subtitle / since text</label>
+              <input id="siteSubtitle" type="text" />
+            </div>
+            <div class="field">
+              <label id="siteBrandTagLabel">Small brand label</label>
+              <input id="siteBrandTag" type="text" />
+            </div>
+            <div class="field">
+              <label id="siteTaglineLabel">Tagline</label>
+              <textarea id="siteTagline"></textarea>
+            </div>
+            <div class="actions">
+              <button class="action primary" id="saveSiteContentBtn" type="button">Save Site Content</button>
+            </div>
           </div>
-          <div class="admin-note">These are the three cards shown above the menu.</div>
+
+          <div class="admin-subsection">
+            <div class="admin-section-row">
+              <div>
+                <div class="admin-subtitle" id="bottomContentTitle">Bottom information section</div>
+                <div class="admin-note" id="bottomContentNote">Add as many lines as you need. Each line can contain any information you want.</div>
+              </div>
+              <button class="action" id="addFooterInfoBtn" type="button">+ Add information</button>
+            </div>
+            <div id="footerEditorList" class="footer-editor-list"></div>
+          </div>
         </section>
 
-        <section class="admin-card" aria-hidden="true" style="display:none">
-          <h4 id="toolsCardTitle">Tools</h4>
-          <div class="actions">
-            <button class="action" id="exportBtn" type="button">Export JSON</button>
-            <button class="action" id="resetMenuBtn" type="button">Reset Demo Menu</button>
+        <section class="admin-card" id="helpCard">
+          <h4 id="toolsCardTitle">Admin controls</h4>
+          <div class="admin-note" id="toolsNote">
+            Authentication, Firebase sync, image uploads, categories and menu item actions continue to use the existing system.
           </div>
-          <div class="admin-note" id="toolsNote" style="margin-top:10px;">
-            Internal compatibility controls retained but not exposed in production UI.
-          </div>
-          <textarea id="exportBox" readonly placeholder="Export appears here" style="margin-top:12px;min-height:220px;width:100%;border-radius:14px;border:1px solid rgba(213,171,83,.18);background:rgba(0,0,0,.28);color:var(--text);padding:12px;resize:vertical"></textarea>
         </section>
       </div>
     </div>
@@ -1570,11 +1515,18 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
     function syncTopCardFromForm(){
       ensureTopCards();
       const safeIndex = Math.max(0, Math.min(2, Number($("topCardSelect").value) || 0));
-      const card = state.topCards[safeIndex];
-      const labelInput = adminEditLang === "ar" ? $("topCardLabelAr") : adminEditLang === "ku" ? $("topCardLabelKu") : $("topCardLabelEn");
-      const valueInput = adminEditLang === "ar" ? $("topCardValueAr") : adminEditLang === "ku" ? $("topCardValueKu") : $("topCardValueEn");
-      card.labels[adminEditLang] = labelInput.value.trim();
-      card.values[adminEditLang] = valueInput.value.trim();
+      state.topCards[safeIndex] = {
+        labels: {
+          en: $("topCardLabelEn").value.trim(),
+          ar: $("topCardLabelAr").value.trim(),
+          ku: $("topCardLabelKu").value.trim()
+        },
+        values: {
+          en: $("topCardValueEn").value.trim(),
+          ar: $("topCardValueAr").value.trim(),
+          ku: $("topCardValueKu").value.trim()
+        }
+      };
       renderTopCards();
       scheduleSaveState();
     }
@@ -1632,6 +1584,35 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
       return svgDataUri(svg);
     }
 
+    function ensureSiteContent(target){
+      const base = makeDefaultState();
+      if (!target.siteContent || typeof target.siteContent !== "object") target.siteContent = {};
+      if (!target.siteContent.header || typeof target.siteContent.header !== "object") target.siteContent.header = {};
+      for (const key of ["brand","subtitle","brandTag","tagline"]) {
+        if (!target.siteContent.header[key] || typeof target.siteContent.header[key] !== "object") {
+          target.siteContent.header[key] = { ...base.siteContent.header[key] };
+        }
+        for (const lang of ["en","ar","ku"]) {
+          if (target.siteContent.header[key][lang] == null || target.siteContent.header[key][lang] === "") {
+            target.siteContent.header[key][lang] = base.siteContent.header[key][lang];
+          }
+        }
+      }
+      if (!target.siteContent.footer || typeof target.siteContent.footer !== "object") target.siteContent.footer = {};
+      for (const lang of ["en","ar","ku"]) {
+        if (!Array.isArray(target.siteContent.footer[lang])) {
+          target.siteContent.footer[lang] = [];
+        }
+        target.siteContent.footer[lang] = target.siteContent.footer[lang]
+          .map((entry) => ({ id: String(entry?.id || uid()), text: String(entry?.text || "") }))
+          .filter((entry) => entry.text.trim() !== "");
+        if (!target.siteContent.footer[lang].length) {
+          target.siteContent.footer[lang] = base.siteContent.footer[lang].map(entry => ({...entry}));
+        }
+      }
+      return target;
+    }
+
     function makeDefaultState(){
       return {
         lang: "en",
@@ -1639,22 +1620,27 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
         currentCategoryId: "coffee",
         search: "",
         section: null,
-        site: {
-          brandName: { en: "1911 Coffee Shop", ar: "مقهى 1911", ku: "کافێی 1911" },
-          brandTag: { en: "Vintage • Modern • Premium", ar: "عتيق • عصري • فاخر", ku: "کۆن • نوێ • شیک" },
-          heroSubtitle: { en: "Since 2021", ar: "منذ 2021", ku: "لە 2021" },
-          heroTagline: { en: "Take Rest and Be Happy", ar: "خذ راحة وكن سعيدًا", ku: "وه‌ربگرە ڕا و خۆشحاڵ بە" },
-          sections: {
-            cafe: { names: { en: "1911 Cafe", ar: "1911 كافيه", ku: "1911 کافێ" }, desc: { en: "Open now", ar: "مفتوح الآن", ku: "ئێستا کراوە" } },
-            fastfood: { names: { en: "1911 Fast Food", ar: "1911 فاست فود", ku: "1911 فاست فود" }, desc: { en: "Coming soon", ar: "قريبًا", ku: "بەم زووانە" } },
-            desserts: { names: { en: "1911 Desserts", ar: "1911 حلويات", ku: "1911 دێزەرت" }, desc: { en: "Coming soon", ar: "قريبًا", ku: "بەم زووانە" } }
+        siteContent: {
+          header: {
+            brand: { en: "1911 Coffee Shop", ar: "مقهى 1911", ku: "کافێی 1911" },
+            subtitle: { en: "Since 2021", ar: "منذ 2021", ku: "لە 2021" },
+            brandTag: { en: "Vintage • Modern • Premium", ar: "عتيق • عصري • فاخر", ku: "کۆن • نوێ • شیک" },
+            tagline: { en: "Take Rest and Be Happy", ar: "خذ راحة وكن سعيدًا", ku: "وه‌ربگرە ڕا و خۆشحاڵ بە" }
+          },
+          footer: {
+            en: [
+              { id: uid(), text: "1911 • Temporary location near Titanic Hotel" },
+              { id: uid(), text: "07734468886" }
+            ],
+            ar: [
+              { id: uid(), text: "1911 • موقع مؤقت قرب فندق تيتانيك" },
+              { id: uid(), text: "07734468886" }
+            ],
+            ku: [
+              { id: uid(), text: "1911 • شوێنی کاتی لە نزیک هوتێلی تایتانیک" },
+              { id: uid(), text: "07734468886" }
+            ]
           }
-        },
-        footer: {
-          blocks: [
-            { id: uid(), type: "location", icon: "📍", url: "", enabled: true, labels: { en: "Location", ar: "الموقع", ku: "شوێن" }, values: { en: "Temporary location near Titanic Hotel", ar: "موقع مؤقت قرب فندق تيتانيك", ku: "شوێنی کاتی لە نزیک هوتێلی تایتانیک" }, order: 0 },
-            { id: uid(), type: "phone", icon: "☎", url: "tel:07734468886", enabled: true, labels: { en: "Phone", ar: "الهاتف", ku: "تەلەفۆن" }, values: { en: "07734468886", ar: "07734468886", ku: "07734468886" }, order: 1 }
-          ]
         },
         topCards: [
           {
@@ -1764,7 +1750,6 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
       const base = makeDefaultState();
       if (!raw || typeof raw !== "object") return base;
       const categories = Array.isArray(raw.categories) ? raw.categories.map((c, idx) => ({
-        ...c,
         id: String(c.id || uid()),
         names: {
           en: String(c.names?.en || `Category ${idx + 1}`),
@@ -1777,7 +1762,6 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
           ku: String(c.desc?.ku || "")
         },
         items: Array.isArray(c.items) ? c.items.map((i) => ({
-          ...i,
           id: String(i.id || uid()),
           names: {
             en: String(i.names?.en || "Item"),
@@ -1790,11 +1774,9 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
             ku: String(i.desc?.ku || "")
           },
           prices: {
-            single: String(i.prices?.single || ""),
             small: String(i.prices?.small || ""),
             large: String(i.prices?.large || "")
           },
-          available: i.available !== false,
           kind: String(i.kind || "coffee"),
           colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
           image: String(i.image || "")
@@ -1804,33 +1786,11 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
       const state = {
         ...base,
         ...raw,
-        site: {
-          ...base.site,
-          ...(raw.site || {}),
-          brandName: { ...base.site.brandName, ...(raw.site?.brandName || {}) },
-          brandTag: { ...base.site.brandTag, ...(raw.site?.brandTag || {}) },
-          heroSubtitle: { ...base.site.heroSubtitle, ...(raw.site?.heroSubtitle || {}) },
-          heroTagline: { ...base.site.heroTagline, ...(raw.site?.heroTagline || {}) },
-          sections: {
-            ...base.site.sections, ...(raw.site?.sections || {})
-          }
-        },
-        footer: {
-          ...base.footer, ...(raw.footer || {}),
-          blocks: Array.isArray(raw.footer?.blocks) ? raw.footer.blocks.map((b, idx) => ({
-            id: String(b?.id || uid()),
-            type: String(b?.type || "custom"),
-            icon: String(b?.icon || ""),
-            url: String(b?.url || b?.link || ""),
-            enabled: b?.enabled !== false,
-            labels: { en: String(b?.labels?.en || ""), ar: String(b?.labels?.ar || ""), ku: String(b?.labels?.ku || "") },
-            values: { en: String(b?.values?.en || ""), ar: String(b?.values?.ar || ""), ku: String(b?.values?.ku || "") },
-            order: Number.isFinite(Number(b?.order)) ? Number(b.order) : idx
-          })) : base.footer.blocks
-        },
         categories,
-        topCards: Array.isArray(raw.topCards) ? raw.topCards : base.topCards
+        topCards: Array.isArray(raw.topCards) ? raw.topCards : base.topCards,
+        siteContent: raw.siteContent || base.siteContent
       };
+      ensureSiteContent(state);
 
       if (!state.categories.length) state.categories = base.categories;
       if (!state.categories.some(c => c.id === state.currentCategoryId)) state.currentCategoryId = state.categories[0].id;
@@ -1848,9 +1808,6 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
     let adminCategoryId = "";
     let adminItemCategoryId = "";
     let adminItemId = "";
-    let adminEditLang = "en";
-    let adminSectionKey = "cafe";
-    let adminFooterBlockId = "";
     let pendingCategoryAction = "";
     let pendingItemAction = "";
 
@@ -2231,216 +2188,119 @@ let saveInFlight = false;
       });
     }
 
-    function t(){ return UI[state.lang] || UI.en; }
+    function getSiteContent(lang = state.lang){
+      ensureSiteContent(state);
+      return state.siteContent;
+    }
 
-    function ensureSiteState(){
-      const base = makeDefaultState();
-      state.site = {
-        ...base.site,
-        ...(state.site || {}),
-        brandName: { ...base.site.brandName, ...(state.site?.brandName || {}) },
-        brandTag: { ...base.site.brandTag, ...(state.site?.brandTag || {}) },
-        heroSubtitle: { ...base.site.heroSubtitle, ...(state.site?.heroSubtitle || {}) },
-        heroTagline: { ...base.site.heroTagline, ...(state.site?.heroTagline || {}) },
-        sections: { ...base.site.sections, ...(state.site?.sections || {}) }
-      };
-      for (const key of ["cafe","fastfood","desserts"]) {
-        state.site.sections[key] = {
-          ...base.site.sections[key],
-          ...(state.site.sections?.[key] || {}),
-          names: { ...base.site.sections[key].names, ...(state.site.sections?.[key]?.names || {}) },
-          desc: { ...base.site.sections[key].desc, ...(state.site.sections?.[key]?.desc || {}) }
-        };
+    function renderSiteContent(){
+      const site = getSiteContent();
+      const lang = state.lang;
+      const header = site.header;
+      const footer = Array.isArray(site.footer?.[lang]) ? site.footer[lang] : [];
+      $("brandTitle").textContent = header.brand[lang] || header.brand.en;
+      $("brandTag").textContent = header.brandTag?.[lang] || header.brandTag?.en || "";
+      $("heroTitle").textContent = header.brand[lang] || header.brand.en;
+      $("heroSub").textContent = header.subtitle[lang] || header.subtitle.en;
+      $("heroTag").textContent = header.tagline[lang] || header.tagline.en;
+      const list = $("footerInfoList");
+      if (list){
+        list.innerHTML = footer.length
+          ? footer.map((entry) => `<div>${escapeHtml(entry.text)}</div>`).join("")
+          : `<div>${escapeHtml(lang === "ar" ? "لا توجد معلومات بعد." : lang === "ku" ? "هێشتا هیچ زانیارییەک نییە." : "No information added yet.")}</div>`;
       }
-      state.footer = state.footer || {};
-      if (!Array.isArray(state.footer.blocks)) state.footer.blocks = [];
-      state.footer.blocks = state.footer.blocks.map((b, idx) => ({
-        id: String(b?.id || uid()), type: String(b?.type || "custom"),
-        icon: String(b?.icon || ""),
-        url: String(b?.url || b?.link || ""),
-        enabled: b?.enabled !== false,
-        labels: { en: String(b?.labels?.en || ""), ar: String(b?.labels?.ar || ""), ku: String(b?.labels?.ku || "") },
-        values: { en: String(b?.values?.en || ""), ar: String(b?.values?.ar || ""), ku: String(b?.values?.ku || "") },
-        order: Number.isFinite(Number(b?.order)) ? Number(b.order) : idx
-      }));
-      state.footer.blocks.sort((a,b) => a.order - b.order);
-      state.footer.blocks.forEach((b,i) => b.order = i);
     }
 
-    function adminLangText(lang = adminEditLang){
-      return lang === "ar" ? "العربية" : lang === "ku" ? "کوردی" : "English";
-    }
-
-    function setAdminEditLanguage(lang){
-      if (!["en","ar","ku"].includes(lang)) return;
-      adminEditLang = lang;
-      document.querySelectorAll("[data-admin-edit-lang]").forEach(btn => btn.classList.toggle("active", btn.dataset.adminEditLang === lang));
-      document.querySelectorAll("[data-admin-lang-panel]").forEach(el => el.classList.toggle("active", el.dataset.adminLangPanel === lang));
-      populateAdmin();
-      updateAdminLanguageUI();
-    }
-
-    function updateAdminLanguageUI(){
-      const lang = adminEditLang;
-      const isArKu = lang !== "en";
-      document.querySelectorAll("[data-lang-label-key]").forEach(el => {
-        const key = el.dataset.langLabelKey;
-        el.textContent = key === "english" ? "English" : key === "arabic" ? "العربية" : "کوردی";
+    function syncAdminLanguageTabs(){
+      document.querySelectorAll("[data-admin-lang]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.adminLang === state.lang);
       });
-      const hint = $("adminLanguageHint");
-      if (hint) hint.textContent = lang === "en" ? "You are editing English menu content. Arabic and Kurdish values remain untouched." : lang === "ar" ? "أنت تعدّل محتوى القائمة بالعربية. لن تتغيّر الإنجليزية أو الكوردية." : "لە زمانی کوردیدا دەستکاری دەکەیت. دەقی ئینگلیزی و عەرەبی دەستکاری ناکرێت.";
-      const dir = isArKu ? "rtl" : "ltr";
-      ["siteBrandEdit","siteBrandTagEdit","siteHeroSubEdit","siteHeroTagEdit","siteSectionNameEdit","siteSectionDescEdit","footerBlockLabelEdit","footerBlockValueEdit","categoryNameEn","categoryNameAr","categoryNameKu","categoryDesc","itemNameEn","itemNameAr","itemNameKu","itemDesc"].forEach(id => {
-        const el = $(id); if (el) el.dir = dir;
-      });
-      document.querySelectorAll("[data-admin-language-label]").forEach(el => el.textContent = adminLangText(lang));
-      const topTranslationFields = [
-        ["topCardLabelEn","topCardValueEn","en"],
-        ["topCardLabelAr","topCardValueAr","ar"],
-        ["topCardLabelKu","topCardValueKu","ku"]
-      ];
-      topTranslationFields.forEach(([labelId,valueId,fieldLang]) => {
-        const labelField = $(labelId)?.closest(".field");
-        const valueField = $(valueId)?.closest(".field");
-        if (labelField) labelField.style.display = fieldLang === lang ? "flex" : "none";
-        if (valueField) valueField.style.display = fieldLang === lang ? "flex" : "none";
-      });
-      if ($("categoryDescLabel")) $("categoryDescLabel").textContent = lang === "ar" ? "الوصف (العربية)" : lang === "ku" ? "وەسف (کوردی)" : "Description (English)";
-      if ($("itemDescLabel")) $("itemDescLabel").textContent = lang === "ar" ? "الوصف (العربية)" : lang === "ku" ? "وەسف (کوردی)" : "Description (English)";
     }
 
-    function getLocalized(obj, key){ return String(obj?.[adminEditLang] ?? ""); }
-    function setLocalized(obj, key, value){ if (!obj) return; obj[adminEditLang] = String(value ?? ""); }
+    const ADMIN_UI = {
+      en: {
+        siteTitle:"Site Content", siteNote:"Edit the selected language only. Changes sync with Firebase using the existing menu document.",
+        headerTitle:"Menu header", brand:"Restaurant / café name", subtitle:"Subtitle / since text", brandTag:"Small brand label", tagline:"Tagline",
+        categoryName:"Category name (selected language)", categoryDesc:"Description (selected language)", itemName:"Item name (selected language)", itemDesc:"Description (selected language)",
+        saveSite:"Save Site Content", bottomTitle:"Bottom information section", bottomNote:"Add as many lines as you need. Each line can contain any information you want.",
+        addInfo:"+ Add information", remove:"Remove", controls:"Admin controls",
+        controlsNote:"Authentication, Firebase sync, image uploads, categories and menu item actions continue to use the existing system.",
+        language:"Edit language"
+      },
+      ar: {
+        siteTitle:"محتوى القائمة", siteNote:"عدّل اللغة المحددة فقط. تتم مزامنة التعديلات مع Firebase باستخدام نفس مستند القائمة.",
+        headerTitle:"رأس القائمة", brand:"اسم المطعم / المقهى", subtitle:"النص الفرعي / منذ", brandTag:"الوسم الصغير", tagline:"الشعار النصي",
+        categoryName:"اسم الفئة (اللغة المحددة)", categoryDesc:"الوصف (اللغة المحددة)", itemName:"اسم العنصر (اللغة المحددة)", itemDesc:"الوصف (اللغة المحددة)",
+        saveSite:"حفظ محتوى القائمة", bottomTitle:"قسم المعلومات السفلي", bottomNote:"أضف أي عدد تريده من المعلومات. كل سطر يمكن أن يحتوي على أي معلومة.",
+        addInfo:"+ إضافة معلومات", remove:"حذف", controls:"أدوات الإدارة",
+        controlsNote:"تستمر المصادقة ومزامنة Firebase ورفع الصور وإدارة الفئات والعناصر باستخدام النظام الحالي.",
+        language:"لغة التعديل"
+      },
+      ku: {
+        siteTitle:"ناوەڕۆکی مێنیو", siteNote:"تەنها زمانی هەڵبژێردراو دەستکاری بکە. گۆڕانکارییەکان بە هەمان بەڵگەی مێنیو لەگەڵ Firebase هاوکات دەبن.",
+        headerTitle:"سەری مێنیو", brand:"ناوی ڕێستورانت / کافێ", subtitle:"دەقی لاوەکی / لە", brandTag:"ناونیشانی بچووک", tagline:"شعار",
+        categoryName:"ناوی پۆل (زمانی هەڵبژێردراو)", categoryDesc:"وەسف (زمانی هەڵبژێردراو)", itemName:"ناوی item (زمانی هەڵبژێردراو)", itemDesc:"وەسف (زمانی هەڵبژێردراو)",
+        saveSite:"پاشەکەوتکردنی ناوەڕۆکی مێنیو", bottomTitle:"بەشی زانیاریی خوارەوە", bottomNote:"هەرچەند زانیاریت دەوێت زیاد بکە. هەر هێڵێک دەتوانێت هەر زانیارییەک بگرێت.",
+        addInfo:"+ زیادکردنی زانیاری", remove:"سڕینەوە", controls:"کۆنترۆڵەکانی بەڕێوەبەر",
+        controlsNote:"دەستپێکردن و Firebase و بارکردنی وێنە و بەڕێوەبردنی پۆل و item بە هەمان سیستەمی ئێستا بەردەوام دەبن.",
+        language:"زمانی دەستکاری"
+      }
+    };
 
-    function getAdminCategory(){ return state.categories.find(c => c.id === (adminCategoryId || state.currentCategoryId)) || state.categories[0] || null; }
-    function getAdminItem(){
-      const cat = state.categories.find(c => c.id === (adminItemCategoryId || state.currentCategoryId));
-      if (!cat) return null;
-      return (cat.items || []).find(i => i.id === adminItemId) || cat.items?.[0] || null;
-    }
-
-    function populateSiteContentForm(){
-      ensureSiteState();
-      const lang = adminEditLang;
-      $("siteBrandEdit").value = getLocalized(state.site.brandName);
-      $("siteBrandTagEdit").value = getLocalized(state.site.brandTag);
-      $("siteHeroSubEdit").value = getLocalized(state.site.heroSubtitle);
-      $("siteHeroTagEdit").value = getLocalized(state.site.heroTagline);
-      document.querySelectorAll("[data-admin-section]").forEach(btn => btn.classList.toggle("active", btn.dataset.adminSection === adminSectionKey));
-      const sec = state.site.sections[adminSectionKey];
-      $("siteSectionNameEdit").value = getLocalized(sec.names);
-      $("siteSectionDescEdit").value = getLocalized(sec.desc);
+    function populateSiteEditor(){
+      const site = getSiteContent();
+      const lang = state.lang;
+      $("siteBrand").value = site.header.brand[lang] || "";
+      $("siteSubtitle").value = site.header.subtitle[lang] || "";
+      $("siteBrandTag").value = site.header.brandTag?.[lang] || "";
+      $("siteTagline").value = site.header.tagline[lang] || "";
+      const list = $("footerEditorList");
+      const entries = Array.isArray(site.footer[lang]) ? site.footer[lang] : [];
+      list.innerHTML = entries.map((entry, index) => `
+        <div class="footer-editor-row" data-footer-id="${escapeAttr(entry.id)}">
+          <textarea data-footer-input="${escapeAttr(entry.id)}" aria-label="Information ${index + 1}">${escapeHtml(entry.text)}</textarea>
+          <button type="button" class="action footer-remove" data-footer-remove="${escapeAttr(entry.id)}">${escapeHtml(ADMIN_UI[lang].remove)}</button>
+        </div>
+      `).join("");
+      syncAdminLanguageTabs();
     }
 
     function saveSiteContent(){
-      ensureSiteState();
-      const lang = adminEditLang;
-      setLocalized(state.site.brandName, lang, $("siteBrandEdit").value.trim());
-      setLocalized(state.site.brandTag, lang, $("siteBrandTagEdit").value.trim());
-      setLocalized(state.site.heroSubtitle, lang, $("siteHeroSubEdit").value.trim());
-      setLocalized(state.site.heroTagline, lang, $("siteHeroTagEdit").value.trim());
-      const sec = state.site.sections[adminSectionKey];
-      setLocalized(sec.names, lang, $("siteSectionNameEdit").value.trim());
-      setLocalized(sec.desc, lang, $("siteSectionDescEdit").value.trim());
-      saveState(); render(); populateAdmin();
-    }
-
-    function populateFooterBuilder(){
-      ensureSiteState();
-      const blocks = state.footer.blocks;
-      if (!blocks.length) adminFooterBlockId = "";
-      if (!adminFooterBlockId || !blocks.some(b => b.id === adminFooterBlockId)) adminFooterBlockId = blocks[0]?.id || "";
-      const select = $("footerBlockSelect");
-      if (select) select.innerHTML = blocks.map((b,i) => `<option value="${escapeAttr(b.id)}">${escapeHtml(getLocalized(b.labels) || `Block ${i+1}`)}</option>`).join("") || `<option value="">—</option>`;
-      if (select) select.value = adminFooterBlockId;
-      const block = blocks.find(b => b.id === adminFooterBlockId);
-      if (!block){
-        $("footerBlockLabelEdit").value = "";
-        $("footerBlockValueEdit").value = "";
-        $("footerBlockTypeEdit").value = "custom";
-        $("footerBlockIconEdit").value = "";
-        $("footerBlockLinkEdit").value = "";
-        $("footerBlockEnabledEdit").checked = true;
-      } else {
-        $("footerBlockLabelEdit").value = getLocalized(block.labels);
-        $("footerBlockValueEdit").value = getLocalized(block.values);
-        $("footerBlockTypeEdit").value = block.type || "custom";
-        $("footerBlockIconEdit").value = block.icon || "";
-        $("footerBlockLinkEdit").value = block.url || "";
-        $("footerBlockEnabledEdit").checked = block.enabled !== false;
-      }
-      const list = $("footerBlockList");
-      if (list) list.innerHTML = blocks.map((b,i) => {
-        const label = getLocalized(b.labels) || `Block ${i+1}`;
-        const value = getLocalized(b.values);
-        const status = b.enabled === false ? `<span class="status off">Hidden</span>` : `<span class="status on">Visible</span>`;
-        const icon = b.icon ? `<span class="footer-icon">${escapeHtml(b.icon)}</span>` : `<span class="footer-icon">•</span>`;
-        return `<div class="admin-footer-row">${icon}<div class="row-main"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span>${status}</div><div class="row-actions"><button class="action" type="button" data-footer-pick="${escapeAttr(b.id)}">Edit</button></div></div>`;
-      }).join("");
-      list?.querySelectorAll("[data-footer-pick]").forEach(btn => btn.addEventListener("click", () => { adminFooterBlockId = btn.dataset.footerPick; populateFooterBuilder(); }));
-    }
-
-    function saveFooterBlock(){
-      ensureSiteState();
-      const block = state.footer.blocks.find(b => b.id === adminFooterBlockId);
-      if (!block) return;
-      setLocalized(block.labels, adminEditLang, $("footerBlockLabelEdit").value.trim());
-      setLocalized(block.values, adminEditLang, $("footerBlockValueEdit").value.trim());
-      block.type = $("footerBlockTypeEdit").value || "custom";
-      block.icon = $("footerBlockIconEdit").value.trim();
-      block.url = $("footerBlockLinkEdit").value.trim();
-      block.enabled = $("footerBlockEnabledEdit").checked;
-      saveState(); render(); populateAdmin();
-    }
-
-    function newFooterBlock(){
-      ensureSiteState();
-      const block = { id: uid(), type: "custom", icon: "", url: "", enabled: true, labels: {en:"New block",ar:"كتلة جديدة",ku:"بلۆکی نوێ"}, values: {en:"",ar:"",ku:""}, order: state.footer.blocks.length };
-      state.footer.blocks.push(block);
-      adminFooterBlockId = block.id;
-      populateFooterBuilder();
-      setAdminEditLanguage(adminEditLang);
-      saveState(); render(); populateAdmin();
-    }
-
-    function deleteFooterBlock(){
-      ensureSiteState();
-      if (!adminFooterBlockId) return;
-      state.footer.blocks = state.footer.blocks.filter(b => b.id !== adminFooterBlockId);
-      state.footer.blocks.forEach((b,i) => b.order = i);
-      adminFooterBlockId = state.footer.blocks[0]?.id || "";
-      saveState(); render(); populateAdmin();
-    }
-
-    function moveFooterBlock(delta){
-      ensureSiteState();
-      const idx = state.footer.blocks.findIndex(b => b.id === adminFooterBlockId);
-      const target = idx + delta;
-      if (idx < 0 || target < 0 || target >= state.footer.blocks.length) return;
-      [state.footer.blocks[idx], state.footer.blocks[target]] = [state.footer.blocks[target], state.footer.blocks[idx]];
-      state.footer.blocks.forEach((b,i) => b.order = i);
-      saveState(); render(); populateAdmin();
-    }
-
-    function renderFooter(){
-      ensureSiteState();
       const lang = state.lang;
-      const blocks = state.footer.blocks.slice().sort((a,b) => a.order - b.order);
-      const footer = document.querySelector("#app footer.footer");
-      if (!footer) return;
-      const visibleBlocks = blocks.filter(block => block.enabled !== false);
-      footer.innerHTML = visibleBlocks.length ? visibleBlocks.map(block => {
-        const label = defaultText(block.labels, lang);
-        const value = defaultText(block.values, lang);
-        const icon = block.icon ? `<span class="footer-icon">${escapeHtml(block.icon)}</span>` : "";
-        const content = `${icon}<strong>${escapeHtml(label)}</strong>${value ? ` • ${escapeHtml(value)}` : ""}`;
-        const safeUrl = String(block.url || "").trim();
-        if (safeUrl && /^(https?:\/\/|tel:|mailto:)/i.test(safeUrl)) {
-          return `<a class="footer-block footer-link" href="${escapeAttr(safeUrl)}" target="${/^https?:\/\//i.test(safeUrl) ? "_blank" : "_self"}" rel="noopener noreferrer">${content}</a>`;
-        }
-        return `<div class="footer-block">${content}</div>`;
-      }).join("") : `<div class="footer-block"><strong>1911</strong></div>`;
+      const site = getSiteContent();
+      site.header.brand[lang] = $("siteBrand").value.trim();
+      site.header.subtitle[lang] = $("siteSubtitle").value.trim();
+      site.header.brandTag[lang] = $("siteBrandTag").value.trim();
+      site.header.tagline[lang] = $("siteTagline").value.trim();
+      const list = $("footerEditorList");
+      site.footer[lang] = Array.from(list.querySelectorAll("[data-footer-input]"))
+        .map(el => ({ id: el.dataset.footerInput, text: el.value.trim() }))
+        .filter(entry => entry.text);
+      saveState();
+      render();
+      populateAdmin();
     }
+
+    function addFooterInfo(){
+      const lang = state.lang;
+      const site = getSiteContent();
+      if (!Array.isArray(site.footer[lang])) site.footer[lang] = [];
+      site.footer[lang].push({ id: uid(), text: "" });
+      populateSiteEditor();
+      const inputs = $("footerEditorList").querySelectorAll("[data-footer-input]");
+      inputs[inputs.length - 1]?.focus();
+    }
+
+    function removeFooterInfo(id){
+      const lang = state.lang;
+      const site = getSiteContent();
+      site.footer[lang] = (site.footer[lang] || []).filter(entry => entry.id !== id);
+      saveState();
+      render();
+      populateAdmin();
+    }
+
+    function t(){ return UI[state.lang] || UI.en; }
 
     function renderTopCards(){
       const cards = Array.isArray(state.topCards) ? state.topCards : [];
@@ -2559,25 +2419,14 @@ let saveInFlight = false;
     }
 
     function setLanguage(lang){
-      state.lang = ["en","ar","ku"].includes(lang) ? lang : "en";
-      ensureSiteState();
-      app.setAttribute("data-lang", state.lang);
-      document.documentElement.lang = lang;
+      state.lang = lang;
+      app.setAttribute("data-lang", lang);
+      document.documentElement.lang = lang === "en" ? "en" : "ar";
       document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
 
-      $("brandTitle").textContent = defaultText(state.site.brandName, state.lang) || UI[state.lang].brand;
-      $("brandTag").textContent = defaultText(state.site.brandTag, state.lang) || UI[state.lang].brand;
-      $("heroTitle").textContent = defaultText(state.site.brandName, state.lang) || UI[state.lang].brand;
-      $("heroSub").textContent = defaultText(state.site.heroSubtitle, state.lang) || UI[state.lang].since;
-      $("heroTag").textContent = defaultText(state.site.heroTagline, state.lang) || UI[state.lang].tagline;
-      $("pill1Label").textContent = UI[lang].design;
-      $("pill1Value").textContent = UI[lang].designValue;
-      $("pill2Label").textContent = UI[lang].languages;
-      $("pill2Value").textContent = UI[lang].languagesValue;
-      $("pill3Label").textContent = UI[lang].menuType;
-      $("pill3Value").textContent = UI[lang].menuTypeValue;
-      $("sectionHint").textContent = UI[lang].sectionHint;
-      renderFooter();
+      renderSiteContent();
+      const adminUi = ADMIN_UI[lang] || ADMIN_UI.en;
+      if ($("sectionHint")) $("sectionHint").textContent = UI[lang].sectionHint;
       const footerBtn = $("openAdminBtnFooter");
       if (footerBtn) footerBtn.addEventListener("click", () => {
         location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
@@ -2587,53 +2436,36 @@ let saveInFlight = false;
       $("searchInput").placeholder = UI[lang].searchPlaceholder;
       $("previewCopy").textContent = UI[lang].previewCopy;
       $("adminTitle").textContent = UI[lang].adminTitle;
+      if ($("viewMenuTopBtn")) $("viewMenuTopBtn").textContent = ({en:"View Live Menu", ar:"عرض القائمة المباشرة", ku:"بینینی مێنوی ڕاستەوخۆ"}[lang] || "View Live Menu");
       $("logoCardTitle").textContent = UI[lang].logoCardTitle;
       $("logoInputLabel").textContent = UI[lang].logoInputLabel;
       $("logoNote").textContent = UI[lang].logoNote;
       $("categoryCardTitle").textContent = UI[lang].categoryCardTitle;
       $("categorySelectLabel").textContent = UI[lang].categorySelectLabel;
-      $("categoryDescLabel").textContent = UI[lang].categoryDescLabel;
+      $("categoryNameLabel").textContent = adminUi.categoryName;
+      $("categoryDescLabel").textContent = adminUi.categoryDesc;
       $("categoryNote").textContent = UI[lang].categoryNote;
       $("itemCardTitle").textContent = UI[lang].itemCardTitle;
       $("itemCategoryLabel").textContent = UI[lang].itemCategoryLabel;
       $("itemSelectLabel").textContent = UI[lang].itemSelectLabel;
-      $("itemDescLabel").textContent = UI[lang].itemDescLabel;
+      $("itemNameLabel").textContent = adminUi.itemName;
+      $("itemDescLabel").textContent = adminUi.itemDesc;
       $("priceLabel").textContent = UI[lang].priceLabel;
       $("itemImageLabel").textContent = UI[lang].itemImageLabel;
       $("itemNote").textContent = UI[lang].itemNote;
-      $("topCardsCardTitle").textContent = lang === "ar" ? "بطاقات المعلومات العلوية" : lang === "ku" ? "کارتی زانیاری سەرەوە" : "Top Information Cards";
-      $("topCardSelectLabel").textContent = lang === "ar" ? "اختر البطاقة" : lang === "ku" ? "هەڵبژاردنی کارت" : "Select card";
-      $("toolsCardTitle").textContent = UI[lang].toolsCardTitle;
-      $("toolsNote").textContent = UI[lang].toolsNote;
-      $("siteContentCardTitle").textContent = lang === "ar" ? "محتوى الموقع والواجهة" : lang === "ku" ? "ناوەڕۆکی ماڵپەڕ و سەرپەڕ" : "Site & Hero Content";
-      $("footerBuilderCardTitle").textContent = lang === "ar" ? "منشئ التذييل" : lang === "ku" ? "دروستکەری فۆتەری سایت" : "Footer Builder";
-      $("adminLanguageTitle").textContent = lang === "ar" ? "لغة التعديل في لوحة الإدارة" : lang === "ku" ? "زمانی دەستکاری لە پانێڵی بەڕێوەبردن" : "Admin editing language";
-      $("siteBrandLabel").textContent = lang === "ar" ? "اسم العلامة" : lang === "ku" ? "ناوی براند" : "Brand name";
-      $("siteBrandTagLabel").textContent = lang === "ar" ? "النص الفرعي للعلامة" : lang === "ku" ? "دەقی لاوەکی براند" : "Brand subline";
-      $("siteHeroSubLabel").textContent = lang === "ar" ? "النص الثانوي للواجهة" : lang === "ku" ? "ژێرنووسی سەرپەڕ" : "Hero subtitle";
-      $("siteHeroTagLabel").textContent = lang === "ar" ? "شعار الواجهة" : lang === "ku" ? "تێگڵاینی سەرپەڕ" : "Hero tagline";
-      $("siteSectionLabel").textContent = lang === "ar" ? "القسم" : lang === "ku" ? "بەش" : "Section";
-      $("siteSectionNameLabel").textContent = lang === "ar" ? "اسم القسم" : lang === "ku" ? "ناوی بەش" : "Section name";
-      $("siteSectionDescLabel").textContent = lang === "ar" ? "وصف القسم" : lang === "ku" ? "وەسفی بەش" : "Section description";
-      $("footerBlockSelectLabel").textContent = lang === "ar" ? "بلوك المعلومات" : lang === "ku" ? "بلۆکی زانیاری" : "Information block";
-      $("footerBlockLabelLabel").textContent = lang === "ar" ? "عنوان البلوك" : lang === "ku" ? "ناونیشانی بلۆک" : "Block label";
-      $("footerBlockValueLabel").textContent = lang === "ar" ? "معلومات البلوك" : lang === "ku" ? "زانیاری بلۆک" : "Block information";
-      $("footerBlockTypeLabel").textContent = lang === "ar" ? "نوع البلوك" : lang === "ku" ? "جۆری بلۆک" : "Block type";
-      $("footerBlockTypeHint").textContent = lang === "ar" ? "النوع معلومات اختيارية؛ يمكنك استخدام أي بلوك مخصص." : lang === "ku" ? "جۆرەکە زانیارییەکی هەڵبژاردەییە؛ هەر بلۆکێکی تایبەت دەتوانیت بەکاربهێنیت." : "Type is optional metadata; custom blocks are always allowed.";
-      $("footerBlockIconLabel").textContent = lang === "ar" ? "أيقونة (اختياري)" : lang === "ku" ? "ئایکۆن (ئارەزوومەندانە)" : "Icon (optional)";
-      $("footerBlockLinkLabel").textContent = lang === "ar" ? "رابط / إجراء (اختياري)" : lang === "ku" ? "بەستەر / کردار (ئارەزوومەندانە)" : "Link / action (optional)";
-      $("footerBlockEnabledLabel").textContent = lang === "ar" ? "إظهار هذا البلوك" : lang === "ku" ? "پیشاندانی ئەم بلۆکە" : "Show this block";
-      $("footerBlockEnabledHint").textContent = lang === "ar" ? "البلوك المعطّل يبقى محفوظًا في Firebase لكنه يختفي عن العملاء." : lang === "ku" ? "بلۆکی ناچالاک لە Firebase هەڵدەگیرێت بەڵام بۆ میوانان پیشان نادرێت." : "Disabled blocks are kept in Firebase but hidden from customers.";
-      $("categoryIconLabel").textContent = lang === "ar" ? "أيقونة الفئة" : lang === "ku" ? "ئایکۆنی پۆل" : "Category icon";
-      $("categoryIconPreviewText").textContent = lang === "ar" ? "تظهر في زر الفئة داخل القائمة." : lang === "ku" ? "لە دوگمەی پۆل لە مێنۆدا پیشان دەدرێت." : "Shown on the public category button.";
-      $("itemAvailabilityLabel").textContent = lang === "ar" ? "التوفر" : lang === "ku" ? "بەردەستبوون" : "Availability";
-      $("itemAvailableText").textContent = lang === "ar" ? "متاح في القائمة" : lang === "ku" ? "لە مێنۆدا بەردەستە" : "Available on the menu";
-      $("saveSiteContentBtn").textContent = lang === "ar" ? "حفظ محتوى الموقع" : lang === "ku" ? "پاشەکەوتی ناوەڕۆک" : "Save Site Content";
-      $("saveFooterBlockBtn").textContent = lang === "ar" ? "حفظ البلوك" : lang === "ku" ? "پاشەکەوتی بلۆک" : "Save Block";
-      $("newFooterBlockBtn").textContent = lang === "ar" ? "إضافة بلوك" : lang === "ku" ? "زیادکردنی بلۆک" : "Add Block";
-      $("deleteFooterBlockBtn").textContent = lang === "ar" ? "حذف البلوك" : lang === "ku" ? "سڕینەوەی بلۆک" : "Remove Block";
-      $("moveFooterUpBtn").textContent = lang === "ar" ? "تحريك لأعلى" : lang === "ku" ? "بۆ سەرەوە" : "Move Up";
-      $("moveFooterDownBtn").textContent = lang === "ar" ? "تحريك لأسفل" : lang === "ku" ? "بۆ خوارەوە" : "Move Down";
+      $("siteContentCardTitle").textContent = adminUi.siteTitle;
+      $("siteContentNote").textContent = adminUi.siteNote;
+      $("headerContentTitle").textContent = adminUi.headerTitle;
+      $("siteBrandLabel").textContent = adminUi.brand;
+      $("siteSubtitleLabel").textContent = adminUi.subtitle;
+      $("siteBrandTagLabel").textContent = adminUi.brandTag;
+      $("siteTaglineLabel").textContent = adminUi.tagline;
+      $("saveSiteContentBtn").textContent = adminUi.saveSite;
+      $("bottomContentTitle").textContent = adminUi.bottomTitle;
+      $("bottomContentNote").textContent = adminUi.bottomNote;
+      $("addFooterInfoBtn").textContent = adminUi.addInfo;
+      $("toolsCardTitle").textContent = adminUi.controls;
+      $("toolsNote").textContent = adminUi.controlsNote;
       $("saveLogoBtn").textContent = UI[lang].saveLogo;
       $("resetLogoBtn").textContent = UI[lang].resetLogo;
       $("saveCategoryBtn").textContent = UI[lang].saveCategory;
@@ -2642,8 +2474,6 @@ let saveInFlight = false;
       $("saveItemBtn").textContent = UI[lang].saveItem;
       $("newItemBtn").textContent = UI[lang].newItem;
       $("deleteItemBtn").textContent = UI[lang].deleteItem;
-      if ($("exportBtn")) $("exportBtn").textContent = UI[lang].exportJson;
-      if ($("resetMenuBtn")) $("resetMenuBtn").textContent = UI[lang].resetMenu;
       render();
       updateLangButtons();
       renderLauncherState();
@@ -2662,23 +2492,41 @@ let saveInFlight = false;
       if (shell) shell.style.display = ready ? "block" : "none";
 
       const lang = state.lang;
-      ensureSiteState();
-      const fallbackLauncher = {
-        en: { title: "Choose your section", sub: "One owner, three stands. The café menu is ready now.", foot: "Tap Café to enter the menu.", switchSection: "Change section" },
-        ar: { title: "اختر القسم", sub: "مالك واحد، وثلاثة أكشاك. قائمة المقهى جاهزة الآن.", foot: "اضغط على الكافيه للدخول إلى القائمة.", switchSection: "تغيير القسم" },
-        ku: { title: "بەشەکەت هەڵبژێرە", sub: "یەک خاوەن، سێ ستاند. مێنوی کافێ ئێستا ئامادەیە.", foot: "کافێ لێبدە بۆ چوونە ناو مێنۆکە.", switchSection: "گۆڕینی بەش" }
-      }[lang] || null;
       const texts = {
-        title: fallbackLauncher?.title || "Choose your section",
-        sub: fallbackLauncher?.sub || "One owner, three stands.",
-        foot: defaultText(state.site.sections[state.section || "cafe"]?.desc, lang) || fallbackLauncher?.foot || "",
-        cafeTitle: defaultText(state.site.sections.cafe.names, lang),
-        fastFoodTitle: defaultText(state.site.sections.fastfood.names, lang),
-        dessertsTitle: defaultText(state.site.sections.desserts.names, lang),
-        cafeDesc: defaultText(state.site.sections.cafe.desc, lang),
-        soon: defaultText(state.site.sections.fastfood.desc, lang),
-        switchSection: fallbackLauncher?.switchSection || "Change section"
-      };
+        en: {
+          title: "Choose your section",
+          sub: "One owner, three stands. The café menu is ready now.",
+          foot: state.section === "fastfood" ? "1911 Fast Food is coming soon." : state.section === "desserts" ? "1911 Deserts is coming soon." : "Tap Café to enter the menu.",
+          cafeTitle: "1911 Cafe",
+          fastFoodTitle: "1911 Fast Food",
+          dessertsTitle: "1911 Deserts",
+          cafeDesc: "Open now",
+          soon: "Coming soon",
+          switchSection: "Change section"
+        },
+        ar: {
+          title: "اختر القسم",
+          sub: "مالك واحد، وثلاثة أكشاك. قائمة المقهى جاهزة الآن.",
+          foot: state.section === "fastfood" ? "1911 فاست فود قريبًا." : state.section === "desserts" ? "1911 حلويات قريبًا." : "اضغط على الكافيه للدخول إلى القائمة.",
+          cafeTitle: "1911 كافيه",
+          fastFoodTitle: "1911 فاست فود",
+          dessertsTitle: "1911 حلويات",
+          cafeDesc: "مفتوح الآن",
+          soon: "قريبًا",
+          switchSection: "تغيير القسم"
+        },
+        ku: {
+          title: "بەشەکەت هەڵبژێرە",
+          sub: "یەک خاوەن، سێ ستاند. مێنوی کافێ ئێستا ئامادەیە.",
+          foot: state.section === "fastfood" ? "1911 فاست فود بەم زووانە." : state.section === "desserts" ? "1911 دێزەرت بەم زووانە." : "کافێ لێبدە بۆ چوونە ناو مێنۆکە.",
+          cafeTitle: "1911 کافێ",
+          fastFoodTitle: "1911 فاست فود",
+          dessertsTitle: "1911 دێزەرت",
+          cafeDesc: "ئێستا کراوە",
+          soon: "بەم زووانە",
+          switchSection: "گۆڕینی بەش"
+        }
+      }[lang] || null;
 
       document.title = state.section === "cafe" ? "1911 Coffee Shop Menu" : state.section === "fastfood" ? "1911 Fast Food" : state.section === "desserts" ? "1911 Deserts" : "1911 Group";
       const active = state.section || "cafe";
@@ -2730,7 +2578,7 @@ let saveInFlight = false;
       if (current && PAGE_MODE === "admin") state.currentCategoryId = current.id;
       categoryBar.innerHTML = state.categories.map(cat => `
         <button class="category-chip ${cat.id === activeId ? "active" : ""}" type="button" data-cat-id="${escapeAttr(cat.id)}">
-          ${cat.icon ? `<span class="chip-icon">${escapeHtml(cat.icon)}</span>` : ""}${escapeHtml(defaultText(cat.names, state.lang))}
+          ${escapeHtml(defaultText(cat.names, state.lang))}
         </button>
       `).join("");
 
@@ -2786,14 +2634,12 @@ let saveInFlight = false;
         const altTitle = state.lang === "en" ? defaultText(item.names, "ar") : defaultText(item.names, "en");
         const desc = defaultText(item.desc, state.lang);
         const prices = [
-          item.prices?.single ? `<span class="price single">${escapeHtml(money(item.prices.single))}</span>` : "",
-          !item.prices?.single && item.prices?.small ? `<span class="price">${escapeHtml(money(item.prices.small))}</span>` : "",
-          !item.prices?.single && item.prices?.large ? `<span class="price secondary">${escapeHtml(money(item.prices.large))}</span>` : ""
+          item.prices?.small ? `<span class="price">${escapeHtml(money(item.prices.small))}</span>` : "",
+          item.prices?.large ? `<span class="price secondary">${escapeHtml(money(item.prices.large))}</span>` : ""
         ].filter(Boolean).join("");
         const img = item.image || placeholderImage(item, idx);
-        const availabilityBadge = item.available === false ? `<div class="availability-badge">${state.lang === "ar" ? "غير متاح" : state.lang === "ku" ? "بەردەست نییە" : "Unavailable"}</div>` : "";
         return `
-          <button class="card ${item.available === false ? "unavailable-card" : ""}" type="button"
+          <button class="card" type="button"
             data-title="${escapeAttr(title)}"
             data-alt-title="${escapeAttr(altTitle)}"
             data-desc="${escapeAttr(desc)}"
@@ -2806,7 +2652,6 @@ let saveInFlight = false;
                   ${altTitle && altTitle !== title ? `<span class="small">${escapeHtml(altTitle)}</span>` : ""}
                 </div>
                 ${desc ? `<div class="desc">${escapeHtml(desc)}</div>` : ""}
-                ${availabilityBadge}
               </div>
               <div class="prices">${prices}</div>
             </div>
@@ -2824,15 +2669,13 @@ let saveInFlight = false;
     }
 
     function render(){
-      ensureSiteState();
       $("brandLogo").src = state.logo || DEFAULT_LOGO;
       $("heroLogo").src = state.logo || DEFAULT_LOGO;
       if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
       updateLangButtons();
-      renderTopCards();
+      renderSiteContent();
       renderCategories();
       renderItems();
-      renderFooter();
       if (adminModal.classList.contains("open")) populateAdmin();
     }
 
@@ -2885,16 +2728,8 @@ let saveInFlight = false;
       if (!cat) return;
       adminCategoryId = cat.id;
       $("categorySelect").value = cat.id;
-      $("categoryNameEn").value = cat.names.en || "";
-      $("categoryNameAr").value = cat.names.ar || "";
-      $("categoryNameKu").value = cat.names.ku || "";
-      $("categoryIcon").value = cat.icon || "";
-      $("categoryIconPreview").textContent = cat.icon || "☕";
-      $("categoryDesc").value = getLocalized(cat.desc);
-      $("categoryNameEn").closest(".field")?.classList.toggle("active", adminEditLang === "en");
-      $("categoryNameAr").closest(".field")?.classList.toggle("active", adminEditLang === "ar");
-      $("categoryNameKu").closest(".field")?.classList.toggle("active", adminEditLang === "ku");
-      [$("categoryNameEn").closest(".field"),$("categoryNameAr").closest(".field"),$("categoryNameKu").closest(".field")].forEach((el,i)=>{ if(el) el.style.display=(i===(["en","ar","ku"].indexOf(adminEditLang)))?"flex":"none"; });
+      $("categoryName").value = cat.names?.[state.lang] || "";
+      $("categoryDesc").value = cat.desc?.[state.lang] || "";
     }
 
     function populateItemSelect(categoryId){
@@ -2915,70 +2750,51 @@ let saveInFlight = false;
       const item = (cat.items || []).find(i => i.id === itemId) || cat.items?.[0] || null;
       if (!item){
         adminItemId = "";
-        $("itemNameEn").value = "";
-        $("itemNameAr").value = "";
-        $("itemNameKu").value = "";
+        $("itemName").value = "";
         $("itemDesc").value = "";
-        $("priceSingle").value = "";
         $("priceSmall").value = "";
         $("priceLarge").value = "";
-        $("itemAvailable").checked = true;
         previewItemImage = "";
         $("itemPreview").src = DEFAULT_LOGO;
         return;
       }
       adminItemId = item.id;
       $("itemSelect").value = item.id;
-      $("itemNameEn").value = item.names.en || "";
-      $("itemNameAr").value = item.names.ar || "";
-      $("itemNameKu").value = item.names.ku || "";
-      $("itemDesc").value = getLocalized(item.desc);
-      $("priceSingle").value = item.prices?.single || "";
+      $("itemName").value = item.names?.[state.lang] || "";
+      $("itemDesc").value = item.desc?.[state.lang] || "";
       $("priceSmall").value = item.prices?.small || "";
       $("priceLarge").value = item.prices?.large || "";
-      $("itemAvailable").checked = item.available !== false;
-      [$("itemNameEn").closest(".field"),$("itemNameAr").closest(".field"),$("itemNameKu").closest(".field")].forEach((el,i)=>{ if(el) el.style.display=(i===(["en","ar","ku"].indexOf(adminEditLang)))?"flex":"none"; });
       previewItemImage = item.image || "";
       $("itemPreview").src = previewItemImage || placeholderImage(item, 0);
     }
 
     function populateAdmin(){
-      ensureSiteState();
       refreshCategorySelects();
       populateCategoryForm(adminCategoryId || state.currentCategoryId);
       populateItemForm(adminItemCategoryId || state.currentCategoryId, adminItemId);
-      populateSiteContentForm();
-      populateFooterBuilder();
       $("logoPreview").src = previewLogoImage || state.logo || DEFAULT_LOGO;
-      if ($("exportBox")) $("exportBox").value = JSON.stringify(state, null, 2);
-      const topIndex = Number($("topCardSelect")?.value || 0);
-      syncTopCardForm(topIndex);
+      populateSiteEditor();
       setConfirmVisibility("category", pendingCategoryAction);
       setConfirmVisibility("item", pendingItemAction);
-      updateAdminLanguageUI();
     }
 
     function saveCategory(){
       const id = adminCategoryId || state.currentCategoryId || uid();
-      const existing = state.categories.find(c => c.id === id);
-      const category = existing || {
-        id,
-        names: { en: "New Category", ar: "فئة جديدة", ku: "پۆلی نوێ" },
-        desc: { en: "", ar: "", ku: "" },
-        items: []
-      };
-      category.id = id;
-      if (!category.names) category.names = { en: "", ar: "", ku: "" };
-      if (!category.desc) category.desc = { en: "", ar: "", ku: "" };
-      const categoryNameInput = adminEditLang === "ar" ? $("categoryNameAr") : adminEditLang === "ku" ? $("categoryNameKu") : $("categoryNameEn");
-      category.names[adminEditLang] = categoryNameInput.value.trim();
-      category.desc[adminEditLang] = $("categoryDesc").value.trim();
-      category.icon = $("categoryIcon").value.trim();
-      if (!category.names.en) category.names.en = "New Category";
-      if (!category.names.ar) category.names.ar = "فئة جديدة";
-      if (!category.names.ku) category.names.ku = "پۆلی نوێ";
-      if (!Array.isArray(category.items)) category.items = [];
-      if (!existing) state.categories.push(category);
+      const existing = state.categories.findIndex(c => c.id === id);
+      if (existing >= 0) {
+        const category = state.categories[existing];
+        category.names = category.names || { en:"", ar:"", ku:"" };
+        category.desc = category.desc || { en:"", ar:"", ku:"" };
+        category.names[state.lang] = $("categoryName").value.trim();
+        category.desc[state.lang] = $("categoryDesc").value.trim();
+        state.categories[existing] = category;
+      } else {
+        const names = { en:"", ar:"", ku:"" };
+        const desc = { en:"", ar:"", ku:"" };
+        names[state.lang] = $("categoryName").value.trim();
+        desc[state.lang] = $("categoryDesc").value.trim();
+        state.categories.push({ id, names, desc, items: [] });
+      }
       state.currentCategoryId = id;
       adminCategoryId = id;
       saveState();
@@ -2988,10 +2804,13 @@ let saveInFlight = false;
 
     function newCategory(){
       const id = uid();
+      const names = { en: "", ar: "", ku: "" };
+      const desc = { en: "", ar: "", ku: "" };
+      names[state.lang] = "New Category";
       state.categories.push({
         id,
-        names: { en: "New Category", ar: "فئة جديدة", ku: "پۆلی نوێ" },
-        desc: { en: "", ar: "", ku: "" },
+        names,
+        desc,
         items: []
       });
       state.currentCategoryId = id;
@@ -3025,47 +2844,44 @@ let saveInFlight = false;
       const catId = adminItemCategoryId || state.currentCategoryId;
       const cat = state.categories.find(c => c.id === catId);
       if (!cat) return;
-      if (!Array.isArray(cat.items)) cat.items = [];
+
       let imageUrl = previewItemImage || "";
       if (pendingItemFile){
         try{
           const uploaded = await uploadFileToImageKit(pendingItemFile, "item");
-          if (uploaded) imageUrl = uploaded;
+          if (uploaded) {
+            imageUrl = uploaded;
+          }
         }catch(uploadErr){
           console.warn("Item upload failed, using embedded image fallback:", uploadErr);
           imageUrl = await fileToDataUrl(pendingItemFile);
         }
       }
-      const existing = cat.items.find(i => i.id === adminItemId);
-      const item = existing || {
-        id: adminItemId || uid(),
-        names: { en: "", ar: "", ku: "" },
-        desc: { en: "", ar: "", ku: "" },
-        prices: { single: "", small: "", large: "" },
-        available: true,
+
+      const itemId = adminItemId || uid();
+      const idx = (cat.items || []).findIndex(i => i.id === itemId);
+      const existingItem = idx >= 0 ? cat.items[idx] : {
+        id: itemId,
+        names: { en:"", ar:"", ku:"" },
+        desc: { en:"", ar:"", ku:"" },
+        prices: { small:"", large:"" },
         kind: "coffee",
         colors: ["#2b160c","#7a4a25","#d7a55c"],
         image: ""
       };
-      item.names = item.names || { en: "", ar: "", ku: "" };
-      item.desc = item.desc || { en: "", ar: "", ku: "" };
-      item.prices = item.prices || { single: "", small: "", large: "" };
-      const itemNameInput = adminEditLang === "ar" ? $("itemNameAr") : adminEditLang === "ku" ? $("itemNameKu") : $("itemNameEn");
-      item.names[adminEditLang] = itemNameInput.value.trim() || (adminEditLang === "en" ? "New Item" : item.names[adminEditLang]);
-      item.desc[adminEditLang] = $("itemDesc").value.trim();
-      item.prices.single = $("priceSingle").value.trim();
-      item.prices.small = $("priceSmall").value.trim();
-      item.prices.large = $("priceLarge").value.trim();
-      item.available = $("itemAvailable").checked;
-      if (!item.image || imageUrl) item.image = imageUrl;
-      if (item.prices.single) { item.prices.small = ""; item.prices.large = ""; }
-      if (!item.prices.small && item.prices.large) item.prices.small = item.prices.large;
-      if (item.prices.small && !item.prices.large && !item.prices.single) item.prices.large = item.prices.small;
-      if (!item.names.en) item.names.en = "New Item";
-      if (!item.names.ar) item.names.ar = "عنصر جديد";
-      if (!item.names.ku) item.names.ku = "تکەی نوێ";
-      if (!existing) cat.items.push(item);
-      adminItemId = item.id;
+      existingItem.names = existingItem.names || { en:"", ar:"", ku:"" };
+      existingItem.desc = existingItem.desc || { en:"", ar:"", ku:"" };
+      existingItem.prices = existingItem.prices || { small:"", large:"" };
+      existingItem.names[state.lang] = $("itemName").value.trim();
+      existingItem.desc[state.lang] = $("itemDesc").value.trim();
+      existingItem.prices.small = $("priceSmall").value.trim();
+      existingItem.prices.large = $("priceLarge").value.trim();
+      if (existingItem.prices.small && !existingItem.prices.large) existingItem.prices.large = existingItem.prices.small;
+      existingItem.image = imageUrl;
+      if (idx >= 0) cat.items[idx] = existingItem;
+      else cat.items.push(existingItem);
+
+      adminItemId = itemId;
       state.currentCategoryId = cat.id;
       pendingItemFile = null;
       previewItemImage = "";
@@ -3082,8 +2898,7 @@ let saveInFlight = false;
         id: uid(),
         names: { en: "", ar: "", ku: "" },
         desc: { en: "", ar: "", ku: "" },
-        prices: { single: "", small: "", large: "" },
-        available: true,
+        prices: { small: "", large: "" },
         kind: "coffee",
         colors: ["#2b160c","#7a4a25","#d7a55c"],
         image: ""
@@ -3149,8 +2964,8 @@ let saveInFlight = false;
 
     function exportJSON(){
       $("exportBox").value = JSON.stringify(state, null, 2);
-      const search = $("searchInput");
-      if (search) search.focus();
+      $("exportBox").focus();
+      $("exportBox").select();
     }
 
     function resetDemoMenu(){
@@ -3186,19 +3001,10 @@ let saveInFlight = false;
       document.querySelectorAll("[data-lang-btn]").forEach(btn => {
         btn.addEventListener("click", () => setLanguage(btn.dataset.langBtn));
       });
-      document.querySelectorAll("[data-admin-edit-lang]").forEach(btn => {
-        btn.addEventListener("click", () => setAdminEditLanguage(btn.dataset.adminEditLang));
-      });
-      document.querySelectorAll("[data-admin-section]").forEach(btn => {
-        btn.addEventListener("click", () => { adminSectionKey = btn.dataset.adminSection || "cafe"; populateSiteContentForm(); });
-      });
 
       document.querySelectorAll(".launcher-card").forEach(btn => {
         btn.addEventListener("click", () => chooseBranch(btn.dataset.branch));
       });
-
-      const bottomSectionBtn = $("bottomSectionBtn");
-      if (bottomSectionBtn) bottomSectionBtn.addEventListener("click", openBranchChooser);
 
       const footerAdminBtn = $("openAdminBtnFooter");
       if (footerAdminBtn) {
@@ -3223,28 +3029,17 @@ let saveInFlight = false;
       $("itemCategorySelect").addEventListener("change", setItemCategoryFromAdminSelect);
       $("itemSelect").addEventListener("change", setItemFromAdminSelect);
 
-      $("topCardSelect").addEventListener("change", (e) => syncTopCardForm(e.target.value));
-      ["topCardLabelEn", "topCardLabelAr", "topCardLabelKu", "topCardValueEn", "topCardValueAr", "topCardValueKu"]
-        .forEach(id => {
-          const el = $(id);
-          if (el) el.addEventListener("input", () => syncTopCardFromForm());
-        });
+      document.querySelectorAll("[data-admin-lang]").forEach(btn => {
+        btn.addEventListener("click", () => setLanguage(btn.dataset.adminLang));
+      });
 
-      // Phase 5A: manual multilingual editing only. No automatic translation is performed.
-      ["itemNameEn", "itemNameAr", "itemNameKu"].forEach(id => {
-        const el = $(id);
-        if (el) el.addEventListener("input", () => { el.dataset.autoGenerated = "0"; });
-      });
-      $("categoryIcon").addEventListener("input", () => {
-        $("categoryIconPreview").textContent = $("categoryIcon").value.trim() || "☕";
-      });
       $("saveSiteContentBtn").addEventListener("click", saveSiteContent);
-      $("saveFooterBlockBtn").addEventListener("click", saveFooterBlock);
-      $("newFooterBlockBtn").addEventListener("click", newFooterBlock);
-      $("deleteFooterBlockBtn").addEventListener("click", deleteFooterBlock);
-      $("moveFooterUpBtn").addEventListener("click", () => moveFooterBlock(-1));
-      $("moveFooterDownBtn").addEventListener("click", () => moveFooterBlock(1));
-      $("footerBlockSelect").addEventListener("change", (e) => { adminFooterBlockId = e.target.value; populateFooterBuilder(); });
+      $("addFooterInfoBtn").addEventListener("click", addFooterInfo);
+      $("footerEditorList").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-footer-remove]");
+        if (!btn) return;
+        removeFooterInfo(btn.dataset.footerRemove);
+      });
 
       $("saveCategoryBtn").addEventListener("click", () => stageCategoryAction("save"));
       $("newCategoryBtn").addEventListener("click", () => stageCategoryAction("new"));
@@ -3265,9 +3060,9 @@ let saveInFlight = false;
       $("authCreateBtn").addEventListener("click", () => handleAuthAction("create"));
       $("authSignOutBtn").addEventListener("click", handleSignOut);
       $("signOutTopBtn").addEventListener("click", handleSignOut);
-
-      $("exportBtn")?.addEventListener("click", exportJSON);
-      $("resetMenuBtn")?.addEventListener("click", resetDemoMenu);
+      $("viewMenuTopBtn").addEventListener("click", () => {
+        window.open("index.html", "_blank", "noopener");
+      });
 
       $("logoInput").addEventListener("change", (e) => {
         const file = e.target.files?.[0];
@@ -3301,10 +3096,6 @@ let saveInFlight = false;
       adminItemCategoryId = state.currentCategoryId;
       adminItemId = state.categories.find(c => c.id === state.currentCategoryId)?.items?.[0]?.id || "";
       ensureTopCards();
-      ensureSiteState();
-      adminEditLang = "en";
-      adminSectionKey = state.section && state.site.sections[state.section] ? state.section : "cafe";
-      adminFooterBlockId = state.footer.blocks[0]?.id || "";
       $("searchInput").value = state.search;
       bindEvents();
       if (PAGE_MODE === "admin") {
