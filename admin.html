@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html> admin panel
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
@@ -1030,9 +1030,9 @@ body[data-page="admin"] .site-launcher{display:none !important}
         </div>
       </div>
       <div class="lang-switch">
-        <button class="btn active" type="button" data-lang-btn="en">English</button>
+        <button class="btn active" type="button" data-lang-btn="ku">کوردی</button>
         <button class="btn" type="button" data-lang-btn="ar">العربية</button>
-        <button class="btn" type="button" data-lang-btn="ku">کوردی</button>
+        <button class="btn" type="button" data-lang-btn="en">English</button>
       </div>
       <div class="topbar-actions" id="topbarActions">
         <button class="btn admin-toggle" id="viewMenuTopBtn" type="button">View Live Menu</button>
@@ -1185,9 +1185,9 @@ body[data-page="admin"] .site-launcher{display:none !important}
               <div class="admin-note" id="siteContentNote">Edit the selected language only. Changes are synced to Firebase with the same menu data.</div>
             </div>
             <div class="admin-lang-tabs" id="adminLangTabs" role="tablist" aria-label="Edit language">
-              <button type="button" class="admin-lang-tab active" data-admin-lang="en">English</button>
+              <button type="button" class="admin-lang-tab active" data-admin-lang="ku">کوردی</button>
               <button type="button" class="admin-lang-tab" data-admin-lang="ar">العربية</button>
-              <button type="button" class="admin-lang-tab" data-admin-lang="ku">کوردی</button>
+              <button type="button" class="admin-lang-tab" data-admin-lang="en">English</button>
             </div>
           </div>
 
@@ -2421,7 +2421,7 @@ let saveInFlight = false;
     function setLanguage(lang){
       state.lang = lang;
       app.setAttribute("data-lang", lang);
-      document.documentElement.lang = lang === "en" ? "en" : "ar";
+      document.documentElement.lang = lang;
       document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
 
       renderSiteContent();
