@@ -1735,6 +1735,28 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
         currentCategoryId: "coffee",
         search: "",
         section: null,
+        siteContent: {
+          header: {
+            brand: { en: "1911 Coffee Shop", ar: "مقهى 1911", ku: "کافێی 1911" },
+            subtitle: { en: "Since 2021", ar: "منذ 2021", ku: "لە 2021" },
+            brandTag: { en: "Vintage • Modern • Premium", ar: "عتيق • عصري • فاخر", ku: "کۆن • نوێ • شیک" },
+            tagline: { en: "Take Rest and Be Happy", ar: "خذ راحة وكن سعيدًا", ku: "وه‌ربگرە ڕا و خۆشحاڵ بە" }
+          },
+          footer: {
+            en: [
+              { id: "default-location", text: "1911 • Temporary location near Titanic Hotel" },
+              { id: "default-phone", text: "07734468886" }
+            ],
+            ar: [
+              { id: "default-location", text: "1911 • موقع مؤقت قرب فندق تيتانيك" },
+              { id: "default-phone", text: "07734468886" }
+            ],
+            ku: [
+              { id: "default-location", text: "1911 • شوێنی کاتی لە نزیک هوتێلی تایتانیک" },
+              { id: "default-phone", text: "07734468886" }
+            ]
+          }
+        },
         topCards: [
           {
             labels: { en: "Fresh Brew", ar: "مشروبات طازجة", ku: "خواردنەوەی تازە" },
@@ -1839,6 +1861,33 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
       };
     }
 
+    function ensureSiteContent(target){
+      const base = makeDefaultState();
+      if (!target.siteContent || typeof target.siteContent !== "object") target.siteContent = {};
+      if (!target.siteContent.header || typeof target.siteContent.header !== "object") target.siteContent.header = {};
+      for (const key of ["brand","subtitle","brandTag","tagline"]) {
+        if (!target.siteContent.header[key] || typeof target.siteContent.header[key] !== "object") {
+          target.siteContent.header[key] = { ...base.siteContent.header[key] };
+        }
+        for (const lang of ["en","ar","ku"]) {
+          if (target.siteContent.header[key][lang] == null || target.siteContent.header[key][lang] === "") {
+            target.siteContent.header[key][lang] = base.siteContent.header[key][lang];
+          }
+        }
+      }
+      if (!target.siteContent.footer || typeof target.siteContent.footer !== "object") target.siteContent.footer = {};
+      for (const lang of ["en","ar","ku"]) {
+        if (!Array.isArray(target.siteContent.footer[lang])) target.siteContent.footer[lang] = [];
+        target.siteContent.footer[lang] = target.siteContent.footer[lang]
+          .map((entry) => ({ id: String(entry?.id || uid()), text: String(entry?.text || "") }))
+          .filter((entry) => entry.text.trim() !== "");
+        if (!target.siteContent.footer[lang].length) {
+          target.siteContent.footer[lang] = base.siteContent.footer[lang].map(entry => ({...entry}));
+        }
+      }
+      return target;
+    }
+
     function normalizeState(raw){
       const base = makeDefaultState();
       if (!raw || typeof raw !== "object") return base;
@@ -1890,6 +1939,7 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
       state.logo = state.logo || DEFAULT_LOGO;
       state.search = String(state.search || "");
       state.section = ["cafe","fastfood","desserts"].includes(state.section) ? state.section : null;
+      ensureSiteContent(state);
       if (!Array.isArray(state.topCards) || !state.topCards.length) state.topCards = base.topCards;
       return state;
     }
@@ -2345,11 +2395,7 @@ let saveInFlight = false;
       document.documentElement.lang = lang === "en" ? "en" : "ar";
       document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
 
-      $("brandTitle").textContent = UI[lang].brand;
-      $("brandTag").textContent = lang === "en" ? "Vintage • Modern • Premium" : lang === "ar" ? "عتيق • عصري • فاخر" : "کۆن • نوێ • شیک";
-      $("heroTitle").textContent = UI[lang].brand;
-      $("heroSub").textContent = UI[lang].since;
-      $("heroTag").textContent = UI[lang].tagline;
+      renderSiteContent();
       $("pill1Label").textContent = UI[lang].design;
       $("pill1Value").textContent = UI[lang].designValue;
       $("pill2Label").textContent = UI[lang].languages;
@@ -2359,8 +2405,7 @@ let saveInFlight = false;
       $("sectionHint").textContent = UI[lang].sectionHint;
       $("menuHeading").textContent = lang === "ar" ? "قائمة 1911" : lang === "ku" ? "مێنوی 1911" : "1911 Menu";
       $("menuIntro").textContent = lang === "ar" ? "تصفح القائمة كاملة بالتمرير بين جميع الفئات." : lang === "ku" ? "بە هەموو مێنۆکەدا بە بەردەوامی بگەڕێ لە هەموو پۆلەکان." : "Browse the full menu by scrolling through every category.";
-      $("footerLeft").innerHTML = `<strong>1911</strong> • ${UI[lang].footerLeft}`;
-      $("footerRight").innerHTML = `${UI[lang].footerRight}`;
+      renderSiteContent();
       const footerBtn = $("openAdminBtnFooter");
       if (footerBtn) footerBtn.addEventListener("click", () => {
         location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
@@ -2774,12 +2819,42 @@ let saveInFlight = false;
       updateActiveCategory(matchingSections.includes(browseCategoryId) ? browseCategoryId : matchingSections[0]);
     }
 
+    function renderSiteContent(){
+      const site = ensureSiteContent(state).siteContent;
+      const lang = state.lang;
+      const header = site.header || {};
+      const footer = Array.isArray(site.footer?.[lang]) ? site.footer[lang] : [];
+
+      const brand = header.brand?.[lang] || header.brand?.en || "1911 Coffee Shop";
+      const brandTag = header.brandTag?.[lang] || header.brandTag?.en || "";
+      const subtitle = header.subtitle?.[lang] || header.subtitle?.en || "";
+      const tagline = header.tagline?.[lang] || header.tagline?.en || "";
+
+      if ($("brandTitle")) $("brandTitle").textContent = brand;
+      if ($("brandTag")) $("brandTag").textContent = brandTag;
+      if ($("heroTitle")) $("heroTitle").textContent = brand;
+      if ($("heroSub")) $("heroSub").textContent = subtitle;
+      if ($("heroTag")) $("heroTag").textContent = tagline;
+
+      const left = $("footerLeft");
+      const right = $("footerRight");
+      const entries = footer.filter(entry => String(entry?.text || "").trim());
+      const first = entries[0]?.text || "";
+      const rest = entries.slice(1).map(entry => escapeHtml(entry.text)).join(" • ");
+
+      if (left) left.innerHTML = first
+        ? escapeHtml(first)
+        : `<strong>${escapeHtml(brand)}</strong>`;
+      if (right) right.innerHTML = rest || "";
+    }
+
     function render(){
       $("brandLogo").src = state.logo || DEFAULT_LOGO;
       $("heroLogo").src = state.logo || DEFAULT_LOGO;
       if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
       updateLangButtons();
       updateTopControls();
+      renderSiteContent();
       // Customer-facing information cards were removed from the menu; their admin data remains intact.
       renderCategories();
       renderItems();
