@@ -1222,14 +1222,6 @@
     <section class="category-bar" id="categoryBar" aria-label="categories"></section>
 
     <main class="panel menu-panel">
-      <div class="panel-head">
-        <div>
-          <h3 id="menuHeading">1911 Menu</h3>
-          <p id="menuIntro">Browse the full menu by scrolling through every category.</p>
-        </div>
-        <div class="hint" id="sectionHint">Tap any item to preview a bigger image.</div>
-      </div>
-      <div class="menu-divider"></div>
       <div class="category-sections" id="items"></div>
     </main>
 
@@ -2403,8 +2395,6 @@ let saveInFlight = false;
       $("pill3Label").textContent = UI[lang].menuType;
       $("pill3Value").textContent = UI[lang].menuTypeValue;
       $("sectionHint").textContent = UI[lang].sectionHint;
-      $("menuHeading").textContent = lang === "ar" ? "قائمة 1911" : lang === "ku" ? "مێنوی 1911" : "1911 Menu";
-      $("menuIntro").textContent = lang === "ar" ? "تصفح القائمة كاملة بالتمرير بين جميع الفئات." : lang === "ku" ? "بە هەموو مێنۆکەدا بە بەردەوامی بگەڕێ لە هەموو پۆلەکان." : "Browse the full menu by scrolling through every category.";
       renderSiteContent();
       const footerBtn = $("openAdminBtnFooter");
       if (footerBtn) footerBtn.addEventListener("click", () => {
