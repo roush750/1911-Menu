@@ -1779,8 +1779,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
           },
           kind: String(i.kind || "coffee"),
           colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
-          image: String(i.image || ""),
-          menuVisible: i.menuVisible !== false
+          image: String(i.image || "")
         })) : []
       })) : base.categories;
 
@@ -1829,7 +1828,7 @@ const FIREBASE_CONFIG = {
   measurementId: "G-RDY676HQLB"
 };
 
-    const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
+    const FIREBASE_DOC_PATH = ["menuSites", "1911-cafe"];
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
     // ImageKit stores the actual menu images. The private key never appears in this file.
@@ -2028,7 +2027,7 @@ async function initFirebaseAuth(){
       }
 
       if (!authUser && PAGE_MODE === "admin") {
-        setSyncStatus("Signed out — viewing read-only Firebase data", "offline");
+        setSyncStatus("Not signed in — Firebase is read-only", "offline");
       }
     });
   }
@@ -2749,7 +2748,6 @@ let saveInFlight = false;
       $("itemCategorySelect").value = categoryId;
       populateItemSelect(categoryId);
       const item = (cat.items || []).find(i => i.id === itemId) || cat.items?.[0] || null;
-      $("itemMenuVisible").checked = item?.menuVisible !== false;
       if (!item){
         adminItemId = "";
         $("itemName").value = "";
@@ -2869,8 +2867,7 @@ let saveInFlight = false;
         prices: { small:"", large:"" },
         kind: "coffee",
         colors: ["#2b160c","#7a4a25","#d7a55c"],
-        image: "",
-        menuVisible: true
+        image: ""
       };
       existingItem.names = existingItem.names || { en:"", ar:"", ku:"" };
       existingItem.desc = existingItem.desc || { en:"", ar:"", ku:"" };
@@ -2881,7 +2878,6 @@ let saveInFlight = false;
       existingItem.prices.large = $("priceLarge").value.trim();
       if (existingItem.prices.small && !existingItem.prices.large) existingItem.prices.large = existingItem.prices.small;
       existingItem.image = imageUrl;
-      existingItem.menuVisible = $("itemMenuVisible")?.checked !== false;
       if (idx >= 0) cat.items[idx] = existingItem;
       else cat.items.push(existingItem);
 
