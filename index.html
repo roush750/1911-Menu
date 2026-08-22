@@ -2756,6 +2756,7 @@ let saveInFlight = false;
     function filteredItemsForCategory(cat){
       const query = state.search.trim().toLowerCase();
       return (cat?.items || []).filter(item => {
+        if (item?.menuVisible === false) return false;
         if (!query) return true;
         const hay = [
           defaultText(item.names, "en"),
