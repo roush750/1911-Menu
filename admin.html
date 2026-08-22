@@ -1161,9 +1161,6 @@ body[data-page="admin"] .site-launcher{display:none !important}
             <label id="itemImageLabel">Upload item picture</label>
             <input id="itemImageInput" type="file" accept="image/*" />
           </div>
-          <div class="field">
-            <label><input id="itemMenuVisible" type="checkbox" checked /> Show item in customer menu</label>
-          </div>
           <div class="actions">
             <button class="action primary" id="saveItemBtn" type="button">Save Item</button>
             <button class="action" id="newItemBtn" type="button">New Item</button>
@@ -1782,7 +1779,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
           },
           kind: String(i.kind || "coffee"),
           colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
-          image: String(i.image || "")
+          image: String(i.image || ""),
+          menuVisible: i.menuVisible !== false
         })) : []
       })) : base.categories;
 
@@ -1839,149 +1837,6 @@ const FIREBASE_CONFIG = {
     const IMAGEKIT_AUTH_URL = "https://roushworker.zamoahmad490.workers.dev/auth";
     const IMAGEKIT_UPLOAD_URL = "https://upload.imagekit.io/api/v1/files/upload";
     const PAGE_MODE = document.body.dataset.page || "index";
-
-    // Shared catalog: only these fields are synchronized between Admin, POS, and Customer Menu.
-    // Admin owns descriptions/images/logo/site content. POS owns inventory/revenue/staff/receipts/recipes.
-    // Price, sizes, category, and English names are shared and use stable IDs.
-    const SHARED_CATALOG_DOC_PATH = ["menuSites", "1911CoffeeShop", "shared", "catalog"];
-    let sharedCatalogRef = null;
-    let sharedCatalogUnsub = null;
-    let applyingSharedCatalog = false;
-
-    function buildSharedCatalogFromAdminState(){
-      const categories = (state.categories || []).map((c, index) => ({
-        id: String(c.id),
-        name: String(c.names?.en || `Category ${index + 1}`),
-        order: Number.isFinite(Number(c.order)) ? Number(c.order) : index + 1
-      }));
-      const products = [];
-      for (const c of (state.categories || [])) {
-        for (const item of (c.items || [])) {
-          const small = String(item.prices?.small || '').trim();
-          const large = String(item.prices?.large || '').trim();
-          const sizes = [];
-          if (small) sizes.push({ name: 'Small', price: Number(small) || 0 });
-          if (large) sizes.push({ name: 'Large', price: Number(large) || Number(small) || 0 });
-          if (!sizes.length) sizes.push({ name: 'Regular', price: 0 });
-          products.push({
-            id: String(item.id),
-            name: String(item.names?.en || 'Item'),
-            categoryId: String(c.id),
-            price: Number(sizes[0]?.price || 0),
-            sizes,
-            menuVisible: item.menuVisible !== false
-          });
-        }
-      }
-      return {
-        schemaVersion: 1,
-        categories,
-        products,
-        updatedAt: Date.now(),
-        updatedBy: authUser?.uid || 'admin'
-      };
-    }
-
-    function applySharedCatalogToAdminState(shared){
-      if (!shared || !Array.isArray(shared.categories) || !Array.isArray(shared.products)) return false;
-      const oldCategories = Array.isArray(state.categories) ? state.categories : [];
-      const oldCategoryMap = new Map(oldCategories.map(c => [String(c.id), c]));
-      const oldItems = new Map();
-      oldCategories.forEach(c => (c.items || []).forEach(i => oldItems.set(String(i.id), i)));
-      const byCategory = new Map();
-      shared.products.forEach(p => {
-        const id = String(p.id);
-        const old = oldItems.get(id) || {};
-        const names = old.names || { en:'', ar:'', ku:'' };
-        names.en = String(p.name || names.en || 'Item');
-        const sizes = Array.isArray(p.sizes) ? p.sizes : [];
-        const small = sizes.find(s => /small/i.test(String(s.name || '')))?.price;
-        const large = sizes.find(s => /large/i.test(String(s.name || '')))?.price;
-        const first = Number(p.price || sizes[0]?.price || 0);
-        const prices = {
-          small: Number.isFinite(Number(small)) ? String(Number(small)) : (sizes.length ? String(first) : String(old.prices?.small || '')),
-          large: Number.isFinite(Number(large)) ? String(Number(large)) : (sizes.length > 1 ? String(Number(sizes[1].price || first)) : String(old.prices?.large || ''))
-        };
-        const next = {
-          ...old,
-          id,
-          names,
-          desc: old.desc || { en:'', ar:'', ku:'' },
-          prices,
-          menuVisible: p.menuVisible !== false,
-          image: String(old.image || ''),
-          kind: old.kind || 'coffee',
-          colors: Array.isArray(old.colors) ? old.colors : ["#2b160c","#7a4a25","#d7a55c"]
-        };
-        const catId = String(p.categoryId || shared.categories[0]?.id || '');
-        if (!byCategory.has(catId)) byCategory.set(catId, []);
-        byCategory.get(catId).push(next);
-      });
-      const nextCategories = shared.categories.map((c, index) => {
-        const old = oldCategoryMap.get(String(c.id)) || {};
-        const names = old.names || { en:'', ar:'', ku:'' };
-        names.en = String(c.name || names.en || `Category ${index + 1}`);
-        return {
-          ...old,
-          id: String(c.id),
-          names,
-          desc: old.desc || { en:'', ar:'', ku:'' },
-          items: byCategory.get(String(c.id)) || []
-        };
-      });
-      state.categories = nextCategories;
-      if (!state.categories.some(c => c.id === state.currentCategoryId)) state.currentCategoryId = state.categories[0]?.id || '';
-      return true;
-    }
-
-    async function publishSharedCatalogFromAdmin(){
-      if (applyingSharedCatalog || !authUser || !firebaseReady || !firebaseHydrated || !db || PAGE_MODE !== 'admin') return;
-      try {
-        sharedCatalogRef = sharedCatalogRef || doc(db, ...SHARED_CATALOG_DOC_PATH);
-        const payload = buildSharedCatalogFromAdminState();
-        await setDoc(sharedCatalogRef, payload, { merge: true });
-      } catch (err) {
-        console.warn('Shared catalog publish failed:', err);
-      }
-    }
-
-    async function startSharedCatalogSync(){
-      if (!db || !firebaseReady) return;
-      try {
-        sharedCatalogRef = doc(db, ...SHARED_CATALOG_DOC_PATH);
-        if (sharedCatalogUnsub) sharedCatalogUnsub();
-        const snap = await getDoc(sharedCatalogRef);
-        if (snap.exists()) {
-          applyingSharedCatalog = true;
-          try {
-            applySharedCatalogToAdminState(snap.data());
-            saveLocalState();
-            render();
-            if (PAGE_MODE === 'admin') populateAdmin();
-          } finally { applyingSharedCatalog = false; }
-        } else if (PAGE_MODE === 'admin' && authUser) {
-          await setDoc(sharedCatalogRef, buildSharedCatalogFromAdminState(), { merge: true });
-        }
-        sharedCatalogUnsub = onSnapshot(sharedCatalogRef, (sharedSnap) => {
-          if (!sharedSnap.exists() || applyingSharedCatalog) return;
-          applyingSharedCatalog = true;
-          try {
-            applySharedCatalogToAdminState(sharedSnap.data());
-            saveLocalState();
-            render();
-            if (PAGE_MODE === 'admin') populateAdmin();
-            if (PAGE_MODE === 'admin' && authUser && menuDocRef) {
-              latestSaveSnapshot = persistedStateSnapshot();
-              saveQueued = true;
-              runFirebaseSaveQueue();
-            }
-          } finally { applyingSharedCatalog = false; }
-        }, err => console.warn('Shared catalog listener error:', err));
-      } catch (err) {
-        console.warn('Shared catalog startup failed:', err);
-      }
-    }
-
 
     let fbApp = null;
     let auth = null;
@@ -2093,7 +1948,6 @@ async function startFirebaseSync(){
       console.error("Firebase listener error:", err);
       setSyncStatus("Firebase listener error", "error");
     });
-    await startSharedCatalogSync();
   }catch(err){
     console.error("Firebase startup error:", err);
     firebaseReady = false;
@@ -2164,21 +2018,6 @@ async function initFirebaseAuth(){
     auth = getAuth(fbApp);
     onAuthStateChanged(auth, async (user) => {
       authUser = user || null;
-      if (authUser) {
-        try {
-          const profileSnap = await getDoc(doc(getFirestore(fbApp), '1911POS', authUser.uid));
-          const role = String(profileSnap.data()?.role || '').toUpperCase();
-          if (role !== 'OWNER') {
-            await signOut(auth);
-            setAuthStatus('Owner access is required for the Admin Panel.', 'error');
-            authUser = null;
-          }
-        } catch (profileErr) {
-          console.warn('Owner profile verification failed:', profileErr);
-          await signOut(auth).catch(()=>{});
-          authUser = null;
-        }
-      }
       updateAuthUI();
 
       try{
@@ -2267,7 +2106,6 @@ let saveInFlight = false;
       latestSaveSnapshot = persistedStateSnapshot();
       saveQueued = true;
       runFirebaseSaveQueue();
-      if (PAGE_MODE === "admin") publishSharedCatalogFromAdmin();
     }
 
     function scheduleSaveState(delay = 450){
@@ -2774,7 +2612,7 @@ let saveInFlight = false;
         return;
       }
 
-      const items = (cat.items || []).filter(item => item.menuVisible !== false).filter(item => {
+      const items = (cat.items || []).filter(item => {
         if (!query) return true;
         const hay = [
           defaultText(item.names, "en"),
@@ -2911,13 +2749,13 @@ let saveInFlight = false;
       $("itemCategorySelect").value = categoryId;
       populateItemSelect(categoryId);
       const item = (cat.items || []).find(i => i.id === itemId) || cat.items?.[0] || null;
+      $("itemMenuVisible").checked = item?.menuVisible !== false;
       if (!item){
         adminItemId = "";
         $("itemName").value = "";
         $("itemDesc").value = "";
         $("priceSmall").value = "";
         $("priceLarge").value = "";
-        $("itemMenuVisible").checked = true;
         previewItemImage = "";
         $("itemPreview").src = DEFAULT_LOGO;
         return;
@@ -2928,7 +2766,6 @@ let saveInFlight = false;
       $("itemDesc").value = item.desc?.[state.lang] || "";
       $("priceSmall").value = item.prices?.small || "";
       $("priceLarge").value = item.prices?.large || "";
-      $("itemMenuVisible").checked = item.menuVisible !== false;
       previewItemImage = item.image || "";
       $("itemPreview").src = previewItemImage || placeholderImage(item, 0);
     }
@@ -3043,8 +2880,8 @@ let saveInFlight = false;
       existingItem.prices.small = $("priceSmall").value.trim();
       existingItem.prices.large = $("priceLarge").value.trim();
       if (existingItem.prices.small && !existingItem.prices.large) existingItem.prices.large = existingItem.prices.small;
-      existingItem.menuVisible = $("itemMenuVisible")?.checked !== false;
       existingItem.image = imageUrl;
+      existingItem.menuVisible = $("itemMenuVisible")?.checked !== false;
       if (idx >= 0) cat.items[idx] = existingItem;
       else cat.items.push(existingItem);
 
@@ -3068,8 +2905,7 @@ let saveInFlight = false;
         prices: { small: "", large: "" },
         kind: "coffee",
         colors: ["#2b160c","#7a4a25","#d7a55c"],
-        image: "",
-        menuVisible: true
+        image: ""
       };
       cat.items = cat.items || [];
       cat.items.unshift(item);
