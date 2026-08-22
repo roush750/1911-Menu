@@ -987,7 +987,7 @@ body[data-page="admin"] .site-launcher{display:none !important}
       </div>
       <div class="actions">
         <button class="action primary" id="authSignInBtn" type="button">Sign In</button>
-        <button class="action" id="authCreateBtn" type="button">Create Account</button>
+        <button class="action" id="authCreateBtn" type="button" style="display:none">Create Account</button>
         <button class="action" id="authSignOutBtn" type="button" style="display:none">Sign Out</button>
       </div>
       <div class="auth-status" id="authStatus">Not signed in.</div>
@@ -1829,6 +1829,7 @@ const FIREBASE_CONFIG = {
 };
 
     const FIREBASE_DOC_PATH = ["menuSites", "1911-cafe"];
+    const ADMIN_UID = "hvqtn531uDVHwwH4uXZx8tVpzKx2";
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
     // ImageKit stores the actual menu images. The private key never appears in this file.
@@ -2017,6 +2018,22 @@ async function initFirebaseAuth(){
     auth = getAuth(fbApp);
     onAuthStateChanged(auth, async (user) => {
       authUser = user || null;
+
+      if (authUser && String(authUser.uid) !== ADMIN_UID) {
+        // Do not expose the Admin Panel to POS owner/staff accounts.
+        // Keep the Firebase session intact so this page cannot log another
+        // application out as a side effect.
+        authUser = null;
+        if (PAGE_MODE === "admin") {
+          const gate = $("authGate");
+          if (gate) gate.classList.add("open");
+          $("app").style.display = "none";
+        }
+        setAuthStatus("Admin account required.", "error");
+        updateAuthUI();
+        return;
+      }
+
       updateAuthUI();
 
       try{
@@ -3057,7 +3074,7 @@ let saveInFlight = false;
       $("resetLogoBtn").addEventListener("click", resetLogo);
 
       $("authSignInBtn").addEventListener("click", () => handleAuthAction("signin"));
-      $("authCreateBtn").addEventListener("click", () => handleAuthAction("create"));
+      $("authCreateBtn")?.addEventListener("click", () => handleAuthAction("create"));
       $("authSignOutBtn").addEventListener("click", handleSignOut);
       $("signOutTopBtn").addEventListener("click", handleSignOut);
       $("viewMenuTopBtn").addEventListener("click", () => {
