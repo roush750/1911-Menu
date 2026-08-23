@@ -1946,7 +1946,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       measurementId: "G-RDY676HQLB"
     };
 
-    const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
+    const FIREBASE_DOC_PATH = ["menuSites", "1911-cafe"];
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
     // ImageKit stores the actual menu images. The private key never appears in this file.
@@ -1958,7 +1958,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     // Shared catalog: only these fields are synchronized between Admin, POS, and Customer Menu.
     // Admin owns descriptions/images/logo/site content. POS owns inventory/revenue/staff/receipts/recipes.
     // Price, sizes, category, and English names are shared and use stable IDs.
-    const SHARED_CATALOG_DOC_PATH = ["menuSites", "1911CoffeeShop", "shared", "catalog"];
+    const SHARED_CATALOG_DOC_PATH = ["menuSites", "1911-cafe", "shared", "catalog"];
     let sharedCatalogRef = null;
     let sharedCatalogUnsub = null;
     let applyingSharedCatalog = false;
