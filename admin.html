@@ -1156,6 +1156,10 @@ body[data-page="admin"] .site-launcher{display:none !important}
               <input id="priceSmall" type="text" inputmode="numeric" placeholder="Small" style="flex:1;min-width:120px" />
               <input id="priceLarge" type="text" inputmode="numeric" placeholder="Large" style="flex:1;min-width:120px" />
             </div>
+            <label style="display:flex;align-items:center;gap:8px;margin-top:10px">
+              <input id="itemTwoSizes" type="checkbox" />
+              <span>Use Small + Large sizes</span>
+            </label>
           </div>
           <div class="field">
             <label><input id="itemMenuVisible" type="checkbox" checked /> Show item on customer Menu</label>
@@ -1163,9 +1167,16 @@ body[data-page="admin"] .site-launcher{display:none !important}
           <div class="field">
             <label id="itemImageLabel">Upload item picture</label>
             <input id="itemImageInput" type="file" accept="image/*" />
+            <button class="action" id="removeItemImageBtn" type="button" style="margin-top:8px">Remove Image</button>
           </div>
           <div class="actions">
             <button class="action" id="removeItemImageBtn" type="button">Remove Image</button>
+          </div>
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:8px">
+              <input id="itemMenuVisible" type="checkbox" checked />
+              <span>Show item on customer menu</span>
+            </label>
           </div>
           <div class="actions">
             <button class="action primary" id="saveItemBtn" type="button">Save Item</button>
@@ -1783,6 +1794,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
             small: String(i.prices?.small || ""),
             large: String(i.prices?.large || "")
           },
+          pricingMode: i.pricingMode === "sizes" || i.prices?.large ? "sizes" : "single",
+          menuVisible: i.menuVisible !== false,
           kind: String(i.kind || "coffee"),
           colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
           image: String(i.image || ""),
@@ -2762,6 +2775,8 @@ let saveInFlight = false;
         $("itemDesc").value = "";
         $("priceSmall").value = "";
         $("priceLarge").value = "";
+        if ($("itemTwoSizes")) $("itemTwoSizes").checked = false;
+        if ($("itemMenuVisible")) $("itemMenuVisible").checked = true;
         previewItemImage = "";
         $("itemPreview").src = DEFAULT_LOGO;
         return;
@@ -2901,8 +2916,11 @@ let saveInFlight = false;
       existingItem.desc[state.lang] = $("itemDesc").value.trim();
       existingItem.prices.small = $("priceSmall").value.trim();
       existingItem.prices.large = $("priceLarge").value.trim();
+      const twoSizes = $("itemTwoSizes")?.checked === true;
+      existingItem.pricingMode = twoSizes ? "sizes" : "single";
+      if (!twoSizes) existingItem.prices.large = "";
       existingItem.image = imageUrl;
-      existingItem.menuVisible = $("itemMenuVisible")?.checked !== false;
+      existingItem.menuVisible = $("itemMenuVisible")?.checked === true;
       if (idx >= 0) cat.items[idx] = existingItem;
       else cat.items.push(existingItem);
 
@@ -3100,6 +3118,8 @@ let saveInFlight = false;
         previewLogoImage = URL.createObjectURL(file);
         $("logoPreview").src = previewLogoImage;
       });
+
+      $("removeItemImageBtn")?.addEventListener("click", removeItemImage);
 
       $("itemImageInput").addEventListener("change", (e) => {
         const file = e.target.files?.[0];
