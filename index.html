@@ -1895,6 +1895,7 @@ import { getFirestore, doc, onSnapshot, getDoc } from "https://www.gstatic.com/f
             small: String(i.prices?.small || ""),
             large: String(i.prices?.large || "")
           },
+          pricingMode: i.pricingMode === "sizes" || i.prices?.large ? "sizes" : "single",
           kind: String(i.kind || "coffee"),
           colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
           image: String(i.image || ""),
