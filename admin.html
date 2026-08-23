@@ -987,7 +987,7 @@ body[data-page="admin"] .site-launcher{display:none !important}
       </div>
       <div class="actions">
         <button class="action primary" id="authSignInBtn" type="button">Sign In</button>
-        <button class="action" id="authCreateBtn" type="button">Create Account</button>
+        <button class="action" id="authCreateBtn" type="button" style="display:none">Create Account</button>
         <button class="action" id="authSignOutBtn" type="button" style="display:none">Sign Out</button>
       </div>
       <div class="auth-status" id="authStatus">Not signed in.</div>
@@ -1156,27 +1156,10 @@ body[data-page="admin"] .site-launcher{display:none !important}
               <input id="priceSmall" type="text" inputmode="numeric" placeholder="Small" style="flex:1;min-width:120px" />
               <input id="priceLarge" type="text" inputmode="numeric" placeholder="Large" style="flex:1;min-width:120px" />
             </div>
-            <label style="display:flex;align-items:center;gap:8px;margin-top:10px">
-              <input id="itemTwoSizes" type="checkbox" />
-              <span>Use Small + Large sizes</span>
-            </label>
-          </div>
-          <div class="field">
-            <label><input id="itemMenuVisible" type="checkbox" checked /> Show item on customer Menu</label>
           </div>
           <div class="field">
             <label id="itemImageLabel">Upload item picture</label>
             <input id="itemImageInput" type="file" accept="image/*" />
-            <button class="action" id="removeItemImageBtn" type="button" style="margin-top:8px">Remove Image</button>
-          </div>
-          <div class="actions">
-            <button class="action" id="removeItemImageBtn" type="button">Remove Image</button>
-          </div>
-          <div class="field">
-            <label style="display:flex;align-items:center;gap:8px">
-              <input id="itemMenuVisible" type="checkbox" checked />
-              <span>Show item on customer menu</span>
-            </label>
           </div>
           <div class="actions">
             <button class="action primary" id="saveItemBtn" type="button">Save Item</button>
@@ -1794,12 +1777,9 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
             small: String(i.prices?.small || ""),
             large: String(i.prices?.large || "")
           },
-          pricingMode: i.pricingMode === "sizes" || i.prices?.large ? "sizes" : "single",
-          menuVisible: i.menuVisible !== false,
           kind: String(i.kind || "coffee"),
           colors: Array.isArray(i.colors) && i.colors.length >= 3 ? i.colors.slice(0,3) : ["#2b160c","#7a4a25","#d7a55c"],
-          image: String(i.image || ""),
-          menuVisible: i.menuVisible !== false
+          image: String(i.image || "")
         })) : []
       })) : base.categories;
 
@@ -1849,6 +1829,7 @@ const FIREBASE_CONFIG = {
 };
 
     const FIREBASE_DOC_PATH = ["menuSites", "1911-cafe"];
+    const ADMIN_UID = "hvqtn531uDVHwwH4uXZx8tVpzKx2";
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
     // ImageKit stores the actual menu images. The private key never appears in this file.
@@ -1870,7 +1851,6 @@ const FIREBASE_CONFIG = {
     let browseCategoryId = "";
     let pendingLogoFile = null;
     let pendingItemFile = null;
-    let removeItemImageRequested = false;
 
     function hasFirebaseConfig(){
       return ["apiKey","authDomain","projectId","storageBucket","messagingSenderId","appId"]
@@ -2038,6 +2018,22 @@ async function initFirebaseAuth(){
     auth = getAuth(fbApp);
     onAuthStateChanged(auth, async (user) => {
       authUser = user || null;
+
+      if (authUser && String(authUser.uid) !== ADMIN_UID) {
+        // Do not expose the Admin Panel to POS owner/staff accounts.
+        // Keep the Firebase session intact so this page cannot log another
+        // application out as a side effect.
+        authUser = null;
+        if (PAGE_MODE === "admin") {
+          const gate = $("authGate");
+          if (gate) gate.classList.add("open");
+          $("app").style.display = "none";
+        }
+        setAuthStatus("Admin account required.", "error");
+        updateAuthUI();
+        return;
+      }
+
       updateAuthUI();
 
       try{
@@ -2048,7 +2044,7 @@ async function initFirebaseAuth(){
       }
 
       if (!authUser && PAGE_MODE === "admin") {
-        setSyncStatus("Signed out — viewing read-only Firebase data", "offline");
+        setSyncStatus("Not signed in — Firebase is read-only", "offline");
       }
     });
   }
@@ -2775,8 +2771,6 @@ let saveInFlight = false;
         $("itemDesc").value = "";
         $("priceSmall").value = "";
         $("priceLarge").value = "";
-        if ($("itemTwoSizes")) $("itemTwoSizes").checked = false;
-        if ($("itemMenuVisible")) $("itemMenuVisible").checked = true;
         previewItemImage = "";
         $("itemPreview").src = DEFAULT_LOGO;
         return;
@@ -2787,7 +2781,6 @@ let saveInFlight = false;
       $("itemDesc").value = item.desc?.[state.lang] || "";
       $("priceSmall").value = item.prices?.small || "";
       $("priceLarge").value = item.prices?.large || "";
-      if ($("itemMenuVisible")) $("itemMenuVisible").checked = item.menuVisible !== false;
       previewItemImage = item.image || "";
       $("itemPreview").src = previewItemImage || placeholderImage(item, 0);
     }
@@ -2864,36 +2857,21 @@ let saveInFlight = false;
       populateAdmin();
     }
 
-    function removeItemImage(){
-      const catId = adminItemCategoryId || state.currentCategoryId;
-      const cat = state.categories.find(c => c.id === catId);
-      const item = cat?.items?.find(i => i.id === adminItemId);
-      if (!item) return;
-      if (!item.image && !pendingItemFile) return;
-      if (!confirm("Remove the image from this product? The product itself will remain.")) return;
-      pendingItemFile = null;
-      previewItemImage = "";
-      removeItemImageRequested = true;
-      populateItemForm(catId, item.id);
-      const preview = $("itemPreview");
-      if (preview) preview.removeAttribute("src");
-      setSyncStatus("Image removal pending — save the item", "connecting");
-    }
-
     async function saveItem(){
       const catId = adminItemCategoryId || state.currentCategoryId;
       const cat = state.categories.find(c => c.id === catId);
       if (!cat) return;
 
-      const existingBeforeSave = (cat.items || []).find(i => i.id === adminItemId);
-      let imageUrl = removeItemImageRequested ? "" : (previewItemImage || existingBeforeSave?.image || "");
+      let imageUrl = previewItemImage || "";
       if (pendingItemFile){
         try{
           const uploaded = await uploadFileToImageKit(pendingItemFile, "item");
-          if (uploaded) imageUrl = uploaded;
+          if (uploaded) {
+            imageUrl = uploaded;
+          }
         }catch(uploadErr){
-          console.error("Item ImageKit upload failed:", uploadErr);
-          throw new Error("Image upload failed. The product was not saved.");
+          console.warn("Item upload failed, using embedded image fallback:", uploadErr);
+          imageUrl = await fileToDataUrl(pendingItemFile);
         }
       }
 
@@ -2906,8 +2884,7 @@ let saveInFlight = false;
         prices: { small:"", large:"" },
         kind: "coffee",
         colors: ["#2b160c","#7a4a25","#d7a55c"],
-        image: "",
-        menuVisible: true
+        image: ""
       };
       existingItem.names = existingItem.names || { en:"", ar:"", ku:"" };
       existingItem.desc = existingItem.desc || { en:"", ar:"", ku:"" };
@@ -2916,11 +2893,8 @@ let saveInFlight = false;
       existingItem.desc[state.lang] = $("itemDesc").value.trim();
       existingItem.prices.small = $("priceSmall").value.trim();
       existingItem.prices.large = $("priceLarge").value.trim();
-      const twoSizes = $("itemTwoSizes")?.checked === true;
-      existingItem.pricingMode = twoSizes ? "sizes" : "single";
-      if (!twoSizes) existingItem.prices.large = "";
+      if (existingItem.prices.small && !existingItem.prices.large) existingItem.prices.large = existingItem.prices.small;
       existingItem.image = imageUrl;
-      existingItem.menuVisible = $("itemMenuVisible")?.checked === true;
       if (idx >= 0) cat.items[idx] = existingItem;
       else cat.items.push(existingItem);
 
@@ -2928,7 +2902,6 @@ let saveInFlight = false;
       state.currentCategoryId = cat.id;
       pendingItemFile = null;
       previewItemImage = "";
-      removeItemImageRequested = false;
       saveState();
       render();
       populateAdmin();
@@ -2945,14 +2918,12 @@ let saveInFlight = false;
         prices: { small: "", large: "" },
         kind: "coffee",
         colors: ["#2b160c","#7a4a25","#d7a55c"],
-        image: "",
-        menuVisible: true
+        image: ""
       };
       cat.items = cat.items || [];
       cat.items.unshift(item);
       adminItemId = item.id;
       pendingItemFile = null;
-      removeItemImageRequested = false;
       saveState();
       render();
       populateAdmin();
@@ -3094,7 +3065,6 @@ let saveInFlight = false;
       $("cancelCategoryBtn").addEventListener("click", clearCategoryAction);
 
       $("saveItemBtn").addEventListener("click", () => stageItemAction("save"));
-      $("removeItemImageBtn")?.addEventListener("click", removeItemImage);
       $("newItemBtn").addEventListener("click", () => stageItemAction("new"));
       $("deleteItemBtn").addEventListener("click", () => stageItemAction("delete"));
       $("confirmItemBtn").addEventListener("click", confirmItemAction);
@@ -3104,7 +3074,7 @@ let saveInFlight = false;
       $("resetLogoBtn").addEventListener("click", resetLogo);
 
       $("authSignInBtn").addEventListener("click", () => handleAuthAction("signin"));
-      $("authCreateBtn").addEventListener("click", () => handleAuthAction("create"));
+      $("authCreateBtn")?.addEventListener("click", () => handleAuthAction("create"));
       $("authSignOutBtn").addEventListener("click", handleSignOut);
       $("signOutTopBtn").addEventListener("click", handleSignOut);
       $("viewMenuTopBtn").addEventListener("click", () => {
@@ -3118,8 +3088,6 @@ let saveInFlight = false;
         previewLogoImage = URL.createObjectURL(file);
         $("logoPreview").src = previewLogoImage;
       });
-
-      $("removeItemImageBtn")?.addEventListener("click", removeItemImage);
 
       $("itemImageInput").addEventListener("change", (e) => {
         const file = e.target.files?.[0];
