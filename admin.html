@@ -987,7 +987,7 @@ body[data-page="admin"] .site-launcher{display:none !important}
       </div>
       <div class="actions">
         <button class="action primary" id="authSignInBtn" type="button">Sign In</button>
-        <button class="action" id="authCreateBtn" type="button" style="display:none">Create Account</button>
+        <button class="action" id="authCreateBtn" type="button">Create Account</button>
         <button class="action" id="authSignOutBtn" type="button" style="display:none">Sign Out</button>
       </div>
       <div class="auth-status" id="authStatus">Not signed in.</div>
@@ -1151,15 +1151,23 @@ body[data-page="admin"] .site-launcher{display:none !important}
           </div>
           <div class="field"><label id="itemDescLabel">Description (selected language)</label><textarea id="itemDesc"></textarea></div>
           <div class="field">
-            <label id="priceLabel">Prices</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input id="priceSmall" type="text" inputmode="numeric" placeholder="Small" style="flex:1;min-width:120px" />
+            <label id="priceLabel">Pricing</label>
+            <select id="priceMode" class="select" style="margin-bottom:8px">
+              <option value="single">One size</option>
+              <option value="two">Small + Large</option>
+            </select>
+            <div id="singlePriceWrap" style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="priceSmall" type="text" inputmode="numeric" placeholder="Price" style="flex:1;min-width:120px" />
+            </div>
+            <div id="twoPriceWrap" style="display:none;gap:8px;flex-wrap:wrap">
+              <input id="priceSmallTwo" type="text" inputmode="numeric" placeholder="Small" style="flex:1;min-width:120px" />
               <input id="priceLarge" type="text" inputmode="numeric" placeholder="Large" style="flex:1;min-width:120px" />
             </div>
           </div>
           <div class="field">
             <label id="itemImageLabel">Upload item picture</label>
             <input id="itemImageInput" type="file" accept="image/*" />
+            <div style="margin-top:8px"><button class="action" id="removeItemImageBtn" type="button">Remove Image</button></div>
           </div>
           <div class="actions">
             <button class="action primary" id="saveItemBtn" type="button">Save Item</button>
@@ -1300,6 +1308,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
         saveItem: "Save Item",
         newItem: "New Item",
         deleteItem: "Delete Item",
+        removeItemImage: "Remove Image",
         exportJson: "Export JSON",
         resetMenu: "Reset Demo Menu",
         itemPreviewFallback: "Item",
@@ -1828,8 +1837,7 @@ const FIREBASE_CONFIG = {
   measurementId: "G-RDY676HQLB"
 };
 
-    const FIREBASE_DOC_PATH = ["menuSites", "1911-cafe"];
-    const ADMIN_UID = "hvqtn531uDVHwwH4uXZx8tVpzKx2";
+    const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
     // ImageKit stores the actual menu images. The private key never appears in this file.
@@ -2018,22 +2026,6 @@ async function initFirebaseAuth(){
     auth = getAuth(fbApp);
     onAuthStateChanged(auth, async (user) => {
       authUser = user || null;
-
-      if (authUser && String(authUser.uid) !== ADMIN_UID) {
-        // Do not expose the Admin Panel to POS owner/staff accounts.
-        // Keep the Firebase session intact so this page cannot log another
-        // application out as a side effect.
-        authUser = null;
-        if (PAGE_MODE === "admin") {
-          const gate = $("authGate");
-          if (gate) gate.classList.add("open");
-          $("app").style.display = "none";
-        }
-        setAuthStatus("Admin account required.", "error");
-        updateAuthUI();
-        return;
-      }
-
       updateAuthUI();
 
       try{
@@ -2044,7 +2036,7 @@ async function initFirebaseAuth(){
       }
 
       if (!authUser && PAGE_MODE === "admin") {
-        setSyncStatus("Not signed in — Firebase is read-only", "offline");
+        setSyncStatus("Signed out — viewing read-only Firebase data", "offline");
       }
     });
   }
@@ -2758,6 +2750,32 @@ let saveInFlight = false;
       $("itemSelect").value = adminItemId || "";
     }
 
+    function togglePriceMode(){
+      const mode = $("priceMode")?.value === "two" ? "two" : "single";
+      const single = $("singlePriceWrap");
+      const two = $("twoPriceWrap");
+      if (single) single.style.display = mode === "single" ? "flex" : "none";
+      if (two) two.style.display = mode === "two" ? "flex" : "none";
+    }
+
+    function removeItemImage(){
+      const catId = adminItemCategoryId || state.currentCategoryId;
+      const cat = state.categories.find(c => c.id === catId);
+      const item = cat?.items?.find(i => i.id === adminItemId);
+      if (!item) return;
+      if (!confirm("Remove this product image from the menu?")) return;
+      item.image = "";
+      previewItemImage = "";
+      pendingItemFile = null;
+      const input = $("itemImageInput");
+      if (input) input.value = "";
+      const preview = $("itemPreview");
+      if (preview) preview.src = placeholderImage(item, 0);
+      saveState();
+      render();
+      populateAdmin();
+    }
+
     function populateItemForm(categoryId, itemId){
       const cat = state.categories.find(c => c.id === categoryId);
       if (!cat) return;
@@ -2770,7 +2788,10 @@ let saveInFlight = false;
         $("itemName").value = "";
         $("itemDesc").value = "";
         $("priceSmall").value = "";
+        $("priceSmallTwo").value = "";
         $("priceLarge").value = "";
+        $("priceMode").value = "single";
+        togglePriceMode();
         previewItemImage = "";
         $("itemPreview").src = DEFAULT_LOGO;
         return;
@@ -2779,8 +2800,13 @@ let saveInFlight = false;
       $("itemSelect").value = item.id;
       $("itemName").value = item.names?.[state.lang] || "";
       $("itemDesc").value = item.desc?.[state.lang] || "";
-      $("priceSmall").value = item.prices?.small || "";
-      $("priceLarge").value = item.prices?.large || "";
+      const smallPrice = item.prices?.small || "";
+      const largePrice = item.prices?.large || "";
+      $("priceSmall").value = smallPrice;
+      $("priceSmallTwo").value = smallPrice;
+      $("priceLarge").value = largePrice;
+      $("priceMode").value = largePrice !== "" ? "two" : "single";
+      togglePriceMode();
       previewItemImage = item.image || "";
       $("itemPreview").src = previewItemImage || placeholderImage(item, 0);
     }
@@ -2891,9 +2917,12 @@ let saveInFlight = false;
       existingItem.prices = existingItem.prices || { small:"", large:"" };
       existingItem.names[state.lang] = $("itemName").value.trim();
       existingItem.desc[state.lang] = $("itemDesc").value.trim();
-      existingItem.prices.small = $("priceSmall").value.trim();
-      existingItem.prices.large = $("priceLarge").value.trim();
-      if (existingItem.prices.small && !existingItem.prices.large) existingItem.prices.large = existingItem.prices.small;
+      const pricingMode = $("priceMode").value === "two" ? "two" : "single";
+      const smallValue = (pricingMode === "two" ? $("priceSmallTwo").value : $("priceSmall").value).trim();
+      const largeValue = pricingMode === "two" ? $("priceLarge").value.trim() : "";
+      existingItem.pricingMode = pricingMode;
+      existingItem.prices.small = smallValue;
+      existingItem.prices.large = largeValue;
       existingItem.image = imageUrl;
       if (idx >= 0) cat.items[idx] = existingItem;
       else cat.items.push(existingItem);
@@ -2916,6 +2945,7 @@ let saveInFlight = false;
         names: { en: "", ar: "", ku: "" },
         desc: { en: "", ar: "", ku: "" },
         prices: { small: "", large: "" },
+        pricingMode: "single",
         kind: "coffee",
         colors: ["#2b160c","#7a4a25","#d7a55c"],
         image: ""
@@ -3074,7 +3104,7 @@ let saveInFlight = false;
       $("resetLogoBtn").addEventListener("click", resetLogo);
 
       $("authSignInBtn").addEventListener("click", () => handleAuthAction("signin"));
-      $("authCreateBtn")?.addEventListener("click", () => handleAuthAction("create"));
+      $("authCreateBtn").addEventListener("click", () => handleAuthAction("create"));
       $("authSignOutBtn").addEventListener("click", handleSignOut);
       $("signOutTopBtn").addEventListener("click", handleSignOut);
       $("viewMenuTopBtn").addEventListener("click", () => {
@@ -3088,6 +3118,9 @@ let saveInFlight = false;
         previewLogoImage = URL.createObjectURL(file);
         $("logoPreview").src = previewLogoImage;
       });
+
+      $("priceMode")?.addEventListener("change", togglePriceMode);
+      $("removeItemImageBtn")?.addEventListener("click", removeItemImage);
 
       $("itemImageInput").addEventListener("change", (e) => {
         const file = e.target.files?.[0];
