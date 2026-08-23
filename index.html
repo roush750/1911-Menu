@@ -859,7 +859,19 @@
       .lang-switch{flex:1}
       .items{grid-template-columns:1fr}
     }
-  </style>
+  
+.visual-menu-heading{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  margin:42px 0 8px;padding:12px 0 8px;
+  font-family:Georgia,"Times New Roman",serif;
+  letter-spacing:.22em;text-align:center;
+  color:var(--ink,#f6ead7);
+  text-shadow:0 0 18px rgba(255,215,150,.28);
+}
+.visual-menu-heading strong{font-size:clamp(1.15rem,3vw,1.7rem);font-weight:700;}
+.visual-menu-heading span{opacity:.65;font-size:.85rem;}
+.visual-menu-heading:first-child{margin-top:10px;}
+</style>
 <style>
 /* Phase 5A navigation polish */
 .topbar{
@@ -1157,24 +1169,6 @@
         </div>
       </div>
 
-      <div class="launcher-step hidden" id="branchStep">
-        <div class="launcher-step-label" id="branchStepLabel">Restaurant section</div>
-        <div class="launcher-options">
-          <button class="launcher-card active" type="button" data-branch="cafe">
-            <span class="launcher-card-name" id="launcherCafeTitle">1911 Cafe</span>
-            <span class="launcher-card-desc" id="launcherCafeDesc">Open now</span>
-          </button>
-          <button class="launcher-card soon" type="button" data-branch="fastfood">
-            <span class="launcher-card-name" id="launcherFastFoodTitle">1911 Fast Food</span>
-            <span class="launcher-card-desc" id="launcherFastFoodDesc">Coming soon</span>
-          </button>
-          <button class="launcher-card soon" type="button" data-branch="desserts">
-            <span class="launcher-card-name" id="launcherDessertsTitle">1911 Desserts</span>
-            <span class="launcher-card-desc" id="launcherDessertsDesc">Coming soon</span>
-          </button>
-        </div>
-        <button class="launcher-back" id="launcherBackLanguage" type="button">← Change language</button>
-      </div>
       <div class="launcher-foot" id="launcherFoot">Choose a language to continue.</div>
     </div>
   </div>
@@ -1188,17 +1182,6 @@
         </div>
       </div>
       <div class="top-actions">
-        <div class="section-switch" id="sectionSwitch">
-          <button class="compact-control" id="sectionSwitchBtn" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span id="sectionSwitchLabel">1911 Café</span>
-            <span class="control-chevron" aria-hidden="true">⌄</span>
-          </button>
-          <div class="control-popover section-popover" id="sectionPopover" role="menu" aria-hidden="true">
-            <button type="button" class="popover-option" data-section-choice="cafe">1911 Café</button>
-            <button type="button" class="popover-option" data-section-choice="fastfood">1911 Fast Food</button>
-            <button type="button" class="popover-option" data-section-choice="desserts">1911 Desserts</button>
-          </div>
-        </div>
         <button class="compact-control globe-only-control" id="backToLanguageBtn" type="button" aria-label="Language selection" title="Language selection">
           <span aria-hidden="true">🌐</span>
         </button>
@@ -1931,7 +1914,7 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
       state.lang = ["en","ar","ku"].includes(state.lang) ? state.lang : "en";
       state.logo = state.logo || DEFAULT_LOGO;
       state.search = String(state.search || "");
-      state.section = ["cafe","fastfood","desserts"].includes(state.section) ? state.section : null;
+      state.section = null;
       ensureSiteContent(state);
       if (!Array.isArray(state.topCards) || !state.topCards.length) state.topCards = base.topCards;
       return state;
@@ -1954,7 +1937,7 @@ import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstat
     const adminModal = $("adminModal");
 
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
-      apiKey: "AIzaSyB_m-lt22FJ7fShyRHDgPEbkYTSOzMpMYM",
+      apiKey: "AIzaSyB_m-t22EZJ7fShvRHdgPEhKYTOSzMpMYM",
       authDomain: "menu-e4cef.firebaseapp.com",
       projectId: "menu-e4cef",
       storageBucket: "menu-e4cef.firebasestorage.app",
@@ -1963,7 +1946,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
       measurementId: "G-RDY676HQLB"
     };
 
-    const FIREBASE_DOC_PATH = ["menuSites", "1911-cafe"];
+    const FIREBASE_DOC_PATH = ["menuSites", "1911CoffeeShop"];
     const LOCAL_STORAGE_KEY = "1911_menu_hybrid_v3";
     const FIREBASE_ASSET_PREFIX = "1911MenuAssets";
     // ImageKit stores the actual menu images. The private key never appears in this file.
@@ -1975,7 +1958,7 @@ const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
     // Shared catalog: only these fields are synchronized between Admin, POS, and Customer Menu.
     // Admin owns descriptions/images/logo/site content. POS owns inventory/revenue/staff/receipts/recipes.
     // Price, sizes, category, and English names are shared and use stable IDs.
-    const SHARED_CATALOG_DOC_PATH = ["menuSites", "1911-cafe"];
+    const SHARED_CATALOG_DOC_PATH = ["menuSites", "1911CoffeeShop", "shared", "catalog"];
     let sharedCatalogRef = null;
     let sharedCatalogUnsub = null;
     let applyingSharedCatalog = false;
@@ -2217,8 +2200,7 @@ async function startFirebaseSync(){
       console.error("Firebase listener error:", err);
       setSyncStatus("Firebase listener error", "error");
     });
-    // The main menuSites/1911-cafe document is the canonical catalog; no secondary catalog overlay.
-
+    await startSharedCatalogSync();
   }catch(err){
     console.error("Firebase startup error:", err);
     firebaseReady = false;
@@ -2270,7 +2252,7 @@ let saveInFlight = false;
       latestSaveSnapshot = persistedStateSnapshot();
       saveQueued = true;
       runFirebaseSaveQueue();
-
+      if (PAGE_MODE === "admin") publishSharedCatalogFromAdmin();
     }
 
     function scheduleSaveState(delay = 450){
@@ -2363,14 +2345,14 @@ let saveInFlight = false;
     };
 
     function closeControlPopovers(){
-      ["sectionPopover"].forEach(id => {
+      [].forEach(id => {
         const pop = $(id);
         if (pop) {
           pop.classList.remove("open");
           pop.setAttribute("aria-hidden","true");
         }
       });
-      ["sectionSwitchBtn"].forEach(id => {
+      [].forEach(id => {
         const btn = $(id);
         if (btn) btn.setAttribute("aria-expanded","false");
       });
@@ -2392,23 +2374,6 @@ let saveInFlight = false;
     function updateTopControls(){
       const currentLanguage = $("currentLanguageLabel");
       if (currentLanguage) currentLanguage.textContent = LANGUAGE_LABELS[state.lang] || LANGUAGE_LABELS.en;
-
-      const sectionLabel = $("sectionSwitchLabel");
-      const sectionNames = {
-        en: { cafe:"1911 Café", fastfood:"1911 Fast Food", desserts:"1911 Desserts" },
-        ar: { cafe:"1911 كافيه", fastfood:"1911 فاست فود", desserts:"1911 حلويات" },
-        ku: { cafe:"1911 کافێ", fastfood:"1911 فاست فود", desserts:"1911 دێزەرت" }
-      };
-      if (sectionLabel){
-        sectionLabel.textContent = sectionNames[state.lang]?.[state.section] || (
-          state.lang === "ar" ? "تغيير القسم" :
-          state.lang === "ku" ? "گۆڕینی بەش" : "Change Section"
-        );
-      }
-
-      document.querySelectorAll("[data-section-choice]").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.sectionChoice === state.section);
-      });
     }
 
 
@@ -2547,8 +2512,6 @@ let saveInFlight = false;
       if (footerBtn) footerBtn.addEventListener("click", () => {
         location.href = PAGE_MODE === "admin" ? "index.html" : "admin.html";
       });
-      const switchBtn = $("switchSectionBtn");
-      if (switchBtn) switchBtn.addEventListener("click", openBranchChooser);
       $("searchInput").placeholder = UI[lang].searchPlaceholder;
       $("previewCopy").textContent = UI[lang].previewCopy;
       $("adminTitle").textContent = UI[lang].adminTitle;
@@ -2592,18 +2555,14 @@ let saveInFlight = false;
     }
 
     function returnToLanguageSelection(){
-      // Navigation-only action: return to the existing initial language screen.
-      // Preserve menu data, authentication, Firebase state, and current language
-      // until the customer explicitly chooses a language again.
       state.section = null;
       saveLocalState();
-
+      const launcher = $("siteLauncher");
+      const shell = $("app");
+      if (launcher) launcher.classList.remove("hidden");
+      if (shell) shell.style.display = "none";
       const languageStep = $("languageStep");
-      const branchStep = $("branchStep");
       if (languageStep) languageStep.classList.remove("hidden");
-      if (branchStep) branchStep.classList.add("hidden");
-
-      closeControlPopovers();
       renderLauncherState();
       window.scrollTo({ top: 0, behavior: "auto" });
     }
@@ -2611,143 +2570,26 @@ let saveInFlight = false;
     function renderLauncherState(){
       const launcher = $("siteLauncher");
       const shell = $("app");
-      const ready = PAGE_MODE === "admin" ? true : state.section === "cafe";
+      const ready = PAGE_MODE === "admin" || !!state.lang;
       if (launcher) launcher.classList.toggle("hidden", PAGE_MODE === "admin" || ready);
       if (shell) shell.style.display = ready ? "block" : "none";
 
       const lang = ["en","ar","ku"].includes(state.lang) ? state.lang : "en";
       const texts = {
-        en: {
-          languageTitle: "Choose your language",
-          languageSub: "Start by choosing the language for the menu.",
-          languageLabel: "Language",
-          branchTitle: "Choose your section",
-          branchSub: "Now choose the 1911 restaurant section.",
-          branchLabel: "Restaurant section",
-          footLanguage: "Choose a language to continue.",
-          footBranch: "Tap Café to enter the menu.",
-          back: "← Change language",
-          cafeTitle: "1911 Café",
-          fastFoodTitle: "1911 Fast Food",
-          dessertsTitle: "1911 Desserts",
-          cafeDesc: "Open now",
-          soon: "Coming soon"
-        },
-        ar: {
-          languageTitle: "اختر لغتك",
-          languageSub: "ابدأ باختيار لغة القائمة.",
-          languageLabel: "اللغة",
-          branchTitle: "اختر القسم",
-          branchSub: "الآن اختر قسم 1911 الذي تريد تصفحه.",
-          branchLabel: "قسم المطعم",
-          footLanguage: "اختر اللغة للمتابعة.",
-          footBranch: "اضغط على الكافيه للدخول إلى القائمة.",
-          back: "← تغيير اللغة",
-          cafeTitle: "1911 كافيه",
-          fastFoodTitle: "1911 فاست فود",
-          dessertsTitle: "1911 حلويات",
-          cafeDesc: "مفتوح الآن",
-          soon: "قريبًا"
-        },
-        ku: {
-          languageTitle: "زمانەکەت هەڵبژێرە",
-          languageSub: "سەرەتا زمانی مێنۆکە هەڵبژێرە.",
-          languageLabel: "زمان",
-          branchTitle: "بەشەکەت هەڵبژێرە",
-          branchSub: "ئێستا بەشی 1911 ـەکەی دەتەوێت هەڵبژێرە.",
-          branchLabel: "بەشی خواردنگە",
-          footLanguage: "زمانێک هەڵبژێرە بۆ بەردەوامبوون.",
-          footBranch: "کافێ لێبدە بۆ چوونە ناو مێنۆکە.",
-          back: "← گۆڕینی زمان",
-          cafeTitle: "1911 کافێ",
-          fastFoodTitle: "1911 فاست فود",
-          dessertsTitle: "1911 دێزەرت",
-          cafeDesc: "ئێستا کراوە",
-          soon: "بەم زووانە"
-        }
+        en: { languageTitle: "Choose your language", languageSub: "Start by choosing the language for the menu.", languageLabel: "Language", footLanguage: "Choose a language to continue.", back: "🌐 Change language" },
+        ar: { languageTitle: "اختر لغتك", languageSub: "ابدأ باختيار لغة القائمة.", languageLabel: "اللغة", footLanguage: "اختر اللغة للمتابعة.", back: "🌐 تغيير اللغة" },
+        ku: { languageTitle: "زمانەکەت هەڵبژێرە", languageSub: "سەرەتا زمانی مێنۆکە هەڵبژێرە.", languageLabel: "زمان", footLanguage: "زمانێک هەڵبژێرە بۆ بەردەوامبوون.", back: "🌐 گۆڕینی زمان" }
       }[lang];
 
-      document.title = state.section === "cafe" ? "1911 Coffee Shop Menu" : state.section === "fastfood" ? "1911 Fast Food" : state.section === "desserts" ? "1911 Desserts" : "1911 Group";
+      document.title = "1911 Menu";
       if ($("launcherLogo")) $("launcherLogo").src = state.logo || DEFAULT_LOGO;
-
-      const languageStep = $("languageStep");
-      const branchStep = $("branchStep");
-      const showingBranch = !!(languageStep && branchStep && languageStep.classList.contains("hidden") && !branchStep.classList.contains("hidden"));
-
-      if (languageStep && branchStep){
-        languageStep.classList.toggle("hidden", showingBranch);
-        branchStep.classList.toggle("hidden", !showingBranch);
-      }
-
-      if ($("launcherTitle")) $("launcherTitle").textContent = showingBranch ? texts.branchTitle : texts.languageTitle;
-      if ($("launcherSub")) $("launcherSub").textContent = showingBranch ? texts.branchSub : texts.languageSub;
+      if ($("launcherTitle")) $("launcherTitle").textContent = texts.languageTitle;
+      if ($("launcherSub")) $("launcherSub").textContent = texts.languageSub;
       if ($("languageStepLabel")) $("languageStepLabel").textContent = texts.languageLabel;
-      if ($("branchStepLabel")) $("branchStepLabel").textContent = texts.branchLabel;
-      if ($("launcherBackLanguage")) $("launcherBackLanguage").textContent = texts.back;
-      if ($("launcherFoot")) $("launcherFoot").textContent = showingBranch ? texts.footBranch : texts.footLanguage;
-      if ($("launcherCafeTitle")) $("launcherCafeTitle").textContent = texts.cafeTitle;
-      if ($("launcherFastFoodTitle")) $("launcherFastFoodTitle").textContent = texts.fastFoodTitle;
-      if ($("launcherDessertsTitle")) $("launcherDessertsTitle").textContent = texts.dessertsTitle;
-      if ($("launcherCafeDesc")) $("launcherCafeDesc").textContent = texts.cafeDesc;
-      if ($("launcherFastFoodDesc")) $("launcherFastFoodDesc").textContent = texts.soon;
-      if ($("launcherDessertsDesc")) $("launcherDessertsDesc").textContent = texts.soon;
-
+      if ($("launcherFoot")) $("launcherFoot").textContent = texts.footLanguage;
       document.querySelectorAll("[data-launcher-lang]").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.launcherLang === state.lang);
       });
-      document.querySelectorAll(".launcher-card[data-branch]").forEach(btn => {
-        const active = btn.dataset.branch === (state.section || "cafe");
-        btn.classList.toggle("active", active);
-        btn.classList.toggle("soon", btn.dataset.branch !== "cafe");
-      });
-    }
-
-    function beginBranchSelection(lang){
-      if (!["en","ar","ku"].includes(lang)) return;
-      state.lang = lang;
-      state.section = null;
-      saveLocalState();
-      const languageStep = $("languageStep");
-      const branchStep = $("branchStep");
-      if (languageStep) languageStep.classList.add("hidden");
-      if (branchStep) branchStep.classList.remove("hidden");
-      renderLauncherState();
-      updateLangButtons();
-      render();
-    }
-
-    function openBranchChooser(){
-      const languageStep = $("languageStep");
-      const branchStep = $("branchStep");
-      if (languageStep) languageStep.classList.add("hidden");
-      if (branchStep) branchStep.classList.remove("hidden");
-      renderLauncherState();
-    }
-
-    function chooseBranch(branch){
-      state.section = branch;
-      saveLocalState();
-      renderLauncherState();
-      if (branch === "cafe") {
-        render();
-      }
-    }
-
-    function chooseTopSection(branch){
-      if (!["cafe","fastfood","desserts"].includes(branch)) return;
-      closeControlPopovers();
-      state.section = branch;
-      saveLocalState();
-      updateTopControls();
-      renderLauncherState();
-      if (branch === "cafe") {
-        render();
-      }
-    }
-
-    function getCurrentCategory(){
-      const preferred = browseCategoryId || state.currentCategoryId;
-      return state.categories.find(c => c.id === preferred) || state.categories[0] || null;
     }
 
     function categoryIcon(cat){
@@ -2873,7 +2715,34 @@ let saveInFlight = false;
         return;
       }
 
-      itemsEl.innerHTML = state.categories.map((cat, catIndex) => {
+      const visualGroupFor = (cat) => {
+        const text = `${defaultText(cat.names, "en")} ${defaultText(cat.names, "ar")} ${defaultText(cat.names, "ku")} ${cat.id || ""}`.toLowerCase();
+        if (/(dessert|sweet|cake|ice cream|pastr|donut|cookie|حلويات|حلو|شیرینی|کێک|دێزەرت)/i.test(text)) return "desserts";
+        if (/(burger|pizza|sandwich|fries|fast|food|meal|wrap|fried|hot dog|chicken|nugget|shawarma|فاست|برگر|پیتزا|ساندویچ|شاورما|مرغ|خواردن)/i.test(text)) return "fastfood";
+        return "cafe";
+      };
+      const visualHeading = (group) => {
+        const labels = {
+          en: { cafe: "1911 CAFE", fastfood: "1911 FAST FOOD", desserts: "1911 DESSERTS" },
+          ar: { cafe: "1911 كافيه", fastfood: "1911 فاست فود", desserts: "1911 حلويات" },
+          ku: { cafe: "1911 کافێ", fastfood: "1911 فاست فود", desserts: "1911 دێزەرت" }
+        };
+        return `<div class="visual-menu-heading" data-visual-group="${group}"><span>✦</span><strong>${escapeHtml(labels[state.lang]?.[group] || labels.en[group])}</strong><span>✦</span></div>`;
+      };
+
+      // These three groups are PRESENTATION ONLY. They are never stored in
+      // Firebase and never become POS/Admin categories. Every existing
+      // catalog category is simply placed under one of these visual groups.
+      const groupedCategories = { cafe: [], fastfood: [], desserts: [] };
+      state.categories.forEach(cat => groupedCategories[visualGroupFor(cat)].push(cat));
+      const groupOrder = ["cafe", "fastfood", "desserts"];
+      let renderedCategoryIndex = 0;
+
+      itemsEl.innerHTML = groupOrder.map(group => {
+        const heading = visualHeading(group);
+        const categories = groupedCategories[group];
+        const groupHtml = categories.map((cat) => {
+        const catIndex = state.categories.findIndex(c => c.id === cat.id);
         const items = filteredItemsForCategory(cat);
         if (!items.length && state.search.trim()) return "";
         matchingSections.push(cat.id);
@@ -2915,6 +2784,7 @@ let saveInFlight = false;
           `;
         }).join("") : `<div class="empty">${escapeHtml(tr.itemEmpty)}</div>`;
 
+        renderedCategoryIndex++;
         return `
           <section class="category-section" data-category-section="${escapeAttr(cat.id)}" data-category-section-index="${catIndex}">
             <div class="category-section-head">
@@ -2930,6 +2800,8 @@ let saveInFlight = false;
             <div class="items">${cards}</div>
           </section>
         `;
+      }).join("");
+        return heading + groupHtml;
       }).join("");
 
       if (!matchingSections.length){
@@ -3354,34 +3226,55 @@ let saveInFlight = false;
       populateItemForm(adminItemCategoryId, adminItemId);
     }
 
+    // Language selection opens the single continuous customer menu directly.
+    // No Cafe/Fast Food/Dessert branch-selection step exists.
+    function selectLanguage(lang){
+      const selected = ["en","ar","ku"].includes(lang) ? lang : "en";
+      state.lang = selected;
+      state.section = null;
+      state.search = "";
+
+      // Hide the launcher FIRST so a rendering/local-storage error cannot
+      // leave the customer trapped on the language screen.
+      const launcher = $("siteLauncher");
+      const shell = $("app");
+      if (launcher) launcher.classList.add("hidden");
+      if (shell) shell.style.display = "block";
+
+      try { saveLocalState(); } catch (e) { console.warn("Could not save language locally:", e); }
+
+      try {
+        setLanguage(selected);
+      } catch (e) {
+        console.error("Language rendering failed:", e);
+        try {
+          app.setAttribute("data-lang", selected);
+          document.documentElement.lang = selected === "en" ? "en" : "ar";
+          document.documentElement.dir = selected === "en" ? "ltr" : "rtl";
+          renderSiteContent();
+        } catch (fallbackError) {
+          console.error("Menu fallback render failed:", fallbackError);
+        }
+      }
+
+      try { renderLauncherState(); } catch (e) { console.warn("Launcher state render failed:", e); }
+      try { render(); } catch (e) { console.error("Menu render failed:", e); }
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+
     function bindEvents(){
       const backToLanguageBtn = $("backToLanguageBtn");
       if (backToLanguageBtn) {
         backToLanguageBtn.addEventListener("click", returnToLanguageSelection);
       }
 
-      const sectionSwitchBtn = $("sectionSwitchBtn");
-      if (sectionSwitchBtn) {
-        sectionSwitchBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          toggleControlPopover("sectionPopover","sectionSwitchBtn");
-        });
-      }
-
-      document.querySelectorAll("[data-section-choice]").forEach(btn => {
-        btn.addEventListener("click", () => chooseTopSection(btn.dataset.sectionChoice));
-      });
-
       document.querySelectorAll("[data-launcher-lang]").forEach(btn => {
-        btn.addEventListener("click", () => beginBranchSelection(btn.dataset.launcherLang));
+        btn.onclick = (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          selectLanguage(btn.dataset.launcherLang);
+        };
       });
-
-      document.querySelectorAll(".launcher-card[data-branch]").forEach(btn => {
-        btn.addEventListener("click", () => chooseBranch(btn.dataset.branch));
-      });
-
-      const launcherBackLanguage = $("launcherBackLanguage");
-      if (launcherBackLanguage) launcherBackLanguage.addEventListener("click", openBranchChooser);
 
       const footerAdminBtn = $("openAdminBtnFooter");
       if (footerAdminBtn) {
@@ -3482,8 +3375,19 @@ let saveInFlight = false;
       $("searchInput").value = state.search;
       bindEvents();
       await startFirebaseSync();
-      setLanguage(state.lang);
-      renderLauncherState();
+
+      if (PAGE_MODE === "admin") {
+        setLanguage(state.lang);
+        renderLauncherState();
+      } else {
+        // Always show language selection on a fresh page load.
+        // The customer must explicitly choose a language before entering the menu.
+        const launcher = $("siteLauncher");
+        const shell = $("app");
+        if (launcher) launcher.classList.remove("hidden");
+        if (shell) shell.style.display = "none";
+        renderLauncherState();
+      }
 
       if (PAGE_MODE === "admin") {
         $("siteLauncher")?.classList.add("hidden");
@@ -3496,7 +3400,7 @@ let saveInFlight = false;
       clearCategoryAction();
       clearItemAction();
       populateAdmin();
-      if (PAGE_MODE !== "admin" && state.section === "cafe") render();
+      if (PAGE_MODE !== "admin" && state.lang) render();
     }
 
     init();
